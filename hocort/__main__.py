@@ -1,2 +1,4 @@
+import hocort.tui as tui
+
 def main():
-    print("Testing")
+    tui.main()
