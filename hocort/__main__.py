@@ -1,2 +1,4 @@
+import hocort.interface as interface
+
 def main():
-    print("Testing")
+    interface.main()
