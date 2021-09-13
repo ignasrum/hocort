@@ -9,7 +9,7 @@ Clone this repository, navigate to it, then install using the following command:
 pip3 install .
 ```
 
-Then launch it using the following command:
+Then run it using the following command:
 
 ```
 hocort
