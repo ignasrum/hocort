@@ -3,10 +3,10 @@
 
 ## Installation:
 
-Clone this repository, navigate to it, then install using the following command:
+Install using the following command:
 
 ```
-pip3 install .
+pip install "git+https://github.com/ignasrum/hocort.git"
 ```
 
 Then run it using the following command:
