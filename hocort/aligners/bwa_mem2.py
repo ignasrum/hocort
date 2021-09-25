@@ -1,17 +1,18 @@
 import hocort.execute as exe
 import multiprocessing
 
+from hocort.aligners.aligner import Aligner
 
 
-class BWA_MEM2():
-    def align(index, seq, output_path, options=[]):
-        log = open(output_path, 'w')
-        log.flush()
+class BWA_MEM2(Aligner):
+    def generate_index(path, sequences):
+        pass
 
+    def align(index, seq, output, options=[]):
         threads = multiprocessing.cpu_count()
         # bwa-mem2 mem -t <num_threads> <prefix> <reads.fq/fa> > out.sam
-        executable = ['bwa-mem2']
-        parameters = ['mem', '-t', str(threads), index, seq]
+        # bwa-mem2 mem -t 16 index_path reads.fastq > out.sam
+        cmd = ['bwa-mem2', 'mem', '-t', str(threads), index, seq] + options
 
-        result, returncode = exe.execute(executable, parameters)
-        return result, returncode
+        returncode, result = exe.execute(cmd, out_file=output)
+        return returncode, result
