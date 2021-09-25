@@ -4,6 +4,7 @@ from argparse import Action
 import hocort.pipelines
 import sys
 import inspect
+import logging
 
 pipelines = {}
 i = 0
@@ -14,6 +15,17 @@ for pipeline in dir(hocort.pipelines):
             pipelines[i] = m
             i += 1
 
+class HelpAction(Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        print('HoCoRT Help:\n')
+        parser.print_help()
+        pipeline = namespace.pipeline
+        if pipeline != None:
+            print('\nPipeline Help:\n')
+            pipeline_interface = pipelines[pipeline]().interface
+            pipeline_interface(['-h'])
+        parser.exit()
+
 class ListAction(Action):
     def __call__(self, parser, namespace, values, option_string=None):
         print('Available pipelines:')
@@ -22,25 +34,30 @@ class ListAction(Action):
         parser.exit()
 
 def main():
-    parser = ArgumentParser(description='HoCoRT')
+    parser = ArgumentParser(description='HoCoRT', add_help=False)
 
     parser.add_argument('pipeline', type=int,
                         help='int: id of pipeline to run')
-    parser.add_argument('sequence_path', type=str,
-                        help='str: path to sequence file')
-    parser.add_argument('output_path', type=str,
-                        help='str: path to output file')
     parser.add_argument('-l', action=ListAction, nargs=0,
-                        help='bool: list all pipelines')
+                        help='flag: list all pipelines')
+    parser.add_argument('-v', action='count', default=0,
+                        help='flag: verbose output')
+    parser.add_argument('-h', action=HelpAction, nargs=0,
+                        help='flag: print help')
 
-    args = parser.parse_args()
-    print(args)
+    args, unknown_args = parser.parse_known_args()
     pipeline = args.pipeline
-    seq = args.sequence_path
-    out = args.output_path
+    verbose = True if args.v > 0 else False
+
+    logger = logging.getLogger(__file__)
+    log_level = logging.INFO
+    if verbose > 0: log_level = logging.DEBUG
+    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s - %(name)s', level=log_level)
+
+    logger.debug(str(args))
 
     try:
-        idx = 'grch38_1kgmaj_snvindels_bt2/grch38_1kgmaj_snvindels'
-        pipelines[pipeline]().run(idx, seq, out)
+        pipeline_interface = pipelines[pipeline]().interface
+        pipeline_interface(unknown_args)
     except Exception as e:
         print(e)

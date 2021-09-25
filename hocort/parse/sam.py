@@ -16,13 +16,7 @@ class SAM:
     # input:  sam
     # output: bam
     def remove(input_path, output_path, quality_score, options=[]):
-        log = open(output_path, 'w')
-        log.flush()
+        cmd = ['samtools', 'view', '-bSq', str(quality_score), input_path] + options
 
-        executable = ['samtools']
-        parameters = [f'view -bSq {str(quality_score)} {input_path}'] + options
-        parameters = ['view', '-bSq', str(quality_score), input_path] + options
-        #parameters = ['view', '-buShq', str(quality_score), input_path] + options
-
-        result, returncode = exe.execute(executable, parameters, stdout=log, stderr=log)
-        return result, returncode
+        returncode, result = exe.execute(cmd, out_file=output_path)
+        return returncode, result

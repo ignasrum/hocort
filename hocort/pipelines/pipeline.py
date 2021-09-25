@@ -1,8 +1,14 @@
 import tempfile
+from abc import ABC, abstractmethod
 
-class Pipeline():
+class Pipeline(ABC):
     def __init__(self):
         self.temp_dir = tempfile.TemporaryDirectory()
 
-    def run():
-        return -1
+    @abstractmethod
+    def run(self, idx, seq, out):
+        pass
+
+    @abstractmethod
+    def interface(self, args):
+        pass
