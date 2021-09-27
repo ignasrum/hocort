@@ -7,13 +7,11 @@ import inspect
 import logging
 
 pipelines = {}
-i = 0
 for pipeline in dir(hocort.pipelines):
     if pipeline[0] != '_':
         m = getattr(hocort.pipelines, pipeline)
         if inspect.isclass(m):
-            pipelines[i] = m
-            i += 1
+            pipelines[pipeline] = m
 
 class HelpAction(Action):
     def __call__(self, parser, namespace, values, option_string=None):
@@ -30,14 +28,14 @@ class ListAction(Action):
     def __call__(self, parser, namespace, values, option_string=None):
         print('Available pipelines:')
         for pipeline in pipelines:
-            print(f'    {pipeline}: {pipelines[pipeline]}')
+            print(f'    {pipeline}')
         parser.exit()
 
 def main():
     parser = ArgumentParser(description='HoCoRT', add_help=False)
 
-    parser.add_argument('pipeline', type=int,
-                        help='int: id of pipeline to run')
+    parser.add_argument('pipeline', type=str,
+                        help='str: pipeline to run')
     parser.add_argument('-l', action=ListAction, nargs=0,
                         help='flag: list all pipelines')
     parser.add_argument('-v', action='count', default=0,
@@ -57,7 +55,10 @@ def main():
     logger.debug(str(args))
 
     try:
+        if pipeline not in pipelines.keys():
+            logger.error(f'Invalid pipeline: {pipeline}')
+            return
         pipeline_interface = pipelines[pipeline]().interface
         pipeline_interface(unknown_args)
     except Exception as e:
-        print(e)
+        logger.error(e)
