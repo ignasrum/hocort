@@ -13,7 +13,7 @@ setup(
               'hocort.parse'],
     python_requires='>=3.8',
     install_requires=['argparse',
-                      ],
+                      'pytest'],
     entry_points = {
         'console_scripts': ['hocort=hocort.__main__:main'],
     }
