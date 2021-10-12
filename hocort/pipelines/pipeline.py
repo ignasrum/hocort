@@ -6,6 +6,7 @@ class Pipeline(ABC):
     def __init__(self, logger_filename):
         self.temp_dir = tempfile.TemporaryDirectory()
         self.logger = logging.getLogger(logger_filename)
+        self.logger.debug(str(self.temp_dir))
 
     @abstractmethod
     def run(self, idx, seq, out):

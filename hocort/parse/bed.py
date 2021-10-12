@@ -6,5 +6,4 @@ class BED:
         # awk '{ print $4 }' in.bed
         cmd = ['awk', '{ print $4 }', bed_path] + options
 
-        returncode, result = exe.execute(cmd, out_file=output_path)
-        return returncode, result
+        return exe.execute(cmd, out_file=output_path)

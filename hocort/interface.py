@@ -15,41 +15,57 @@ for pipeline in dir(hocort.pipelines):
 
 class HelpAction(Action):
     def __call__(self, parser, namespace, values, option_string=None):
-        print('HoCoRT Help:\n')
-        parser.print_help()
         pipeline = namespace.pipeline
         if pipeline != None:
-            print('\nPipeline Help:\n')
             pipeline_interface = pipelines[pipeline]().interface
             pipeline_interface(['-h'])
-        parser.exit()
+        else:
+            parser.print_help()
 
-class ListAction(Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        print('Available pipelines:')
+        print('\nAvailable pipelines:')
         for pipeline in pipelines:
             print(f'    {pipeline}')
         parser.exit()
 
 def main():
-    parser = ArgumentParser(description='HoCoRT', add_help=False)
-
-    parser.add_argument('pipeline', type=str,
-                        help='str: pipeline to run')
-    parser.add_argument('-l', action=ListAction, nargs=0,
-                        help='flag: list all pipelines')
-    parser.add_argument('-v', action='count', default=0,
-                        help='flag: verbose output')
-    parser.add_argument('-h', action=HelpAction, nargs=0,
-                        help='flag: print help')
+    parser = ArgumentParser(
+        prog='HoCoRT',
+        description='HoCoRT: A Host Contamination Removal Tool',
+        usage='hocort [pipeline] [options]',
+        add_help=False
+    )
+    parser.add_argument(
+        'pipeline',
+        type=str,
+        help='str: pipeline to run'
+    )
+    parser.add_argument(
+        '--debug',
+        '-d',
+        action='store_true',
+        help='flag: verbose output'
+    )
+    parser.add_argument(
+        '--version',
+        '-v',
+        action='store_true',
+        help='flag: verbose output'
+    )
+    parser.add_argument(
+        '--help',
+        '-h',
+        action=HelpAction,
+        nargs=0,
+        help='flag: print help'
+    )
 
     args, unknown_args = parser.parse_known_args()
     pipeline = args.pipeline
-    verbose = True if args.v > 0 else False
+    debug = args.debug
 
     logger = logging.getLogger(__file__)
     log_level = logging.INFO
-    if verbose > 0: log_level = logging.DEBUG
+    if debug: log_level = logging.DEBUG
     logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s - %(name)s', level=log_level)
 
     logger.debug(str(args))
