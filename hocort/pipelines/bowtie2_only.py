@@ -14,7 +14,14 @@ class Bowtie2Only(Pipeline):
     def __init__(self):
         super().__init__(__file__)
 
-    def run(self, idx, seq1, out, seq2=None, intermediary='SAM'):
+    def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM'):
+        if seq2 and not out2:
+            self.logger.info('Invalid input: sequence2 without output2')
+            return None
+        if out2 and not seq2:
+            self.logger.info('Invalid input: output2 without sequence2')
+            return None
+
         self.logger.debug(f'intermediary: {intermediary}')
         self.logger.debug(f'seq1: {seq1}')
         self.logger.debug(f'seq2: {seq2}')
@@ -50,11 +57,11 @@ class Bowtie2Only(Pipeline):
 
         # REMOVE FILTERED READS FROM ORIGINAL FASTQ FILE
         self.logger.info('Removing reads from input fastq file 1')
-        returncode, stdout, stderr = FastQ.filter_by_id(seq1, out+'.file1.fastq', seq_ids_output)
+        returncode, stdout, stderr = FastQ.filter_by_id(seq1, out1, seq_ids_output)
 
         if seq2 is not None:
             self.logger.info('Removing reads from input fastq file 2')
-            returncode, stdout, stderr = FastQ.filter_by_id(seq2, out+'.file2.fastq', seq_ids_output)
+            returncode, stdout, stderr = FastQ.filter_by_id(seq2, out2, seq_ids_output)
 
         end_time = time.time()
         self.logger.info(f'Pipeline run time: {end_time - start_time} seconds')
@@ -65,25 +72,27 @@ class Bowtie2Only(Pipeline):
             usage=f'hocort {self.__class__.__name__} positional_arguments [options]'
         )
         parser.add_argument(
-            'bowtie2_index_path',
+            '-x',
+            required=True,
             type=str,
+            metavar=('<idx>'),
             help='str: path to bowtie2 index'
         )
         parser.add_argument(
-            'seq1_path',
+            '-i',
+            required=True,
             type=str,
-            help='str: path to sequence file 1'
+            nargs=('+'),
+            metavar=('<seq1>', '<seq2>'),
+            help='str: path to sequence files, max 2'
         )
         parser.add_argument(
-            'seq2_path',
+            '-o',
+            required=True,
             type=str,
-            nargs='?',
-            help='str: path to sequence file 2'
-        )
-        parser.add_argument(
-            'output_path',
-            type=str,
-            help='str: path to output file'
+            nargs=('+'),
+            metavar=('<out1>', '<out2>'),
+            help='str: path to output files, max 2'
         )
         parser.add_argument(
             '--intermediary',
@@ -93,10 +102,24 @@ class Bowtie2Only(Pipeline):
         )
         parsed = parser.parse_args(args=args)
 
-        idx = parsed.bowtie2_index_path
-        seq1 = parsed.seq1_path
-        seq2 = parsed.seq2_path
-        out = parsed.output_path
+        idx = parsed.x
+        seq = parsed.i
+        out = parsed.o
         intermediary = parsed.intermediary
 
-        self.run(idx, seq1, out, seq2=seq2, intermediary=intermediary)
+        seq1 = seq[0]
+        seq2 = None
+        out1 = out[0]
+        out2 = None
+
+        try:
+            seq2 = seq[1]
+        except:
+            self.logger.info('Sequence file 2 path was not provided')
+
+        try:
+            out2 = out[1]
+        except:
+            self.logger.info('Output file 2 path was not provided')
+
+        self.run(idx, seq1, out1, out2=out2, seq2=seq2, intermediary=intermediary)
