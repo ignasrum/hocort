@@ -11,7 +11,7 @@ from argparse import ArgumentParser
 import time
 
 
-class HumanBWA_MEM2(Pipeline):
+class BWA_MEM2_Only(Pipeline):
     def __init__(self):
         super().__init__(__file__)
 
@@ -55,7 +55,10 @@ class HumanBWA_MEM2(Pipeline):
         self.logger.info(f'Pipeline run time: {end_time - start_time}')
 
     def interface(self, args):
-        parser = ArgumentParser(description='Human BWA_MEM2 pipeline')
+        parser = ArgumentParser(
+            description='BWA_MEM2 pipeline',
+            usage=f'hocort {self.__class__.__name__} positional_arguments [options]'
+        )
         parser.add_argument('bwa_mem2_index_path', type=str,
                             help='str: path to bwa_mem2 index')
         parser.add_argument('sequence_path', type=str,

@@ -1,4 +1,5 @@
 import pysam
+import itertools
 from argparse import ArgumentParser
 
 def count(file):
@@ -24,7 +25,7 @@ def print_cmp(msg, file1_num, file2_num):
 def compare(file1, file2):
     entries1, total1 = count(file1)
     entries2, total2 = count(file2)
-    for entry1, entry2 in zip(entries1, entries2):
+    for entry1, entry2 in itertools.zip_longest(entries1, entries2):
         if entry1 is not None:
             val = entries2[entry1] if entry1 in entries2 else 0
             print_cmp(entry1, entries1[entry1], val)
