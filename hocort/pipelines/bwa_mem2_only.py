@@ -1,13 +1,13 @@
 from hocort.pipelines.pipeline import Pipeline
 
 from hocort.aligners.bwa_mem2 import BWA_MEM2
-from hocort.pipelines.human_host import HumanHost
 from hocort.parse.sam import SAM
 from hocort.parse.bam import BAM
 from hocort.parse.bed import BED
 from hocort.parse.fastq import FastQ
 
 from argparse import ArgumentParser
+import multiprocessing
 import time
 
 
@@ -15,60 +15,99 @@ class BWA_MEM2_Only(Pipeline):
     def __init__(self):
         super().__init__(__file__)
 
-    def run(self, idx, seq, out):
+    def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', include='f', threads=multiprocessing.cpu_count()):
         # awk '($5 >= 42)' output1.sam | wc -l
 
         self.logger.info('Starting pipeline')
+        self.logger.info(str(self.temp_dir))
         start_time = time.time()
         # MAP READS TO INDEX
         bwa_mem2_output = f'{self.temp_dir.name}/output.sam'
         options = []
-        self.logger.info('Aligning reads with BWA-MEM2')
-        result, returncode = BWA_MEM2.align(idx, seq, bwa_mem2_output, options=options)
 
-        # COUNT NUMBER OF READS WITH CERTAIN MAPPING QUALITY
-        query_names = SAM.count_reads(bwa_mem2_output, 42)
-        queries = len(query_names)
-        self.logger.info(f'Reads with at least 42 mapping quality: {queries}')
-
-        # FILTER MAPPED READS BASED ON MAPPING QUALITY
-        sam_remove_output = f'{self.temp_dir.name}/removed.bam'
-        self.logger.info('Filtering reads')
-        result, returncode = SAM.remove(bwa_mem2_output, sam_remove_output, 42)
-
-        # CONVERT BAM TO BED
-        bam_to_bed_output = f'{self.temp_dir.name}/removed.bed'
-        self.logger.info('Converting BAM to BED')
-        result, returncode = BAM.bam_to_bed(sam_remove_output, bam_to_bed_output)
-
-        # awk '{ print $4 }' in.bed
-        # EXTRACT SEQUENCE IDS FROM BED
+        include=False
+        add_slash=False
+        if seq2: add_slash = True
+        mapq = 0
         seq_ids_output = f'{self.temp_dir.name}/removed.list'
-        self.logger.info('Extracting sequence ids')
-        result, returncode = BED.extract_sequence_ids(bam_to_bed_output, seq_ids_output)
+        query_names = []
 
-        # REMOVE FILTERED READS FROM ORIGINAL FASTQ FILE
-        self.logger.info('Removing reads from input fastq file')
-        result, returncode = FastQ.filter_by_id(seq, out, seq_ids_output)
+        self.logger.info('Aligning reads with BWA-MEM2')
+        returncode, stdout, stderr = BWA_MEM2.align(idx, seq1, bwa_mem2_output, seq2=seq2, threads=threads, options=options)
+        print('\n', stderr)
+        self.logger.info('Extracting sequence ids')
+        query_names = SAM.extract_ids(bwa_mem2_output, mapping_quality=mapq, add_slash=add_slash)
+
+        with open(seq_ids_output, 'w') as f:
+            for query in query_names:
+                f.write(f'{query}\n')
+
+        # REMOVE FILTERED READS FROM ORIGINAL FASTQ FILES
+        self.logger.info('Removing reads from input fastq file 1')
+        returncode, stdout, stderr = FastQ.filter_by_id(seq1, out1, seq_ids_output, include=include)
+
+        if seq2 is not None:
+            self.logger.info('Removing reads from input fastq file 2')
+            returncode, stdout, stderr = FastQ.filter_by_id(seq2, out2, seq_ids_output, include=include)
 
         end_time = time.time()
-        self.logger.info(f'Pipeline run time: {end_time - start_time}')
+        self.logger.info(f'Pipeline run time: {end_time - start_time} seconds')
 
     def interface(self, args):
         parser = ArgumentParser(
             description='BWA_MEM2 pipeline',
             usage=f'hocort {self.__class__.__name__} positional_arguments [options]'
         )
-        parser.add_argument('bwa_mem2_index_path', type=str,
-                            help='str: path to bwa_mem2 index')
-        parser.add_argument('sequence_path', type=str,
-                            help='str: path to sequence file')
-        parser.add_argument('output_path', type=str,
-                            help='str: path to output file')
+        parser.add_argument(
+            '-x',
+            required=True,
+            type=str,
+            metavar=('<idx>'),
+            help='str: path to bowtie2 index'
+        )
+        parser.add_argument(
+            '-i',
+            required=True,
+            type=str,
+            nargs=('+'),
+            metavar=('<seq1>', '<seq2>'),
+            help='str: path to sequence files, max 2'
+        )
+        parser.add_argument(
+            '-o',
+            required=True,
+            type=str,
+            nargs=('+'),
+            metavar=('<out1>', '<out2>'),
+            help='str: path to output files, max 2'
+        )
+        parser.add_argument(
+            '-t',
+            required=False,
+            type=int,
+            metavar=('INT'),
+            help='int: number of threads, default is max available on machine'
+        )
         parsed = parser.parse_args(args=args)
 
-        idx = parsed.bwa_mem2_index_path
-        seq = parsed.sequence_path
-        out = parsed.output_path
+        idx = parsed.x
+        seq = parsed.i
+        out = parsed.o
+        threads = parsed.t
 
-        self.run(idx, seq, out)
+        seq1 = seq[0]
+        seq2 = None
+        out1 = out[0]
+        out2 = None
+
+        try:
+            seq2 = seq[1]
+        except:
+            self.logger.info('Sequence file 2 path was not provided')
+
+        try:
+            out2 = out[1]
+        except:
+            self.logger.info('Output file 2 path was not provided')
+
+        self.run(idx, seq1, out1, out2=out2, seq2=seq2, threads=threads)
