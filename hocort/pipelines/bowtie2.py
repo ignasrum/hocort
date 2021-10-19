@@ -1,6 +1,6 @@
 from hocort.pipelines.pipeline import Pipeline
 
-from hocort.aligners.bowtie2 import Bowtie2
+from hocort.aligners.bowtie2 import Bowtie2 as bt2
 from hocort.parse.sam import SAM
 from hocort.parse.bam import BAM
 from hocort.parse.bed import BED
@@ -48,13 +48,13 @@ class Bowtie2(Pipeline):
 
         self.logger.info('Aligning reads with Bowtie2')
         if intermediary == 'BAM':
-            returncode, stdout, stderr = Bowtie2.align_bam(idx, seq1, bowtie2_output, seq2=seq2, threads=threads, options=options)
+            returncode, stdout, stderr = bt2.align_bam(idx, seq1, bowtie2_output, seq2=seq2, threads=threads, options=options)
             print('\n', stderr[0])
             print('\n', stderr[1])
             self.logger.info('Extracting sequence ids')
             query_names = BAM.extract_ids(bowtie2_output, mapping_quality=mapq, add_slash=add_slash)
         else:
-            returncode, stdout, stderr = Bowtie2.align_sam(idx, seq1, bowtie2_output, seq2=seq2, threads=threads, options=options)
+            returncode, stdout, stderr = bt2.align_sam(idx, seq1, bowtie2_output, seq2=seq2, threads=threads, options=options)
             print('\n', stderr)
             self.logger.info('Extracting sequence ids')
             query_names = SAM.extract_ids(bowtie2_output, mapping_quality=mapq, add_slash=add_slash)
@@ -136,10 +136,10 @@ class Bowtie2(Pipeline):
         )
         parsed = parser.parse_args(args=args)
 
-        idx = parsed.x
-        seq = parsed.i
-        out = parsed.o
-        threads = parsed.t
+        idx = parsed.index
+        seq = parsed.input
+        out = parsed.output
+        threads = parsed.threads
         intermediary = parsed.intermediary
         mode = parsed.mode
         include = parsed.include
