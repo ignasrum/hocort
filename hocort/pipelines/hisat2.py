@@ -10,7 +10,7 @@ from argparse import ArgumentParser
 import time
 
 
-class HumanHISAT2(Pipeline):
+class HISAT2(Pipeline):
     def __init__(self):
         super().__init__(__file__)
 
@@ -55,7 +55,7 @@ class HumanHISAT2(Pipeline):
         self.logger.info(f'Pipeline run time: {end_time - start_time}')
 
     def interface(self, args):
-        parser = ArgumentParser(description='Human HISAT2 pipeline')
+        parser = ArgumentParser(description='HISAT2 pipeline')
         parser.add_argument('hisat2_index_path', type=str,
                             help='str: path to HISAT2 index')
         parser.add_argument('sequence_path', type=str,
