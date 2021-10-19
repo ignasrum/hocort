@@ -81,6 +81,7 @@ class Bowtie2(Pipeline):
         )
         parser.add_argument(
             '-x',
+            '--index',
             required=True,
             type=str,
             metavar=('<idx>'),
@@ -88,6 +89,7 @@ class Bowtie2(Pipeline):
         )
         parser.add_argument(
             '-i',
+            '--input',
             required=True,
             type=str,
             nargs=('+'),
@@ -96,6 +98,7 @@ class Bowtie2(Pipeline):
         )
         parser.add_argument(
             '-o',
+            '--output',
             required=True,
             type=str,
             nargs=('+'),
@@ -104,24 +107,28 @@ class Bowtie2(Pipeline):
         )
         parser.add_argument(
             '-t',
+            '--threads',
             required=False,
             type=int,
             metavar=('INT'),
             help='int: number of threads, default is max available on machine'
         )
         parser.add_argument(
+            '-inter',
             '--intermediary',
             choices=['SAM', 'BAM'],
             default='SAM',
             help='str: intermediary step output format, default is SAM'
         )
         parser.add_argument(
+            '-m',
             '--mode',
             choices=['local', 'end-to-end'],
             default='local',
             help='str: operation mode, default is local'
         )
         parser.add_argument(
+            '-incl',
             '--include',
             choices=['t', 'f'],
             default='f',
