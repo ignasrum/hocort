@@ -54,7 +54,7 @@ class BWA_MEM2(Pipeline):
 
     def interface(self, args):
         parser = ArgumentParser(
-            description='BWA_MEM2 pipeline',
+            description=f'{self.__class__.__name__} pipeline',
             usage=f'hocort {self.__class__.__name__} positional_arguments [options]'
         )
         parser.add_argument(
