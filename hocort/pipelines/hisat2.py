@@ -3,7 +3,6 @@ from hocort.pipelines.pipeline import Pipeline
 from hocort.aligners.hisat2 import HISAT2 as hs2
 from hocort.parse.sam import SAM
 from hocort.parse.bam import BAM
-from hocort.parse.bed import BED
 from hocort.parse.fastq import FastQ
 
 from argparse import ArgumentParser
@@ -16,11 +15,8 @@ class HISAT2(Pipeline):
         super().__init__(__file__)
 
     def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', include='f', threads=multiprocessing.cpu_count()):
-        if seq2 and not out2:
-            self.logger.error('Invalid input: sequence2 without output2')
-            return None
-        if out2 and not seq2:
-            self.logger.error('Invalid input: output2 without sequence2')
+        if not seq2 or not out2:
+            self.logger.error('Invalid input: seq2 or out2 missing')
             return None
 
         self.logger.debug(f'seq1: {seq1}')
@@ -66,6 +62,7 @@ class HISAT2(Pipeline):
 
         end_time = time.time()
         self.logger.info(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
+        return 1
 
     def interface(self, args):
         parser = ArgumentParser(
@@ -138,7 +135,6 @@ class HISAT2(Pipeline):
             seq2 = seq[1]
         except:
             self.logger.info('Sequence file 2 path was not provided')
-
         try:
             out2 = out[1]
         except:

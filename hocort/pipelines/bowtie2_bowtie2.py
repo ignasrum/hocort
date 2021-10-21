@@ -18,6 +18,7 @@ class Bowtie2Bowtie2(Pipeline):
         Bowtie2().run(bt2_idx, temp1, out1, seq2=temp2, out2=out2, mode='local')
         end_time = time.time()
         self.logger.info(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
+        return 1
 
     def interface(self, args):
         parser = ArgumentParser(
@@ -65,7 +66,6 @@ class Bowtie2Bowtie2(Pipeline):
             seq2 = seq[1]
         except:
             self.logger.info('Sequence file 2 path was not provided')
-
         try:
             out2 = out[1]
         except:
