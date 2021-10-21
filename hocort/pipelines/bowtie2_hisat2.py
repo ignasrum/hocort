@@ -12,10 +12,12 @@ class Bowtie2HISAT2(Pipeline):
 
     def run(self, bt2_idx, hs2_idx, seq1, out1, seq2=None, out2=None):
         self.logger.info(f'Starting pipeline: {self.__class__.__name__}')
-        temp1 = f'{self.temp_dir.name}/temp1'
-        temp2 = f'{self.temp_dir.name}/temp2'
+        start_time = time.time()
+        temp1 = f'{self.temp_dir.name}/temp1.fastq'
+        temp2 = f'{self.temp_dir.name}/temp2.fastq'
         Bowtie2().run(bt2_idx, seq1, temp1, seq2=seq2, out2=temp2)
         HISAT2().run(hs2_idx, temp1, out1, seq2=temp2, out2=out2)
+        end_time = time.time()
         self.logger.info(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
 
     def interface(self, args):
