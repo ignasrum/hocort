@@ -35,7 +35,7 @@ class Bowtie2(Pipeline):
         self.logger.debug(f'mode: {mode}')
         self.logger.debug(f'intermediary: {intermediary}')
 
-        self.logger.info('Starting pipeline')
+        self.logger.info(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
         bowtie2_output = f'{self.temp_dir.name}/output'
@@ -72,7 +72,7 @@ class Bowtie2(Pipeline):
             returncode, stdout, stderr = FastQ.filter_by_id(seq2, out2, seq_ids_output, include=include)
 
         end_time = time.time()
-        self.logger.info(f'Pipeline run time: {end_time - start_time} seconds')
+        self.logger.info(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
 
     def interface(self, args):
         parser = ArgumentParser(
