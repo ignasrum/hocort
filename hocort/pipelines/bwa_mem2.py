@@ -1,6 +1,6 @@
 from hocort.pipelines.pipeline import Pipeline
 
-from hocort.aligners.bwa_mem2 import BWA_MEM2
+from hocort.aligners.bwa_mem2 import BWA_MEM2 as BWA_MEM2_mapper
 from hocort.parse.sam import SAM
 from hocort.parse.bam import BAM
 from hocort.parse.bed import BED
@@ -19,11 +19,10 @@ class BWA_MEM2(Pipeline):
         # awk '($5 >= 42)' output1.sam | wc -l
 
         self.logger.info('Starting pipeline')
-        self.logger.info(str(self.temp_dir))
         start_time = time.time()
         # MAP READS TO INDEX
         bwa_mem2_output = f'{self.temp_dir.name}/output.sam'
-        options = []
+        options = ['-O 20,20', '-E 6,6', '-L 2,2']
 
         include=False
         add_slash=False
@@ -33,7 +32,7 @@ class BWA_MEM2(Pipeline):
         query_names = []
 
         self.logger.info('Aligning reads with BWA-MEM2')
-        returncode, stdout, stderr = BWA_MEM2.align(idx, seq1, bwa_mem2_output, seq2=seq2, threads=threads, options=options)
+        returncode, stdout, stderr = BWA_MEM2_mapper.align(idx, seq1, bwa_mem2_output, seq2=seq2, threads=threads, options=options)
         print('\n', stderr)
         self.logger.info('Extracting sequence ids')
         query_names = SAM.extract_ids(bwa_mem2_output, mapping_quality=mapq, add_slash=add_slash)
