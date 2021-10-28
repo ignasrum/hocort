@@ -14,7 +14,7 @@ class HISAT2(Pipeline):
     def __init__(self):
         super().__init__(__file__)
 
-    def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', include='f', threads=multiprocessing.cpu_count()):
+    def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', include='f', threads=1, options=[]):
         if not seq2 or not out2:
             self.logger.error('Invalid input: seq2 or out2 missing')
             return None
@@ -27,12 +27,14 @@ class HISAT2(Pipeline):
         start_time = time.time()
 
         hisat2_output = f'{self.temp_dir.name}/output'
-        options = ['--sensitive', '--sp 3,2', '--mp 5,1']
+        if len(options) > 0:
+            options = options
+        else:
+            options = ['--sensitive', '--sp 3,2', '--mp 5,1']
 
         add_slash=False
         if seq2: add_slash = True
         mapq = 0
-        seq_ids_output = f'{self.temp_dir.name}/removed.list'
         query_names = []
 
         self.logger.info('Aligning reads with HISAT2')
@@ -48,21 +50,12 @@ class HISAT2(Pipeline):
             self.logger.info('Extracting sequence ids')
             query_names = SAM.extract_ids(hisat2_output, mapping_quality=mapq, add_slash=add_slash)
 
-        with open(seq_ids_output, 'w') as f:
-            for query in query_names:
-                f.write(f'{query}\n')
-
         # REMOVE FILTERED READS FROM ORIGINAL FASTQ FILES
-        self.logger.info('Removing reads from input fastq file 1')
-        returncode, stdout, stderr = FastQ.filter_by_id(seq1, out1, seq_ids_output, include=include)
-
-        if seq2 is not None:
-            self.logger.info('Removing reads from input fastq file 2')
-            returncode, stdout, stderr = FastQ.filter_by_id(seq2, out2, seq_ids_output, include=include)
+        self.filter(query_names, seq1, out1, seq2=seq2, out2=out2, include=include)
 
         end_time = time.time()
         self.logger.info(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
-        return 1
+        return 0
 
     def interface(self, args):
         parser = ArgumentParser(
@@ -123,6 +116,7 @@ class HISAT2(Pipeline):
         seq = parsed.input
         out = parsed.output
         threads = parsed.threads
+        if not threads: threads = multiprocessing.cpu_count()
         intermediary = parsed.intermediary
         include = parsed.include
 
