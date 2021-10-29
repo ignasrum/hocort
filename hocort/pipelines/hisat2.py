@@ -42,6 +42,7 @@ class HISAT2(Pipeline):
         self.logger.info('Aligning reads with HISAT2')
         if intermediary == 'BAM':
             returncode, stdout, stderr = hs2.align_bam(idx, seq1, hisat2_output, seq2=seq2, threads=threads, options=options)
+            returncode = returncode[0]
             print('\n', stderr[0])
             print('\n', stderr[1])
             self.logger.info('Extracting sequence ids')
@@ -57,7 +58,7 @@ class HISAT2(Pipeline):
 
         end_time = time.time()
         self.logger.info(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
-        return 0
+        return returncode, stdout, stderr
 
     def interface(self, args):
         parser = ArgumentParser(
