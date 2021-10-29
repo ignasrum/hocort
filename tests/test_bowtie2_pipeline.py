@@ -12,21 +12,31 @@ seq2 = f'{path}/test_data/sequences/sequences2.fastq'
 out2 = f'{temp_dir.name}/out2.fastq'
 
 def test_bowtie2_pipeline_end_to_end_1():
-    options = ['--end-to-end']
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, options=options)
+    mode = 'end-to-end'
+    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, mode=mode)
     assert returncode == 0
 
 def test_bowtie2_pipeline_end_to_end_2():
-    options = ['--end-to-end']
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, options=options)
+    mode = 'end-to-end'
+    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, mode=mode)
     assert returncode == 0
 
 def test_bowtie2_pipeline_local_1():
+    mode = 'local'
+    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, mode=mode)
+    assert returncode == 0
+
+def test_bowtie2_pipeline_local_2():
+    mode = 'local'
+    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, mode=mode)
+    assert returncode == 0
+
+def test_bowtie2_pipeline_custom_options_1():
     options = ['--local']
     returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, options=options)
     assert returncode == 0
 
-def test_bowtie2_pipeline_local_2():
+def test_bowtie2_pipeline_custom_options_2():
     options = ['--local']
     returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, options=options)
     assert returncode == 0
