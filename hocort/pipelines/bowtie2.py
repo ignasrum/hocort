@@ -14,15 +14,9 @@ class Bowtie2(Pipeline):
     def __init__(self):
         super().__init__(__file__)
 
-    def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', include='f', mode='local', threads=1, options=[]):
-        if not seq2 and not out2:
-            pass
-        elif not seq2 or not out2:
-            self.logger.error('Invalid input: seq2 or out2 missing')
-            return None
-
+    def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', hcfilter='f', mode='local', threads=1, options=[]):
         if len(options) > 0:
-            pass
+            options = options
         elif mode == 'local':
             options = ['--local', '--very-fast-local', '--score-min G,21,9']
         elif mode == 'end-to-end':
@@ -61,7 +55,7 @@ class Bowtie2(Pipeline):
             query_names = SAM.extract_ids(bowtie2_output, mapping_quality=mapq, add_slash=add_slash)
 
         # REMOVE FILTERED READS FROM ORIGINAL FASTQ FILES
-        self.filter(query_names, seq1, out1, seq2=seq2, out2=out2, include=include)
+        self.filter(query_names, seq1, out1, seq2=seq2, out2=out2, hcfilter=hcfilter)
 
         end_time = time.time()
         self.logger.info(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
@@ -104,6 +98,7 @@ class Bowtie2(Pipeline):
             required=False,
             type=int,
             metavar=('INT'),
+            default=multiprocessing.cpu_count(),
             help='int: number of threads, default is max available on machine'
         )
         parser.add_argument(
@@ -121,11 +116,11 @@ class Bowtie2(Pipeline):
             help='str: operation mode, default is local'
         )
         parser.add_argument(
-            '-incl',
-            '--include',
+            '-hcfilter',
+            '--host_contam_filter',
             choices=['t', 'f'],
             default='f',
-            help='str: set to true to include the filtered sequences, false to exclude'
+            help='str: set to true to keep host sequences, false to keep everything besides host sequences'
         )
         parsed = parser.parse_args(args=args)
 
@@ -133,23 +128,13 @@ class Bowtie2(Pipeline):
         seq = parsed.input
         out = parsed.output
         threads = parsed.threads
-        if not threads: threads = multiprocessing.cpu_count()
         intermediary = parsed.intermediary
         mode = parsed.mode
-        include = parsed.include
+        hcfilter = parsed.hcfilter
 
         seq1 = seq[0]
-        seq2 = None
+        seq2 = None if len(seq) < 2 else seq[1]
         out1 = out[0]
-        out2 = None
+        out2 = None if len(out) < 2 else out[1]
 
-        try:
-            seq2 = seq[1]
-        except:
-            self.logger.info('Sequence file 2 path was not provided')
-        try:
-            out2 = out[1]
-        except:
-            self.logger.info('Output file 2 path was not provided')
-
-        self.run(idx, seq1, out1, out2=out2, seq2=seq2, intermediary=intermediary, include=include, threads=threads, mode=mode)
+        self.run(idx, seq1, out1, out2=out2, seq2=seq2, intermediary=intermediary, hcfilter=hcfilter, threads=threads, mode=mode)
