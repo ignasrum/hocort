@@ -36,7 +36,6 @@ class HISAT2(Pipeline):
         self.logger.info('Aligning reads with HISAT2')
         if intermediary == 'BAM':
             returncode, stdout, stderr = hs2.align_bam(idx, seq1, hisat2_output, seq2=seq2, threads=threads, options=options)
-            returncode = returncode[0]
             print('\n', stderr[0])
             print('\n', stderr[1])
             self.logger.info('Extracting sequence ids')
@@ -115,7 +114,7 @@ class HISAT2(Pipeline):
         out = parsed.output
         threads = parsed.threads
         intermediary = parsed.intermediary
-        hcfilter = parsed.hcfilter
+        hcfilter = parsed.host_contam_filter
 
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]

@@ -13,12 +13,12 @@ seq2 = f'{path}/test_data/sequences/sequences2.fastq'
 def test_sam_1():
     options = []
     returncode, stdout, stderr = hs2.align_sam(idx, seq1, output, options=options)
-    assert returncode == 0
+    assert returncode[0] == 0
 
 def test_sam_2():
     options = []
     returncode, stdout, stderr = hs2.align_sam(idx, seq1, output, seq2=seq2, options=options)
-    assert returncode == 0
+    assert returncode[0] == 0
 
 def test_bam_1():
     options = []

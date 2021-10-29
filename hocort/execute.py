@@ -17,7 +17,7 @@ def execute(cmd, out_file=None, decode_stdout=False, decode_stderr=False):
         log = open(out_file, 'w') if decode_stdout else open(out_file, 'wb')
         log.flush()
         log.write(stdout)
-    return returncode, stdout, stderr
+    return (returncode,), (stdout,), (stderr,)
 
 def execute_pipe(cmd1, cmd2, out_file=None, decode_stdout=False, decode_stderr=False):
     proc1 = subprocess.Popen(cmd1, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -36,4 +36,4 @@ def execute_pipe(cmd1, cmd2, out_file=None, decode_stdout=False, decode_stderr=F
     proc1_stderr = proc1.stderr.read().decode("utf-8") if decode_stderr else proc1.stderr.read()
     proc2_stderr = proc2.stderr.read().decode("utf-8") if decode_stderr else proc2.stderr.read()
 
-    return (proc1.returncode, proc2.returncode), proc2_stdout, (proc1_stderr, proc2_stderr)
+    return (proc1.returncode, proc2.returncode), (proc2_stdout,), (proc1_stderr, proc2_stderr)

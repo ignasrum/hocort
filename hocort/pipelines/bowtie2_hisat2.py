@@ -19,7 +19,7 @@ class Bowtie2HISAT2(Pipeline):
         returncode2, stdout2, stderr2 = HISAT2().run(hs2_idx, temp1, out1, seq2=temp2, out2=out2, hcfilter=hcfilter)
         end_time = time.time()
         self.logger.info(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
-        return (returncode1, returncode2), (stdout1, stdout2), (stderr1, stderr2)
+        return returncode1 + returncode2, stdout1 + stdout2, stderr1 + stderr2
 
     def interface(self, args):
         parser = ArgumentParser(
@@ -73,7 +73,7 @@ class Bowtie2HISAT2(Pipeline):
         hs2_idx = parsed.hisat2_index
         seq = parsed.input
         out = parsed.output
-        hcfilter = parsed.hcfilter
+        hcfilter = parsed.host_contam_filter
 
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]

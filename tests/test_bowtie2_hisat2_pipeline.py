@@ -20,6 +20,14 @@ def test_bowtie2_hisat2_pipeline_2():
     returncode, stdout, stderr = Bowtie2HISAT2().run(bt2_idx, hs2_idx, seq1, out1, seq2=seq2, out2=out2)
     assert returncode[0] == 0
 
+def test_bowtie2_hisat2_pipeline_seq2_no_out2():
+    returncode, stdout, stderr = Bowtie2HISAT2().run(bt2_idx, hs2_idx, seq1, out1, seq2=seq2)
+    assert returncode[0] == 0
+
+def test_bowtie2_hisat2_pipeline_noseq2_out2():
+    returncode, stdout, stderr = Bowtie2HISAT2().run(bt2_idx, hs2_idx, seq1, out1, out2=out2)
+    assert returncode[0] == 0
+
 """
 def test_bowtie2_hisat2_pipeline_custom_options_1():
     options = ['--local']
