@@ -15,7 +15,9 @@ class Bowtie2(Pipeline):
         super().__init__(__file__)
 
     def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', include='f', mode='local', threads=1, options=[]):
-        if not seq2 or not out2:
+        if not seq2 and not out2:
+            pass
+        elif not seq2 or not out2:
             self.logger.error('Invalid input: seq2 or out2 missing')
             return None
 
@@ -47,6 +49,7 @@ class Bowtie2(Pipeline):
         self.logger.info('Aligning reads with Bowtie2')
         if intermediary == 'BAM':
             returncode, stdout, stderr = bt2.align_bam(idx, seq1, bowtie2_output, seq2=seq2, threads=threads, options=options)
+            returncode = returncode[0]
             print('\n', stderr[0])
             print('\n', stderr[1])
             self.logger.info('Extracting sequence ids')
@@ -62,7 +65,7 @@ class Bowtie2(Pipeline):
 
         end_time = time.time()
         self.logger.info(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
-        return 0
+        return returncode, stdout, stderr
 
     def interface(self, args):
         parser = ArgumentParser(

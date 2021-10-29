@@ -15,7 +15,9 @@ class HISAT2(Pipeline):
         super().__init__(__file__)
 
     def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', include='f', threads=1, options=[]):
-        if not seq2 or not out2:
+        if not seq2 and not out2:
+            pass
+        elif not seq2 or not out2:
             self.logger.error('Invalid input: seq2 or out2 missing')
             return None
 
