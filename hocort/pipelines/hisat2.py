@@ -38,11 +38,13 @@ class HISAT2(Pipeline):
             returncode, stdout, stderr = hs2.align_bam(idx, seq1, hisat2_output, seq2=seq2, threads=threads, options=options)
             print('\n', stderr[0])
             print('\n', stderr[1])
+            if returncode[0] != 0: return returncode, stdout, stderr
             self.logger.info('Extracting sequence ids')
             query_names = BAM.extract_ids(hisat2_output, mapping_quality=mapq, add_slash=add_slash)
         else:
             returncode, stdout, stderr = hs2.align_sam(idx, seq1, hisat2_output, seq2=seq2, threads=threads, options=options)
             print('\n', stderr[0])
+            if returncode[0] != 0: return returncode, stdout, stderr
             self.logger.info('Extracting sequence ids')
             query_names = SAM.extract_ids(hisat2_output, mapping_quality=mapq, add_slash=add_slash)
 
