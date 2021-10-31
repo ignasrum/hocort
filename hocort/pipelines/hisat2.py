@@ -37,22 +37,23 @@ class HISAT2(Pipeline):
             returncode, stdout, stderr = hs2.align_bam(idx, seq1, hisat2_output, seq2=seq2, threads=threads, options=options)
             print('\n', stderr[0])
             print('\n', stderr[1])
-            if returncode[0] != 0: return returncode, stdout, stderr
+            if returncode[0] != 0 or returncode[1] != 0: return 1
             self.logger.info('Extracting sequence ids')
             query_names = BAM.extract_ids(hisat2_output, mapping_quality=mapq, threads=threads, add_slash=add_slash)
         else:
             returncode, stdout, stderr = hs2.align_sam(idx, seq1, hisat2_output, seq2=seq2, threads=threads, options=options)
             print('\n', stderr[0])
-            if returncode[0] != 0: return returncode, stdout, stderr
+            if returncode[0] != 0: return 1
             self.logger.info('Extracting sequence ids')
             query_names = SAM.extract_ids(hisat2_output, mapping_quality=mapq, threads=threads, add_slash=add_slash)
 
         # REMOVE FILTERED READS FROM ORIGINAL FASTQ FILES
-        self.filter(query_names, seq1, out1, seq2=seq2, out2=out2, hcfilter=hcfilter)
+        returncode = self.filter(query_names, seq1, out1, seq2=seq2, out2=out2, hcfilter=hcfilter)
+        if returncode != 0: return 1
 
         end_time = time.time()
         self.logger.info(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
-        return returncode, stdout, stderr
+        return 0
 
     def interface(self, args):
         parser = ArgumentParser(

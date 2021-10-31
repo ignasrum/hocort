@@ -13,95 +13,95 @@ out2 = f'{temp_dir.name}/out2.fastq'
 no_path = ''
 
 def test_bowtie2_pipeline_idx_no_path():
-    returncode, stdout, stderr = Bowtie2().run(no_path, seq1, out1)
-    assert returncode[0] == 255
+    returncode = Bowtie2().run(no_path, seq1, out1)
+    assert returncode == 1
 
 def test_bowtie2_pipeline_seq1_no_path():
-    returncode, stdout, stderr = Bowtie2().run(idx, no_path, out1)
-    assert returncode[0] == 1
+    returncode = Bowtie2().run(idx, no_path, out1)
+    assert returncode == 1
 
 def test_bowtie2_pipeline_out1_no_path():
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, no_path)
-    assert returncode[0] == 0
+    returncode = Bowtie2().run(idx, seq1, no_path)
+    assert returncode == 0
 
 def test_bowtie2_pipeline_seq1_seq2_no_path():
-    returncode, stdout, stderr = Bowtie2().run(idx, no_path, out1, seq2=no_path)
-    assert returncode[0] == 0
+    returncode = Bowtie2().run(idx, no_path, out1, seq2=no_path)
+    assert returncode == 1
 
 def test_bowtie2_pipeline_seq2_no_path():
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, seq2=no_path)
-    assert returncode[0] == 1
+    returncode = Bowtie2().run(idx, seq1, out1, seq2=no_path)
+    assert returncode == 1
 
 def test_bowtie2_pipeline_hcfilter_true_1():
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, hcfilter='t')
-    assert returncode[0] == 0
+    returncode = Bowtie2().run(idx, seq1, out1, hcfilter='t')
+    assert returncode == 0
 
 def test_bowtie2_pipeline_hcfilter_false_1():
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, hcfilter='f')
-    assert returncode[0] == 0
+    returncode = Bowtie2().run(idx, seq1, out1, hcfilter='f')
+    assert returncode == 0
 
 def test_bowtie2_pipeline_hcfilter_true_2():
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, hcfilter='t')
-    assert returncode[0] == 0
+    returncode = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, hcfilter='t')
+    assert returncode == 0
 
 def test_bowtie2_pipeline_hcfilter_false_2():
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, hcfilter='f')
-    assert returncode[0] == 0
+    returncode = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, hcfilter='f')
+    assert returncode == 0
 
 def test_bowtie2_pipeline_end_to_end_1():
     mode = 'end-to-end'
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, mode=mode)
-    assert returncode[0] == 0
+    returncode = Bowtie2().run(idx, seq1, out1, mode=mode)
+    assert returncode == 0
 
 def test_bowtie2_pipeline_end_to_end_2():
     mode = 'end-to-end'
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, mode=mode)
-    assert returncode[0] == 0
+    returncode = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, mode=mode)
+    assert returncode == 0
 
 def test_bowtie2_pipeline_local_1():
     mode = 'local'
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, mode=mode)
-    assert returncode[0] == 0
+    returncode = Bowtie2().run(idx, seq1, out1, mode=mode)
+    assert returncode == 0
 
 def test_bowtie2_pipeline_local_2():
     mode = 'local'
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, mode=mode)
-    assert returncode[0] == 0
+    returncode = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, mode=mode)
+    assert returncode == 0
 
 def test_bowtie2_pipeline_custom_options_1():
     options = ['--local']
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, options=options)
-    assert returncode[0] == 0
+    returncode = Bowtie2().run(idx, seq1, out1, options=options)
+    assert returncode == 0
 
 def test_bowtie2_pipeline_custom_options_2():
     options = ['--local']
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, options=options)
-    assert returncode[0] == 0
+    returncode = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, options=options)
+    assert returncode == 0
 
 def test_bowtie2_pipeline_sam_1():
     intermediary = 'SAM'
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, intermediary=intermediary)
-    assert returncode[0] == 0
+    returncode = Bowtie2().run(idx, seq1, out1, intermediary=intermediary)
+    assert returncode == 0
 
 def test_bowtie2_pipeline_sam_2():
     intermediary = 'SAM'
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, intermediary=intermediary)
-    assert returncode[0] == 0
+    returncode = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, intermediary=intermediary)
+    assert returncode == 0
 
 def test_bowtie2_pipeline_bam_1():
     intermediary = 'BAM'
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, intermediary=intermediary)
-    assert returncode[0] == 0
+    returncode = Bowtie2().run(idx, seq1, out1, intermediary=intermediary)
+    assert returncode == 0
 
 def test_bowtie2_pipeline_bam_2():
     intermediary = 'BAM'
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, intermediary=intermediary)
-    assert returncode[0] == 0
+    returncode = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, intermediary=intermediary)
+    assert returncode == 0
 
 def test_bowtie2_pipeline_seq2_no_out2():
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, seq2=seq2)
-    assert returncode[0] == 0
+    returncode = Bowtie2().run(idx, seq1, out1, seq2=seq2)
+    assert returncode == 0
 
 def test_bowtie2_pipeline_noseq2_out2():
-    returncode, stdout, stderr = Bowtie2().run(idx, seq1, out1, out2=out2)
-    assert returncode[0] == 0
+    returncode = Bowtie2().run(idx, seq1, out1, out2=out2)
+    assert returncode == 0

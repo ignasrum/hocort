@@ -6,7 +6,7 @@ from hocort.parse.bam import BAM
 from hocort.parse.fastq import FastQ
 
 from argparse import ArgumentParser
-import multiprocessing
+import os
 import time
 
 
@@ -14,7 +14,7 @@ class BWA_MEM2(Pipeline):
     def __init__(self):
         super().__init__(__file__)
 
-    def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', include='f', threads=multiprocessing.cpu_count()):
+    def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', include='f', threads=1):
         # awk '($5 >= 42)' output1.sam | wc -l
 
         self.logger.info('Starting pipeline')
@@ -32,7 +32,7 @@ class BWA_MEM2(Pipeline):
 
         self.logger.info('Aligning reads with BWA-MEM2')
         returncode, stdout, stderr = BWA_MEM2_mapper.align(idx, seq1, bwa_mem2_output, seq2=seq2, threads=threads, options=options)
-        print('\n', stderr)
+        print('\n', stderr[0])
         self.logger.info('Extracting sequence ids')
         query_names = SAM.extract_ids(bwa_mem2_output, mapping_quality=mapq, add_slash=add_slash)
 
@@ -81,9 +81,11 @@ class BWA_MEM2(Pipeline):
         )
         parser.add_argument(
             '-t',
+            '--threads',
             required=False,
             type=int,
             metavar=('INT'),
+            default=os.cpu_count(),
             help='int: number of threads, default is max available on machine'
         )
         parsed = parser.parse_args(args=args)
@@ -91,21 +93,11 @@ class BWA_MEM2(Pipeline):
         idx = parsed.x
         seq = parsed.i
         out = parsed.o
-        threads = parsed.t
+        threads = parsed.threads if parsed.threads else 1
 
         seq1 = seq[0]
-        seq2 = None
+        seq2 = None if len(seq) < 2 else seq[1]
         out1 = out[0]
-        out2 = None
-
-        try:
-            seq2 = seq[1]
-        except:
-            self.logger.info('Sequence file 2 path was not provided')
-
-        try:
-            out2 = out[1]
-        except:
-            self.logger.info('Output file 2 path was not provided')
+        out2 = None if len(out) < 2 else out[1]
 
         self.run(idx, seq1, out1, out2=out2, seq2=seq2, threads=threads)

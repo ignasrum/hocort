@@ -19,10 +19,13 @@ class Pipeline(ABC):
         # REMOVE FILTERED READS FROM ORIGINAL FASTQ FILES
         self.logger.info('Removing reads from input fastq file 1')
         returncode1, stdout1, stderr1 = FastQ.filter_by_id(seq1, out1, seq_ids_output, include=hcfilter)
+        if returncode1[0] != 0: return 1
 
         if seq2 is not None:
             self.logger.info('Removing reads from input fastq file 2')
             returncode2, stdout2, stderr2 = FastQ.filter_by_id(seq2, out2, seq_ids_output, include=hcfilter)
+            if returncode2[0] != 0: return 1
+        return 0
 
     @abstractmethod
     def run(self, idx, seq, out):
