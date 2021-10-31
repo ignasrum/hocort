@@ -9,7 +9,7 @@ class Bowtie2Bowtie2(Pipeline):
     def __init__(self):
         super().__init__(__file__)
 
-    def run(self, bt2_idx, seq1, out1, seq2=None, out2=None, hcfilter='f'):
+    def run(self, bt2_idx, seq1, out1, seq2=None, out2=None, threads=1, hcfilter='f'):
         self.logger.info(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
         temp1 = f'{self.temp_dir.name}/temp1.fastq'
@@ -52,6 +52,15 @@ class Bowtie2Bowtie2(Pipeline):
             help='str: path to output files, max 2'
         )
         parser.add_argument(
+            '-t',
+            '--threads',
+            required=False,
+            type=int,
+            metavar=('INT'),
+            default=multiprocessing.cpu_count(),
+            help='int: number of threads, default is max available on machine'
+        )
+        parser.add_argument(
             '-hcfilter',
             '--host_contam_filter',
             choices=['t', 'f'],
@@ -65,9 +74,13 @@ class Bowtie2Bowtie2(Pipeline):
         out = parsed.output
         hcfilter = parsed.host_contam_filter
 
+        if parsed.threads: threads = parsed.threads
+        elif os.cpu_count(): threads = os.cpu_count()
+        else: threads = 1
+
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        self.run(bt2_idx, seq1, out1, seq2=seq2, out2=out2, hcfilter=hcfilter)
+        self.run(bt2_idx, seq1, out1, seq2=seq2, out2=out2, threads=threads, hcfilter=hcfilter)

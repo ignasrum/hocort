@@ -6,8 +6,8 @@ from hocort.parse.bam import BAM
 from hocort.parse.fastq import FastQ
 
 from argparse import ArgumentParser
-import multiprocessing
 import time
+import os
 
 
 class Bowtie2(Pipeline):
@@ -128,10 +128,13 @@ class Bowtie2(Pipeline):
         idx = parsed.index
         seq = parsed.input
         out = parsed.output
-        threads = parsed.threads
         intermediary = parsed.intermediary
         mode = parsed.mode
         hcfilter = parsed.host_contam_filter
+
+        if parsed.threads: threads = parsed.threads
+        elif os.cpu_count(): threads = os.cpu_count()
+        else: threads = 1
 
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]

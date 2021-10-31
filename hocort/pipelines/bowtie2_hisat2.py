@@ -10,13 +10,13 @@ class Bowtie2HISAT2(Pipeline):
     def __init__(self):
         super().__init__(__file__)
 
-    def run(self, bt2_idx, hs2_idx, seq1, out1, seq2=None, out2=None, hcfilter='f'):
+    def run(self, bt2_idx, hs2_idx, seq1, out1, seq2=None, out2=None, threads=1, hcfilter='f'):
         self.logger.info(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
         temp1 = f'{self.temp_dir.name}/temp1.fastq'
         temp2 = None if seq2 == None else f'{self.temp_dir.name}/temp2.fastq'
-        returncode1, stdout1, stderr1 = Bowtie2().run(bt2_idx, seq1, temp1, seq2=seq2, out2=temp2, mode='end-to-end', hcfilter=hcfilter)
-        returncode2, stdout2, stderr2 = HISAT2().run(hs2_idx, temp1, out1, seq2=temp2, out2=out2, hcfilter=hcfilter)
+        returncode1, stdout1, stderr1 = Bowtie2().run(bt2_idx, seq1, temp1, seq2=seq2, out2=temp2, mode='end-to-end', threads=threads, hcfilter=hcfilter)
+        returncode2, stdout2, stderr2 = HISAT2().run(hs2_idx, temp1, out1, seq2=temp2, out2=out2, threads=threads, hcfilter=hcfilter)
         end_time = time.time()
         self.logger.info(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return returncode1 + returncode2, stdout1 + stdout2, stderr1 + stderr2
@@ -61,6 +61,15 @@ class Bowtie2HISAT2(Pipeline):
             help='str: path to output files, max 2'
         )
         parser.add_argument(
+            '-t',
+            '--threads',
+            required=False,
+            type=int,
+            metavar=('INT'),
+            default=multiprocessing.cpu_count(),
+            help='int: number of threads, default is max available on machine'
+        )
+        parser.add_argument(
             '-hcfilter',
             '--host_contam_filter',
             choices=['t', 'f'],
@@ -75,9 +84,13 @@ class Bowtie2HISAT2(Pipeline):
         out = parsed.output
         hcfilter = parsed.host_contam_filter
 
+        if parsed.threads: threads = parsed.threads
+        elif os.cpu_count(): threads = os.cpu_count()
+        else: threads = 1
+
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        self.run(bt2_idx, hs2_idx, seq1, out1, seq2=seq2, out2=out2, hcfilter=hcfilter)
+        self.run(bt2_idx, hs2_idx, seq1, out1, seq2=seq2, out2=out2, threads=threads, hcfilter=hcfilter)
