@@ -3,7 +3,6 @@ from hocort.pipelines.pipeline import Pipeline
 from hocort.aligners.bwa_mem2 import BWA_MEM2 as BWA_MEM2_mapper
 from hocort.parse.sam import SAM
 from hocort.parse.bam import BAM
-from hocort.parse.bed import BED
 from hocort.parse.fastq import FastQ
 
 from argparse import ArgumentParser

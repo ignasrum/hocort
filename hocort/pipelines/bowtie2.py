@@ -1,5 +1,4 @@
 from hocort.pipelines.pipeline import Pipeline
-
 from hocort.aligners.bowtie2 import Bowtie2 as bt2
 from hocort.parse.sam import SAM
 from hocort.parse.bam import BAM
@@ -47,13 +46,13 @@ class Bowtie2(Pipeline):
             print('\n', stderr[1])
             if returncode[0] != 0: return returncode, stdout, stderr
             self.logger.info('Extracting sequence ids')
-            query_names = BAM.extract_ids(bowtie2_output, mapping_quality=mapq, add_slash=add_slash)
+            query_names = BAM.extract_ids(bowtie2_output, mapping_quality=mapq, threads=threads, add_slash=add_slash)
         else:
             returncode, stdout, stderr = bt2.align_sam(idx, seq1, bowtie2_output, seq2=seq2, threads=threads, options=options)
             print('\n', stderr[0])
             if returncode[0] != 0: return returncode, stdout, stderr
             self.logger.info('Extracting sequence ids')
-            query_names = SAM.extract_ids(bowtie2_output, mapping_quality=mapq, add_slash=add_slash)
+            query_names = SAM.extract_ids(bowtie2_output, mapping_quality=mapq, threads=threads, add_slash=add_slash)
 
         # REMOVE FILTERED READS FROM ORIGINAL FASTQ FILES
         self.filter(query_names, seq1, out1, seq2=seq2, out2=out2, hcfilter=hcfilter)
