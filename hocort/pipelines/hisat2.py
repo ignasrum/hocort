@@ -6,8 +6,8 @@ from hocort.parse.bam import BAM
 from hocort.parse.fastq import FastQ
 
 from argparse import ArgumentParser
-import multiprocessing
 import time
+import os
 
 
 class HISAT2(Pipeline):
@@ -92,7 +92,7 @@ class HISAT2(Pipeline):
             required=False,
             type=int,
             metavar=('INT'),
-            default=multiprocessing.cpu_count(),
+            default=os.cpu_count(),
             help='int: number of threads, default is max available on machine'
         )
         parser.add_argument(
@@ -114,12 +114,9 @@ class HISAT2(Pipeline):
         idx = parsed.index
         seq = parsed.input
         out = parsed.output
+        threads = parsed.threads if parsed.threads else 1
         intermediary = parsed.intermediary
         hcfilter = parsed.host_contam_filter
-
-        if parsed.threads: threads = parsed.threads
-        elif os.cpu_count(): threads = os.cpu_count()
-        else: threads = 1
 
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]

@@ -4,6 +4,7 @@ from hocort.pipelines.bowtie2 import Bowtie2
 
 from argparse import ArgumentParser
 import time
+import os
 
 class Bowtie2Bowtie2(Pipeline):
     def __init__(self):
@@ -57,7 +58,7 @@ class Bowtie2Bowtie2(Pipeline):
             required=False,
             type=int,
             metavar=('INT'),
-            default=multiprocessing.cpu_count(),
+            default=os.cpu_count(),
             help='int: number of threads, default is max available on machine'
         )
         parser.add_argument(
@@ -72,11 +73,8 @@ class Bowtie2Bowtie2(Pipeline):
         bt2_idx = parsed.bowtie2_index
         seq = parsed.input
         out = parsed.output
+        threads = parsed.threads if parsed.threads else 1
         hcfilter = parsed.host_contam_filter
-
-        if parsed.threads: threads = parsed.threads
-        elif os.cpu_count(): threads = os.cpu_count()
-        else: threads = 1
 
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]
