@@ -5,6 +5,7 @@ from hocort.pipelines.hisat2 import HISAT2
 
 from argparse import ArgumentParser
 import time
+import os
 
 class Bowtie2HISAT2(Pipeline):
     def __init__(self):
