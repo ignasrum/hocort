@@ -18,7 +18,3 @@ class FastQ:
         cmd = ['filterbyname.sh', f'in={input_path}', f'out={output_path}', f'names={filter_path}', f'include={include}', 'ow=t'] + options
 
         return exe.execute(cmd)
-
-    # seqtk subseq in.fq name.lst > out.fq
-    def filter_by_id1(input_path, output_path, filter_path, options=[]):
-        pass
