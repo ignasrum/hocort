@@ -30,8 +30,6 @@ class Minimap2(Pipeline):
 
         minimap2_output = f'{self.temp_dir.name}/output'
 
-        add_slash=False
-        if seq2: add_slash = True
         mapq = 0
         query_names = []
 
@@ -42,13 +40,13 @@ class Minimap2(Pipeline):
             print('\n', stderr[1])
             if returncode[0] != 0 or returncode[1] != 0: return 1
             self.logger.info('Extracting sequence ids')
-            query_names = BAM.extract_ids(minimap2_output, mapping_quality=mapq, threads=threads, add_slash=add_slash)
+            query_names = BAM.extract_ids(minimap2_output, mapping_quality=mapq, threads=threads)
         else:
             returncode, stdout, stderr = mn2.align_sam(idx, seq1, minimap2_output, seq2=seq2, threads=threads, options=options)
             print('\n', stderr[0])
             if returncode[0] != 0: return 1
             self.logger.info('Extracting sequence ids')
-            query_names = SAM.extract_ids(minimap2_output, mapping_quality=mapq, threads=threads, add_slash=add_slash)
+            query_names = SAM.extract_ids(minimap2_output, mapping_quality=mapq, threads=threads)
 
         # REMOVE FILTERED READS FROM ORIGINAL FASTQ FILES
         returncode = self.filter(query_names, seq1, out1, seq2=seq2, out2=out2, hcfilter=hcfilter)
