@@ -9,12 +9,20 @@ class Minimap2(Aligner):
     def generate_index(path, sequences):
         pass
 
-    def align(index, seq, output, options=[]):
-        log = open(output, 'w')
-        log.flush()
+    def align_sam(index, seq1, output, seq2=None, threads=multiprocessing.cpu_count(), options=[]):
+        cmd = ['minimap2', '-t', str(threads), '-a', '-o', output] + options
+        cmd += [index, seq1]
+        if seq2 is not None:
+            cmd += [seq2]
 
-        threads = multiprocessing.cpu_count()
-        cmd = ['minimap2', '-a', index, seq] + options
+        return exe.execute(cmd, decode_stderr=True)
 
-        returncode, result = exe.execute(cmd, out_file=log)
-        return returncode, result
+    def align_bam(index, seq1, output, seq2=None, threads=multiprocessing.cpu_count(), options=[]):
+        cmd1 = ['minimap2', '-t', str(threads), '-a'] + options
+        cmd1 += [index, seq1]
+        if seq2 is not None:
+            cmd1 += [seq2]
+
+        cmd2 = ['samtools', 'view', '-@', str(threads), '-b', '-o', output]
+
+        return exe.execute_pipe(cmd1, cmd2, decode_stderr=True)
