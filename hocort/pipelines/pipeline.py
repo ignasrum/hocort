@@ -5,8 +5,8 @@ from abc import ABC, abstractmethod
 from hocort.parse.fastq import FastQ
 
 class Pipeline(ABC):
-    def __init__(self, logger_filename):
-        self.temp_dir = tempfile.TemporaryDirectory()
+    def __init__(self, logger_filename, dir=None):
+        self.temp_dir = tempfile.TemporaryDirectory(dir=dir)
         self.logger = logging.getLogger(logger_filename)
         self.logger.debug(str(self.temp_dir))
 

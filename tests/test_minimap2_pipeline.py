@@ -12,6 +12,11 @@ seq2 = f'{path}/test_data/sequences/sequences2.fastq'
 out2 = f'{temp_dir.name}/out2.fastq'
 no_path = ''
 
+def test_pipeline_temp_dir():
+    path = '.'
+    returncode = Minimap2(path).run(idx, seq1, out1, seq2=seq2, out2=out2)
+    assert returncode == 0
+
 def test_pipeline_mapq():
     returncode = Minimap2().run(idx, seq1, out1, seq2=seq2, out2=out2, mapq=2)
     assert returncode == 0

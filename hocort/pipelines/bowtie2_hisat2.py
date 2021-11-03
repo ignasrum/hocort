@@ -8,8 +8,8 @@ import time
 import os
 
 class Bowtie2HISAT2(Pipeline):
-    def __init__(self):
-        super().__init__(__file__)
+    def __init__(self, dir=None):
+        super().__init__(__file__, dir=dir)
 
     def run(self, bt2_idx, hs2_idx, seq1, out1, seq2=None, out2=None, threads=1, hcfilter='f'):
         self.logger.info(f'Starting pipeline: {self.__class__.__name__}')

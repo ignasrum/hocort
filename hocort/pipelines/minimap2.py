@@ -10,8 +10,8 @@ import os
 
 
 class Minimap2(Pipeline):
-    def __init__(self):
-        super().__init__(__file__)
+    def __init__(self, dir=None):
+        super().__init__(__file__, dir=dir)
 
     def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', hcfilter='f', threads=1, mapq=0, options=[]):
         if len(options) > 0:
