@@ -13,7 +13,7 @@ class HISAT2(Pipeline):
     def __init__(self):
         super().__init__(__file__)
 
-    def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', hcfilter='f', threads=1, options=[]):
+    def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', hcfilter='f', threads=1, mapq=0, options=[]):
         self.logger.debug(f'seq1: {seq1}')
         self.logger.debug(f'seq2: {seq2}')
         self.logger.debug(f'intermediary: {intermediary}')
@@ -29,7 +29,6 @@ class HISAT2(Pipeline):
 
         add_slash=False
         if seq2: add_slash = True
-        mapq = 0
         query_names = []
 
         self.logger.info('Aligning reads with HISAT2')

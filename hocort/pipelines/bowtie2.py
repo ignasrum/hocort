@@ -13,7 +13,7 @@ class Bowtie2(Pipeline):
     def __init__(self):
         super().__init__(__file__)
 
-    def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', hcfilter='f', mode='local', threads=1, options=[]):
+    def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', hcfilter='f', mode='local', threads=1, mapq=0, options=[]):
         if len(options) > 0:
             options = options
         elif mode == 'local':
@@ -36,7 +36,6 @@ class Bowtie2(Pipeline):
 
         add_slash=False
         if seq2: add_slash = True
-        mapq = 0
         query_names = []
 
         self.logger.info('Aligning reads with Bowtie2')

@@ -13,7 +13,7 @@ class Minimap2(Pipeline):
     def __init__(self):
         super().__init__(__file__)
 
-    def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', hcfilter='f', threads=1, options=[]):
+    def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', hcfilter='f', threads=1, mapq=0, options=[]):
         if len(options) > 0:
             options = options
         else:
@@ -32,7 +32,6 @@ class Minimap2(Pipeline):
 
         minimap2_output = f'{self.temp_dir.name}/output'
 
-        mapq = 0
         query_names = []
 
         self.logger.info('Aligning reads with Minimap2')

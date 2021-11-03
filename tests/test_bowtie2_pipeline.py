@@ -12,6 +12,10 @@ seq2 = f'{path}/test_data/sequences/sequences2.fastq'
 out2 = f'{temp_dir.name}/out2.fastq'
 no_path = ''
 
+def test_bowtie2_pipeline_mapq():
+    returncode = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, mapq=2)
+    assert returncode == 0
+
 def test_bowtie2_pipeline_idx_no_path():
     returncode = Bowtie2().run(no_path, seq1, out1)
     assert returncode == 1
