@@ -1,0 +1,19 @@
+### STAR   --runMode genomeGenerate      --runThreadN 16   --genomeDir star   --genomeFastaFiles fasta/genome.fna      --genomeSAindexNbases 7
+### GstrandBit 32
+versionGenome	2.7.4a
+genomeType	Full
+genomeFastaFiles	fasta/genome.fna 
+genomeSAindexNbases	7
+genomeChrBinNbits	18
+genomeSAsparseD	1
+genomeTransformType	None
+genomeTransformVCF	-
+sjdbOverhang	0
+sjdbFileChrStartEnd	- 
+sjdbGTFfile	-
+sjdbGTFchrPrefix	-
+sjdbGTFfeatureExon	exon
+sjdbGTFtagExonParentTranscript	transcript_id
+sjdbGTFtagExonParentGene	gene_id
+sjdbInsertSave	Basic
+genomeFileSizes	2621440 19803

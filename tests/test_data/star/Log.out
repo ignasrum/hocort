@@ -1,0 +1,92 @@
+STAR version=2.7.9a
+STAR compilation time,server,dir=2021-05-04T09:43:56-0400 vega:/home/dobin/data/STAR/STARcode/STAR.master/source
+##### Command Line:
+STAR --runThreadN 16 --genomeSAindexNbases 7 --runMode genomeGenerate --genomeDir star --genomeFastaFiles fasta/genome.fna
+##### Initial USER parameters from Command Line:
+###### All USER parameters from Command Line:
+runThreadN                    16     ~RE-DEFINED
+genomeSAindexNbases           7     ~RE-DEFINED
+runMode                       genomeGenerate        ~RE-DEFINED
+genomeDir                     star     ~RE-DEFINED
+genomeFastaFiles              fasta/genome.fna        ~RE-DEFINED
+##### Finished reading parameters from all sources
+
+##### Final user re-defined parameters-----------------:
+runMode                           genomeGenerate   
+runThreadN                        16
+genomeDir                         star
+genomeFastaFiles                  fasta/genome.fna   
+genomeSAindexNbases               7
+
+-------------------------------
+##### Final effective command line:
+STAR   --runMode genomeGenerate      --runThreadN 16   --genomeDir star   --genomeFastaFiles fasta/genome.fna      --genomeSAindexNbases 7
+----------------------------------------
+
+Number of fastq files for each mate = 1
+ParametersSolo: --soloCellFilterType CellRanger2.2 filtering parameters:  3000 0.99 10
+Finished loading and checking parameters
+--genomeDir directory created: star/
+Nov 04 16:22:16 ... starting to generate Genome files
+fasta/genome.fna : chr # 0  "test0" chrStart: 0
+fasta/genome.fna : chr # 1  "test1" chrStart: 262144
+fasta/genome.fna : chr # 2  "test2" chrStart: 524288
+fasta/genome.fna : chr # 3  "test3" chrStart: 786432
+fasta/genome.fna : chr # 4  "test4" chrStart: 1048576
+fasta/genome.fna : chr # 5  "test5" chrStart: 1310720
+fasta/genome.fna : chr # 6  "test6" chrStart: 1572864
+fasta/genome.fna : chr # 7  "test7" chrStart: 1835008
+fasta/genome.fna : chr # 8  "test8" chrStart: 2097152
+fasta/genome.fna : chr # 9  "test9" chrStart: 2359296
+Chromosome sequence lengths: 
+test0	240
+test1	240
+test2	240
+test3	240
+test4	240
+test5	240
+test6	240
+test7	240
+test8	240
+test9	240
+Genome sequence total length = 2400
+Genome size with padding = 2621440
+!!!!! WARNING: --genomeSAindexNbases 7 is too large for the genome size=2400, which may cause seg-fault at the mapping step. Re-run genome generation with recommended --genomeSAindexNbases 4
+Estimated genome size with padding and SJs: total=genome+SJ=203621440 = 2621440 + 201000000
+GstrandBit=32
+Number of SA indices: 4800
+Nov 04 16:22:16 ... starting to sort Suffix Array. This may take a long time...
+Number of chunks: 16;   chunks size limit: 2560 bytes
+Nov 04 16:22:16 ... sorting Suffix Array chunks and saving them to disk...
+Writing 2544 bytes into star//SA_5 ; empty space on disk = 80309391360 bytes ...Writing 2528 bytes into star//SA_9 ; empty space on disk = 80309391360 bytes ... done
+ done
+Writing 2368 bytes into star//SA_0 ; empty space on disk = 80309383168 bytes ... done
+Writing 1664 bytes into star//SA_15 ; empty space on disk = 80309379072 bytes ... done
+Writing 2488 bytes into star//SA_10 ; empty space on disk = 80309374976 bytes ... done
+Writing 2520 bytes into star//SA_2 ; empty space on disk = 80309370880 bytes ...Writing 2504 bytes into star//SA_1 ; empty space on disk = 80309370880 bytes ... done
+ done
+ done
+Writing 2208 bytes into star//SA_13 ; empty space on disk = 80309362688 bytes ... done
+Writing 2528 bytes into star//SA_12 ; empty space on disk = 80309358592 bytes ... done
+Writing 2544 bytes into star//SA_3 ; empty space on disk = 80309354496 bytes ... done
+Writing 2376 bytes into star//SA_7 ; empty space on disk = 80309350400 bytes ... done
+Writing 2528 bytes into star//SA_6 ; empty space on disk = 80309346304 bytes ... done
+Writing 2512 bytes into star//SA_11 ; empty space on disk = 80309342208 bytes ... done
+Writing 2512 bytes into star//SA_8 ; empty space on disk = 80309338112 bytes ... done
+Writing 2408 bytes into star//SA_4 ; empty space on disk = 80309334016 bytes ... done
+Writing 2168 bytes into star//SA_14 ; empty space on disk = 80309329920 bytes ... done
+Nov 04 16:22:16 ... loading chunks from disk, packing SA...
+Nov 04 16:22:16 ... finished generating suffix array
+Nov 04 16:22:16 ... generating Suffix Array index
+Nov 04 16:22:16 ... completed Suffix Array index
+Nov 04 16:22:16 ... writing Genome to disk ...
+Writing 2621440 bytes into star//Genome ; empty space on disk = 80309383168 bytes ... done
+SA size in bytes: 19803
+Nov 04 16:22:16 ... writing Suffix Array to disk ...
+Writing 19803 bytes into star//SA ; empty space on disk = 80306761728 bytes ... done
+Nov 04 16:22:16 ... writing SAindex to disk
+Writing 8 bytes into star//SAindex ; empty space on disk = 80306741248 bytes ... done
+Writing 64 bytes into star//SAindex ; empty space on disk = 80306741248 bytes ... done
+Writing 95571 bytes into star//SAindex ; empty space on disk = 80306741248 bytes ... done
+Nov 04 16:22:16 ..... finished successfully
+DONE: Genome generation, EXITING
