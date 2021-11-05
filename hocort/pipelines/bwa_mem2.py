@@ -14,8 +14,6 @@ class BWA_MEM2(Pipeline):
         super().__init__(__file__, dir=dir)
 
     def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', hcfilter='f', threads=1, mapq=0, options=[]):
-        # awk '($5 >= 42)' output1.sam | wc -l
-
         self.logger.info('Starting pipeline')
         start_time = time.time()
         # MAP READS TO INDEX
