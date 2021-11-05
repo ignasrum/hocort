@@ -65,7 +65,7 @@ class HISAT2(Pipeline):
             required=True,
             type=str,
             metavar=('<idx>'),
-            help='str: path to bowtie2 index'
+            help='str: path to HISAT2 index'
         )
         parser.add_argument(
             '-i',

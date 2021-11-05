@@ -9,6 +9,7 @@ setup(
     license='MIT',
     packages=['hocort',
               'hocort.aligners',
+              'hocort.classifiers',
               'hocort.pipelines',
               'hocort.parse'],
     python_requires='>=3.8',

@@ -35,7 +35,7 @@ class Bowtie2HISAT2(Pipeline):
             required=True,
             type=str,
             metavar=('<idx>'),
-            help='str: path to bowtie2 index'
+            help='str: path to Bowtie2 index'
         )
         parser.add_argument(
             '-hs2_idx',
@@ -43,7 +43,7 @@ class Bowtie2HISAT2(Pipeline):
             required=True,
             type=str,
             metavar=('<idx>'),
-            help='str: path to hisat2 index'
+            help='str: path to HISAT2 index'
         )
         parser.add_argument(
             '-i',
