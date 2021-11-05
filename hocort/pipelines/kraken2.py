@@ -36,8 +36,10 @@ class Kraken2(Pipeline):
 
         self.logger.info('Classifying reads with Kraken2')
         returncode, stdout, stderr = kr2.classify(idx, seq1, class_out, unclass_out, seq2=seq2, threads=threads, options=options)
-        print('\n', stderr[0])
-        if returncode[0] != 0: return 1
+        self.logger.info('\n' + stderr[0])
+        if returncode[0] != 0:
+            self.logger.error('Pipeline was terminated')
+            return 1
 
         end_time = time.time()
         self.logger.info(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')

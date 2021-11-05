@@ -31,21 +31,27 @@ class BWA_MEM2(Pipeline):
         self.logger.info('Aligning reads with BWA-MEM2')
         if intermediary == 'BAM':
             returncode, stdout, stderr = bwa_mem2.align_bam(idx, seq1, bwa_mem2_output, seq2=seq2, threads=threads, options=options)
-            print('\n', stderr[0])
-            print('\n', stderr[1])
-            if returncode[0] != 0 or returncode[1] != 0: return 1
+            self.logger.info('\n' + stderr[0])
+            self.logger.info('\n' + stderr[1])
+            if returncode[0] != 0 or returncode[1] != 0:
+                self.logger.error('Pipeline was terminated')
+                return 1
             self.logger.info('Extracting sequence ids')
             query_names = BAM.extract_ids(bwa_mem2_output, mapping_quality=mapq, threads=threads, add_slash=add_slash)
         else:
             returncode, stdout, stderr = bwa_mem2.align_sam(idx, seq1, bwa_mem2_output, seq2=seq2, threads=threads, options=options)
-            print('\n', stderr[0])
-            if returncode[0] != 0: return 1
+            self.logger.info('\n' + stderr[0])
+            if returncode[0] != 0:
+                self.logger.error('Pipeline was terminated')
+                return 1
             self.logger.info('Extracting sequence ids')
             query_names = SAM.extract_ids(bwa_mem2_output, mapping_quality=mapq, add_slash=add_slash)
 
         # REMOVE FILTERED READS FROM ORIGINAL FASTQ FILES
         returncode = self.filter(query_names, seq1, out1, seq2=seq2, out2=out2, hcfilter=hcfilter)
-        if returncode != 0: return 1
+        if returncode != 0:
+            self.logger.error('Pipeline was terminated')
+            return 1
 
         end_time = time.time()
         self.logger.info(f'Pipeline run time: {end_time - start_time} seconds')

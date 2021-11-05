@@ -17,9 +17,13 @@ class Bowtie2HISAT2(Pipeline):
         temp1 = f'{self.temp_dir.name}/temp1.fastq'
         temp2 = None if seq2 == None else f'{self.temp_dir.name}/temp2.fastq'
         returncode = Bowtie2().run(bt2_idx, seq1, temp1, seq2=seq2, out2=temp2, mode='end-to-end', threads=threads, hcfilter=hcfilter)
-        if returncode != 0: return 1
+        if returncode != 0:
+            self.logger.error('Pipeline was terminated')
+            return 1
         returncode = HISAT2().run(hs2_idx, temp1, out1, seq2=temp2, out2=out2, threads=threads, hcfilter=hcfilter)
-        if returncode != 0: return 1
+        if returncode != 0:
+            self.logger.error('Pipeline was terminated')
+            return 1
         end_time = time.time()
         self.logger.info(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return 0
