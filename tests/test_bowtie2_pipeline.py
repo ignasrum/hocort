@@ -39,7 +39,7 @@ def test_pipeline_seq1_seq2_no_path():
 
 def test_pipeline_seq2_no_path():
     returncode = Bowtie2().run(idx, seq1, out1, seq2=no_path)
-    assert returncode == 1
+    assert returncode == 0
 
 def test_pipeline_hcfilter_true_1():
     returncode = Bowtie2().run(idx, seq1, out1, hcfilter='t')
