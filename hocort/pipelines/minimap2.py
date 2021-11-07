@@ -17,9 +17,6 @@ class Minimap2(Pipeline):
         if len(options) > 0:
             options = options
         else:
-            options = ['-A 3', '-B 4']
-            options = ['-x', 'map-hifi']
-            options = ['-x', 'asm20']
             options = ['-A1', '-B4', '-O1,10', '-s100', '--end-bonus', '200']
 
         self.logger.debug(f'seq1: {seq1}')
