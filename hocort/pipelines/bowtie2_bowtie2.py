@@ -68,7 +68,7 @@ class Bowtie2Bowtie2(Pipeline):
             help='int: number of threads, default is max available on machine'
         )
         parser.add_argument(
-            '-hcfilter',
+            '-f',
             '--host_contam_filter',
             choices=['t', 'f'],
             default='f',

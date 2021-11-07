@@ -40,7 +40,7 @@ class Kraken2Bowtie2(Pipeline):
             usage=f'hocort {self.__class__.__name__} positional_arguments [options]'
         )
         parser.add_argument(
-            '-bt2_idx',
+            '-b',
             '--bowtie2_index',
             required=True,
             type=str,
@@ -48,7 +48,7 @@ class Kraken2Bowtie2(Pipeline):
             help='str: path to Bowtie2 index'
         )
         parser.add_argument(
-            '-kr2_idx',
+            '-k',
             '--kraken2_index',
             required=True,
             type=str,
@@ -83,7 +83,7 @@ class Kraken2Bowtie2(Pipeline):
             help='int: number of threads, default is max available on machine'
         )
         parser.add_argument(
-            '-hcfilter',
+            '-f',
             '--host_contam_filter',
             choices=['t', 'f'],
             default='f',

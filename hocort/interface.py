@@ -40,20 +40,20 @@ def main():
         help='str: pipeline to run'
     )
     parser.add_argument(
-        '--debug',
         '-d',
+        '--debug',
         action='store_true',
         help='flag: verbose output'
     )
     parser.add_argument(
-        '--version',
         '-v',
+        '--version',
         action='store_true',
         help='flag: verbose output'
     )
     parser.add_argument(
-        '--help',
         '-h',
+        '--help',
         action=HelpAction,
         nargs=0,
         help='flag: print help'

@@ -34,7 +34,7 @@ class Bowtie2HISAT2(Pipeline):
             usage=f'hocort {self.__class__.__name__} positional_arguments [options]'
         )
         parser.add_argument(
-            '-bt2_idx',
+            '-b',
             '--bowtie2_index',
             required=True,
             type=str,
@@ -42,7 +42,7 @@ class Bowtie2HISAT2(Pipeline):
             help='str: path to Bowtie2 index'
         )
         parser.add_argument(
-            '-hs2_idx',
+            '-s',
             '--hisat2_index',
             required=True,
             type=str,
@@ -77,7 +77,7 @@ class Bowtie2HISAT2(Pipeline):
             help='int: number of threads, default is max available on machine'
         )
         parser.add_argument(
-            '-hcfilter',
+            '-f',
             '--host_contam_filter',
             choices=['t', 'f'],
             default='f',
