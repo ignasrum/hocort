@@ -6,5 +6,5 @@ class Classifier(ABC):
         pass
 
     @abstractmethod
-    def classify(index, seq, classified_out, unclassified_out, options=[]):
+    def classify(index, seq1, classified_out, unclassified_out, seq2=None, options=[]):
         pass

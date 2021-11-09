@@ -1,7 +1,6 @@
 import tempfile
 import logging
 from abc import ABC, abstractmethod
-
 from hocort.parse.fastq import FastQ
 
 class Pipeline(ABC):
@@ -38,7 +37,7 @@ class Pipeline(ABC):
         return 0
 
     @abstractmethod
-    def run(self, idx, seq, out):
+    def run(self, seq1, seq2=None):
         pass
 
     @abstractmethod

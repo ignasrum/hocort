@@ -3,7 +3,6 @@ from hocort.aligners.minimap2 import Minimap2 as mn2
 from hocort.parse.sam import SAM
 from hocort.parse.bam import BAM
 from hocort.parse.fastq import FastQ
-
 from argparse import ArgumentParser
 import time
 import os
@@ -13,7 +12,7 @@ class Minimap2(Pipeline):
     def __init__(self, dir=None):
         super().__init__(__file__, dir=dir)
 
-    def run(self, idx, seq1, out1, out2=None, seq2=None, intermediary='SAM', hcfilter='f', threads=1, mapq=0, options=[]):
+    def run(self, idx, seq1, out1, seq2=None, out2=None, intermediary='SAM', hcfilter='f', threads=1, mapq=0, options=[]):
         if len(options) > 0:
             options = options
         else:

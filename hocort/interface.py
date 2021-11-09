@@ -1,10 +1,10 @@
 from argparse import ArgumentParser
 from argparse import Action
-
 import hocort.pipelines
 import sys
 import inspect
 import logging
+
 
 pipelines = {}
 for pipeline in dir(hocort.pipelines):

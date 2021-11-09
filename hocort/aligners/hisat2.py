@@ -1,6 +1,5 @@
 import hocort.execute as exe
 import multiprocessing
-
 from hocort.aligners.aligner import Aligner
 
 
@@ -9,8 +8,6 @@ class HISAT2(Aligner):
         pass
 
     def align_sam(index, seq1, output, seq2=None, threads=multiprocessing.cpu_count(), options=[]):
-        # hisat2 -x genome -U reads.fq -S output.sam
-        # hisat2 -x grch38_snp/genome_snp -U SRR3733117.1.fastq -S output.sam -p 16
         cmd = ['hisat2', '-p', str(threads), '-x', index, '-S', output] + options
         if seq2:
             cmd += ['-1', seq1, '-2', seq2]

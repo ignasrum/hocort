@@ -6,5 +6,9 @@ class Aligner(ABC):
         pass
 
     @abstractmethod
-    def align(index, seq, output, options=[]):
+    def align_sam(index, seq1, output, seq2=None, options=[]):
+        pass
+
+    @abstractmethod
+    def align_bam(index, seq1, output, seq2=None, options=[]):
         pass

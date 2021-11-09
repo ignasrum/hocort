@@ -1,9 +1,7 @@
 import hocort.execute as exe
 import multiprocessing
-
 from hocort.aligners.aligner import Aligner
 
-# minimap2 [options] <target.fa>|<target.idx> [query.fa] [...]
 
 class Minimap2(Aligner):
     def generate_index(path, sequences):

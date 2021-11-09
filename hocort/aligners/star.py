@@ -1,6 +1,5 @@
 import hocort.execute as exe
 import multiprocessing
-
 from hocort.aligners.aligner import Aligner
 
 

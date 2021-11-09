@@ -1,6 +1,5 @@
 import hocort.execute as exe
 import multiprocessing
-
 from hocort.classifiers.classifier import Classifier
 
 

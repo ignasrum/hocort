@@ -1,6 +1,5 @@
 conda config --add channels defaults
 conda config --add channels bioconda
-conda config --add channels conda-forge
-conda install seqtk sra-tools vsearch insilicoseq art htslib seqkit fastx_toolkit emboss sga cutadapt mummer4 recentrifuge
+#conda config --add channels conda-forge
 
-conda install -c pysam samtools bowtie2 minimap2 bwa-mem2 hisat2 kraken2 star bbmap #centrifuge
+conda install -c bioconda pysam samtools bowtie2 minimap2 bwa-mem2 hisat2 kraken2 star bbmap #centrifuge

@@ -3,7 +3,6 @@ from hocort.classifiers.kraken2 import Kraken2 as kr2
 from hocort.parse.sam import SAM
 from hocort.parse.bam import BAM
 from hocort.parse.fastq import FastQ
-
 from argparse import ArgumentParser
 import time
 import os
