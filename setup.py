@@ -12,7 +12,7 @@ setup(
               'hocort.classifiers',
               'hocort.pipelines',
               'hocort.parse'],
-    python_requires='>=3.8',
+    python_requires='>=3.7',
     install_requires=['argparse',
                       'pytest'],
     entry_points = {
