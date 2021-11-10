@@ -1,5 +1,4 @@
 import hocort.execute as exe
-import multiprocessing
 from hocort.aligners.aligner import Aligner
 
 
@@ -7,7 +6,7 @@ class HISAT2(Aligner):
     def generate_index(path, sequences):
         pass
 
-    def align_sam(index, seq1, output, seq2=None, threads=multiprocessing.cpu_count(), options=[]):
+    def align_sam(index, seq1, output, seq2=None, threads=1, options=[]):
         cmd = ['hisat2', '-p', str(threads), '-x', index, '-S', output] + options
         if seq2:
             cmd += ['-1', seq1, '-2', seq2]
@@ -15,7 +14,7 @@ class HISAT2(Aligner):
 
         return exe.execute(cmd, decode_stderr=True)
 
-    def align_bam(index, seq1, output, seq2=None, threads=multiprocessing.cpu_count(), options=[]):
+    def align_bam(index, seq1, output, seq2=None, threads=1, options=[]):
         cmd1 = ['hisat2', '-p', str(threads), '-x', index] + options
         if seq2:
             cmd1 += ['-1', seq1, '-2', seq2]
