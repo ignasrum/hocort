@@ -16,6 +16,11 @@ class Kraken2(Pipeline):
         self.logger.debug(f'seq1: {seq1}')
         self.logger.debug(f'seq2: {seq2}')
 
+        if len(options) > 0:
+            options = options
+        else:
+            options = []
+
         self.logger.info(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
