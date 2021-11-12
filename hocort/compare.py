@@ -2,11 +2,11 @@ import pysam
 import itertools
 from argparse import ArgumentParser
 
-def count(file):
+def count(file, separator):
     entries = {}
     with pysam.FastxFile(file) as f:
         for record in f:
-            seq = record.name.split('_')[0]
+            seq = record.name.split(separator)[0]
             if seq not in entries:
                 entries[seq] = 1
             else: entries[seq] += 1
@@ -23,9 +23,9 @@ def print_cmp(msg, file1_num, file2_num):
     print('\tdifference: ', file1_num - file2_num)
     print('\tdifference (%): ', (file1_num - file2_num) / file1_num)
 
-def compare(file1, file2):
-    entries1, total1 = count(file1)
-    entries2, total2 = count(file2)
+def compare(file1, file2, separator):
+    entries1, total1 = count(file1, separator)
+    entries2, total2 = count(file2, separator)
     for entry1, entry2 in itertools.zip_longest(entries1, entries2):
         if entry1 is not None:
             val = entries2[entry1] if entry1 in entries2 else 0
@@ -42,12 +42,15 @@ def main():
                         help='str: path to file 1')
     parser.add_argument('file2', type=str,
                         help='str: path to file 2')
+    parser.add_argument('separator', type=str,
+                        help='char: separator used when splitting sequence names')
 
     args = parser.parse_args()
     file1 = args.file1
     file2 = args.file2
+    separator = args.separator
 
-    compare(file1, file2)
+    compare(file1, file2, separator)
 
 if __name__ == '__main__':
     main()
