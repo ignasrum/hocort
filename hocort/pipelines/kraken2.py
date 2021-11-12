@@ -13,8 +13,7 @@ class Kraken2(Pipeline):
         super().__init__(__file__, dir=dir)
 
     def run(self, idx, seq1, out, seq2=None, threads=1, options=[]):
-        self.logger.debug(f'seq1: {seq1}')
-        self.logger.debug(f'seq2: {seq2}')
+        self.debug_log_args(self.run.__name__, locals())
 
         if len(options) > 0:
             options = options

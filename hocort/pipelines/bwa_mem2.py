@@ -13,6 +13,7 @@ class BWA_MEM2(Pipeline):
         super().__init__(__file__, dir=dir)
 
     def run(self, idx, seq1, out1, seq2=None, out2=None, intermediary='SAM', hcfilter='f', threads=1, mapq=0, options=[]):
+        self.debug_log_args(self.run.__name__, locals())
         self.logger.info('Starting pipeline')
         start_time = time.time()
         # MAP READS TO INDEX

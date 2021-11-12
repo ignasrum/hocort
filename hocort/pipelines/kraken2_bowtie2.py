@@ -10,6 +10,7 @@ class Kraken2Bowtie2(Pipeline):
         super().__init__(__file__, dir=dir)
 
     def run(self, bt2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, threads=1, hcfilter='f'):
+        self.debug_log_args(self.run.__name__, locals())
         self.logger.info(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
 

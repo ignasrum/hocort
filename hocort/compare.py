@@ -21,6 +21,7 @@ def print_cmp(msg, file1_num, file2_num):
     print('\tfile1: ', file1_num)
     print('\tfile2: ', file2_num)
     print('\tdifference: ', file1_num - file2_num)
+    print('\tdifference (%): ', (file1_num - file2_num) / file1_num)
 
 def compare(file1, file2):
     entries1, total1 = count(file1)

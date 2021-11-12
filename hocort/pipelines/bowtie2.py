@@ -13,6 +13,7 @@ class Bowtie2(Pipeline):
         super().__init__(__file__, dir=dir)
 
     def run(self, idx, seq1, out1, seq2=None, out2=None, intermediary='SAM', hcfilter='f', mode='local', threads=1, mapq=0, options=[]):
+        self.debug_log_args(self.run.__name__, locals())
         if len(options) > 0:
             options = options
         elif mode == 'local':
@@ -22,12 +23,6 @@ class Bowtie2(Pipeline):
         else:
             self.logger.error(f'Invalid mode: {mode}')
             return 1
-
-        self.logger.debug(f'seq1: {seq1}')
-        self.logger.debug(f'seq2: {seq2}')
-        self.logger.debug(f'mode: {mode}')
-        self.logger.debug(f'threads: {threads}')
-        self.logger.debug(f'intermediary: {intermediary}')
 
         self.logger.info(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()

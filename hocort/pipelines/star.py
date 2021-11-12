@@ -13,9 +13,7 @@ class STAR(Pipeline):
         super().__init__(__file__, dir=dir)
 
     def run(self, idx, seq1, out1, seq2=None, out2=None, intermediary='SAM', hcfilter='f', threads=1, mapq=0, options=[]):
-        self.logger.debug(f'seq1: {seq1}')
-        self.logger.debug(f'seq2: {seq2}')
-        self.logger.debug(f'intermediary: {intermediary}')
+        self.debug_log_args(self.run.__name__, locals())
 
         self.logger.info(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()

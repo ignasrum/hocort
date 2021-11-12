@@ -9,6 +9,13 @@ class Pipeline(ABC):
         self.logger = logging.getLogger(logger_filename)
         self.logger.debug(str(self.temp_dir))
 
+    def debug_log_args(self, function_name, locals_vars):
+        string = f'Logging args for: {function_name}()'
+        for var in locals_vars:
+            if var != 'self':
+                string += f'\n{var}: {locals_vars[var]}'
+        self.logger.debug(string + '\n')
+
     def filter(self, query_names, seq1, out1, seq2=None, out2=None, hcfilter='f'):
         seq_ids_output = f'{self.temp_dir.name}/removed.list'
         try:
