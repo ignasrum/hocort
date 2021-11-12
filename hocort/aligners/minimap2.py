@@ -3,8 +3,10 @@ from hocort.aligners.aligner import Aligner
 
 
 class Minimap2(Aligner):
-    def generate_index(path, sequences):
-        pass
+    def build_index(path_out, fasta_in, threads=1, options=[]):
+        cmd = ['minimap2', '-t', str(threads), '-d', path_out] + options + [fasta_in]
+
+        return exe.execute(cmd, decode_stderr=True)
 
     def align_sam(index, seq1, output, seq2=None, threads=1, options=[]):
         cmd = ['minimap2', '-t', str(threads), '-a', '-o', output] + options

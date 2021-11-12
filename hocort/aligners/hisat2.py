@@ -3,8 +3,10 @@ from hocort.aligners.aligner import Aligner
 
 
 class HISAT2(Aligner):
-    def generate_index(path, sequences):
-        pass
+    def build_index(path_out, fasta_in, threads=1, options=[]):
+        cmd = ['hisat2-build'] + options + ['-p', str(threads), fasta_in, path_out]
+
+        return exe.execute(cmd, decode_stderr=True)
 
     def align_sam(index, seq1, output, seq2=None, threads=1, options=[]):
         cmd = ['hisat2', '-p', str(threads), '-x', index, '-S', output] + options

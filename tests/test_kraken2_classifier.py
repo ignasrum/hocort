@@ -6,9 +6,11 @@ temp_dir = tempfile.TemporaryDirectory()
 path = os.path.dirname(__file__)
 
 idx = f'{path}/test_data/kraken2'
+fasta = f'{path}/test_data/fasta/genome.fna'
 seq1 = f'{path}/test_data/sequences/sequences1.fastq'
 class_out = f'{temp_dir.name}/class#.fq'
 unclass_out = f'{temp_dir.name}/unclass#.fq'
+output = f'{temp_dir.name}/output'
 seq2 = f'{path}/test_data/sequences/sequences2.fastq'
 no_path = ''
 

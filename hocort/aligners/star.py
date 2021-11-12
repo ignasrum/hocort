@@ -3,8 +3,10 @@ from hocort.aligners.aligner import Aligner
 
 
 class STAR(Aligner):
-    def generate_index(path, sequences):
-        pass
+    def build_index(path_out, fasta_in, threads=1, options=[]):
+        cmd = ['STAR', '--runThreadN', str(threads)] + options + ['--runMode', 'genomeGenerate', '--genomeDir', path_out, '--genomeFastaFiles', fasta_in]
+
+        return exe.execute(cmd, decode_stderr=True)
 
     def align_sam(index, seq1, output_path, seq2=None, threads=1, options=[]):
         cmd = ['STAR', '--runThreadN', str(threads), '--genomeDir', index, '--outFileNamePrefix', output_path] + options

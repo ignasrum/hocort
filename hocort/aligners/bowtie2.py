@@ -3,8 +3,10 @@ from hocort.aligners.aligner import Aligner
 
 
 class Bowtie2(Aligner):
-    def generate_index(path, sequences):
-        pass
+    def build_index(path_out, fasta_in, threads=1, options=[]):
+        cmd = ['bowtie2-build'] + options + ['--threads', str(threads), fasta_in, path_out]
+
+        return exe.execute(cmd, decode_stderr=True)
 
     def align_sam(index, seq1, output, seq2=None, threads=1, options=[]):
         cmd = ['bowtie2', '-p', str(threads), '-x', index, '-q', '-S', output] + options

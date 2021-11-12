@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class Classifier(ABC):
     @abstractmethod
-    def generate_index(path, sequences):
+    def build_index(path_out, fasta_in):
         pass
 
     @abstractmethod
