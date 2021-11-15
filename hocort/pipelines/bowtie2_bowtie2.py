@@ -1,8 +1,10 @@
-from hocort.pipelines.pipeline import Pipeline
-from hocort.pipelines.bowtie2 import Bowtie2
 from argparse import ArgumentParser
 import time
 import os
+
+from hocort.pipelines.pipeline import Pipeline
+from hocort.pipelines.bowtie2 import Bowtie2
+
 
 class Bowtie2Bowtie2(Pipeline):
     def __init__(self, dir=None):

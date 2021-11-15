@@ -1,11 +1,12 @@
+from argparse import ArgumentParser
+import time
+import os
+
 from hocort.pipelines.pipeline import Pipeline
 from hocort.aligners.bowtie2 import Bowtie2 as bt2
 from hocort.parse.sam import SAM
 from hocort.parse.bam import BAM
 from hocort.parse.fastq import FastQ
-from argparse import ArgumentParser
-import time
-import os
 
 
 class Bowtie2(Pipeline):

@@ -1,9 +1,11 @@
-from hocort.pipelines.pipeline import Pipeline
-from hocort.pipelines.bowtie2 import Bowtie2
-from hocort.pipelines.kraken2 import Kraken2
 from argparse import ArgumentParser
 import time
 import os
+
+from hocort.pipelines.pipeline import Pipeline
+from hocort.pipelines.bowtie2 import Bowtie2
+from hocort.pipelines.kraken2 import Kraken2
+
 
 class Kraken2Bowtie2(Pipeline):
     def __init__(self, dir=None):

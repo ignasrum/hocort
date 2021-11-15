@@ -2,6 +2,7 @@ from setuptools import setup
 
 from hocort.version import __version__
 
+
 setup(
     name='hocort',
     version=__version__,

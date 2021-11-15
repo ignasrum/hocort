@@ -1,11 +1,12 @@
+from argparse import ArgumentParser
+import time
+import os
+
 from hocort.pipelines.pipeline import Pipeline
 from hocort.aligners.star import STAR as star
 from hocort.parse.sam import SAM
 from hocort.parse.bam import BAM
 from hocort.parse.fastq import FastQ
-from argparse import ArgumentParser
-import time
-import os
 
 
 class STAR(Pipeline):

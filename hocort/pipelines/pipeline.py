@@ -1,7 +1,9 @@
 import tempfile
 import logging
 from abc import ABC, abstractmethod
+
 from hocort.parse.fastq import FastQ
+
 
 class Pipeline(ABC):
     def __init__(self, logger_filename, dir=None):

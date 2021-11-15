@@ -1,6 +1,8 @@
-import pysam
 import itertools
 from argparse import ArgumentParser
+
+import pysam
+
 
 def count(file, separator):
     entries = {}

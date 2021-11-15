@@ -1,11 +1,12 @@
+from argparse import ArgumentParser
+import os
+import time
+
 from hocort.pipelines.pipeline import Pipeline
 from hocort.aligners.bwa_mem2 import BWA_MEM2 as bwa_mem2
 from hocort.parse.sam import SAM
 from hocort.parse.bam import BAM
 from hocort.parse.fastq import FastQ
-from argparse import ArgumentParser
-import os
-import time
 
 
 class BWA_MEM2(Pipeline):
