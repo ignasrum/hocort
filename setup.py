@@ -1,8 +1,10 @@
 from setuptools import setup
 
+from hocort.version import __version__
+
 setup(
     name='hocort',
-    version='0.1.0',
+    version=__version__,
     description='Host Contamination Removal Tool',
     url='https://github.com/ignasrum/hocort',
     author='Ignas Rumbavicius',
