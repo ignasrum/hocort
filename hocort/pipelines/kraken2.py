@@ -52,7 +52,7 @@ class Kraken2(Pipeline):
     def interface(self, args):
         parser = ArgumentParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort {self.__class__.__name__} positional_arguments [options]'
+            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] -x <idx> -i <seq1> [<seq2>] -o <out1> [<out2>]'
         )
         parser.add_argument(
             '-x',
@@ -60,7 +60,7 @@ class Kraken2(Pipeline):
             required=True,
             type=str,
             metavar=('<idx>'),
-            help='str: path to Kraken2 index'
+            help='str: path to Kraken2 index (required)'
         )
         parser.add_argument(
             '-i',
@@ -69,7 +69,7 @@ class Kraken2(Pipeline):
             type=str,
             nargs=('+'),
             metavar=('<seq1>', '<seq2>'),
-            help='str: path to sequence files, max 2'
+            help='str: path to sequence files, max 2 (required)'
         )
         parser.add_argument(
             '-o',
@@ -77,16 +77,16 @@ class Kraken2(Pipeline):
             required=True,
             type=str,
             metavar=('<out>'),
-            help='str: output path'
+            help='str: output path (required)'
         )
         parser.add_argument(
             '-t',
             '--threads',
             required=False,
             type=int,
-            metavar=('INT'),
+            metavar=('<int>'),
             default=os.cpu_count(),
-            help='int: number of threads, default is max available on machine'
+            help='int: number of threads (default: max available on machine)'
         )
         parsed = parser.parse_args(args=args)
 

@@ -11,17 +11,17 @@ class Bowtie2HISAT2(Pipeline):
     def __init__(self, dir=None):
         super().__init__(__file__, dir=dir)
 
-    def run(self, bt2_idx, hs2_idx, seq1, out1, seq2=None, out2=None, threads=1, hcfilter='f'):
+    def run(self, bt2_idx, hs2_idx, seq1, out1, seq2=None, out2=None, threads=1, intermediary='SAM', hcfilter='f'):
         self.debug_log_args(self.run.__name__, locals())
         self.logger.info(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
         temp1 = f'{self.temp_dir.name}/temp1.fastq'
         temp2 = None if seq2 == None else f'{self.temp_dir.name}/temp2.fastq'
-        returncode = Bowtie2().run(bt2_idx, seq1, temp1, seq2=seq2, out2=temp2, mode='end-to-end', threads=threads, hcfilter=hcfilter)
+        returncode = Bowtie2().run(bt2_idx, seq1, temp1, seq2=seq2, out2=temp2, mode='end-to-end', threads=threads, intermediary=intermediary, hcfilter=hcfilter)
         if returncode != 0:
             self.logger.error('Pipeline was terminated')
             return 1
-        returncode = HISAT2().run(hs2_idx, temp1, out1, seq2=temp2, out2=out2, threads=threads, hcfilter=hcfilter)
+        returncode = HISAT2().run(hs2_idx, temp1, out1, seq2=temp2, out2=out2, threads=threads, intermediary=intermediary, hcfilter=hcfilter)
         if returncode != 0:
             self.logger.error('Pipeline was terminated')
             return 1
@@ -32,7 +32,7 @@ class Bowtie2HISAT2(Pipeline):
     def interface(self, args):
         parser = ArgumentParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort {self.__class__.__name__} positional_arguments [options]'
+            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--intermediary <format>] [--host_contam_filter <bool>] --bowtie2_index <idx> --hisat2_index <idx> -i <seq1> [<seq2>] -o <out1> [<out2>]'
         )
         parser.add_argument(
             '-b',
@@ -40,7 +40,7 @@ class Bowtie2HISAT2(Pipeline):
             required=True,
             type=str,
             metavar=('<idx>'),
-            help='str: path to Bowtie2 index'
+            help='str: path to Bowtie2 index (required)'
         )
         parser.add_argument(
             '-s',
@@ -48,7 +48,7 @@ class Bowtie2HISAT2(Pipeline):
             required=True,
             type=str,
             metavar=('<idx>'),
-            help='str: path to HISAT2 index'
+            help='str: path to HISAT2 index (required)'
         )
         parser.add_argument(
             '-i',
@@ -57,7 +57,7 @@ class Bowtie2HISAT2(Pipeline):
             type=str,
             nargs=('+'),
             metavar=('<seq1>', '<seq2>'),
-            help='str: path to sequence files, max 2'
+            help='str: path to sequence files, max 2 (required)'
         )
         parser.add_argument(
             '-o',
@@ -66,23 +66,30 @@ class Bowtie2HISAT2(Pipeline):
             type=str,
             nargs=('+'),
             metavar=('<out1>', '<out2>'),
-            help='str: path to output files, max 2'
+            help='str: path to output files, max 2 (required)'
         )
         parser.add_argument(
             '-t',
             '--threads',
             required=False,
             type=int,
-            metavar=('INT'),
+            metavar=('<int>'),
             default=os.cpu_count(),
-            help='int: number of threads, default is max available on machine'
+            help='int: number of threads (default: max available on machine)'
+        )
+        parser.add_argument(
+            '-r',
+            '--intermediary',
+            choices=['SAM', 'BAM'],
+            default='SAM',
+            help='str: intermediary step output format (default: SAM)'
         )
         parser.add_argument(
             '-f',
             '--host_contam_filter',
             choices=['t', 'f'],
             default='f',
-            help='str: set to true to keep host sequences, false to keep everything besides host sequences'
+            help='str: set to true to keep host sequences, false to keep everything besides host sequences (default: f)'
         )
         parsed = parser.parse_args(args=args)
 
@@ -91,6 +98,7 @@ class Bowtie2HISAT2(Pipeline):
         seq = parsed.input
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
+        intermediary = parsed.intermediary
         hcfilter = parsed.host_contam_filter
 
         seq1 = seq[0]
@@ -98,4 +106,4 @@ class Bowtie2HISAT2(Pipeline):
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        self.run(bt2_idx, hs2_idx, seq1, out1, seq2=seq2, out2=out2, threads=threads, hcfilter=hcfilter)
+        self.run(bt2_idx, hs2_idx, seq1, out1, seq2=seq2, out2=out2, threads=threads, intermediary=intermediary, hcfilter=hcfilter)
