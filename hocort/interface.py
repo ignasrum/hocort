@@ -49,7 +49,7 @@ def main():
         '-v',
         '--version',
         action='store_true',
-        help='flag: verbose output'
+        help='flag: print version'
     )
     parser.add_argument(
         '-h',
