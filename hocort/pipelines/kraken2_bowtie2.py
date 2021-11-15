@@ -38,7 +38,7 @@ class Kraken2Bowtie2(Pipeline):
     def interface(self, args):
         parser = ArgumentParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--intermediary <format>] [--host_contam_filter <bool>] --bowtie2_index <idx> --kraken2_index <idx> -i <seq1> [<seq2>] -o <out1> [<out2>]'
+            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--intermediary <format>] [--host_contam_filter <bool>] --bowtie2_index <idx> --kraken2_index <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
         )
         parser.add_argument(
             '-b',
@@ -62,7 +62,7 @@ class Kraken2Bowtie2(Pipeline):
             required=True,
             type=str,
             nargs=('+'),
-            metavar=('<seq1>', '<seq2>'),
+            metavar=('<fastq_1>', '<fastq_2>'),
             help='str: path to sequence files, max 2 (required)'
         )
         parser.add_argument(
@@ -71,7 +71,7 @@ class Kraken2Bowtie2(Pipeline):
             required=True,
             type=str,
             nargs=('+'),
-            metavar=('<out1>', '<out2>'),
+            metavar=('<fastq_1>', '<fastq_2>'),
             help='str: path to output files, max 2 (required)'
         )
         parser.add_argument(

@@ -61,7 +61,7 @@ class HISAT2(Pipeline):
     def interface(self, args):
         parser = ArgumentParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort {self.__class__.__name__} positional_arguments [options]'
+            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--intermediary <format>] [--host_contam_filter <bool>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
         )
         parser.add_argument(
             '-x',
@@ -69,7 +69,7 @@ class HISAT2(Pipeline):
             required=True,
             type=str,
             metavar=('<idx>'),
-            help='str: path to HISAT2 index'
+            help='str: path to HISAT2 index (required)'
         )
         parser.add_argument(
             '-i',
@@ -77,8 +77,8 @@ class HISAT2(Pipeline):
             required=True,
             type=str,
             nargs=('+'),
-            metavar=('<seq1>', '<seq2>'),
-            help='str: path to sequence files, max 2'
+            metavar=('<fastq_1>', '<fastq_2>'),
+            help='str: path to sequence files, max 2 (required)'
         )
         parser.add_argument(
             '-o',
@@ -86,31 +86,31 @@ class HISAT2(Pipeline):
             required=True,
             type=str,
             nargs=('+'),
-            metavar=('<out1>', '<out2>'),
-            help='str: path to output files, max 2'
+            metavar=('<fastq_1>', '<fastq_2>'),
+            help='str: path to output files, max 2 (required)'
         )
         parser.add_argument(
             '-t',
             '--threads',
             required=False,
             type=int,
-            metavar=('INT'),
+            metavar=('<int>'),
             default=os.cpu_count(),
-            help='int: number of threads, default is max available on machine'
+            help='int: number of threads (default: max available on machine)'
         )
         parser.add_argument(
             '-r',
             '--intermediary',
             choices=['SAM', 'BAM'],
             default='SAM',
-            help='str: intermediary step output format, default is SAM'
+            help='str: intermediary step output format (default: SAM)'
         )
         parser.add_argument(
             '-f',
             '--host_contam_filter',
             choices=['t', 'f'],
             default='f',
-            help='str: set to true to keep host sequences, false to keep everything besides host sequences'
+            help='str: set to true to keep host sequences, false to keep everything besides host sequences (default: f)'
         )
         parsed = parser.parse_args(args=args)
 
