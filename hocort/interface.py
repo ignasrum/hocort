@@ -5,6 +5,7 @@ import inspect
 import logging
 
 import hocort.pipelines
+import hocort.version as version
 
 
 pipelines = {}
@@ -28,6 +29,12 @@ class HelpAction(Action):
             print(f'    {pipeline}')
         parser.exit()
 
+class VersionAction(Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        print(f'Version: {version.__version__}')
+        print(f'Last modified: {version.__last_modified__}')
+        parser.exit()
+
 def main():
     parser = ArgumentParser(
         prog='HoCoRT',
@@ -49,7 +56,8 @@ def main():
     parser.add_argument(
         '-v',
         '--version',
-        action='store_true',
+        action=VersionAction,
+        nargs=0,
         help='flag: print version'
     )
     parser.add_argument(
