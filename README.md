@@ -5,7 +5,7 @@
 
 A host contamination removal tool for Linux and Mac OS
 
-## Installation:
+# Installation:
 
 Install using the following command:
 
@@ -18,3 +18,6 @@ Then run it using the following command:
 ```
 hocort
 ```
+
+# Wiki
+Documentation is in the [wiki pages](https://github.com/ignasrum/hocort/wiki)
