@@ -23,7 +23,7 @@ class BBMap(Pipeline):
         if len(options) > 0:
             options = options
         else:
-            options = []
+            options = ['fast=t', 'local=t']
 
         add_slash=False
         if seq2: add_slash = True
@@ -32,6 +32,7 @@ class BBMap(Pipeline):
         self.logger.info('Aligning reads with BBMap')
         if intermediary == 'BAM':
             returncode, stdout, stderr = bb.align_bam(idx, seq1, bbmap_output, seq2=seq2, threads=threads, options=options)
+            bbmap_output += '.bam'
             self.logger.info('\n' + stderr[0])
             if returncode[0] != 0:
                 self.logger.error('Pipeline was terminated')
@@ -40,6 +41,7 @@ class BBMap(Pipeline):
             query_names = BAM.extract_ids(bbmap_output, mapping_quality=mapq, threads=threads, add_slash=add_slash)
         else:
             returncode, stdout, stderr = bb.align_sam(idx, seq1, bbmap_output, seq2=seq2, threads=threads, options=options)
+            bbmap_output += '.sam'
             self.logger.info('\n' + stderr[0])
             if returncode[0] != 0:
                 self.logger.error('Pipeline was terminated')
