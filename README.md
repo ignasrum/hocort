@@ -6,18 +6,7 @@
 A host contamination removal tool for Linux and Mac OS
 
 # Installation:
-
-Install using the following command:
-
-```
-pip install "git+https://github.com/ignasrum/hocort.git"
-```
-
-Then run it using the following command:
-
-```
-hocort
-```
+[How To Use](https://github.com/ignasrum/hocort/wiki/How-To-Use)
 
 # Wiki
 Documentation is in the [wiki pages](https://github.com/ignasrum/hocort/wiki)
