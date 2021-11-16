@@ -7,3 +7,4 @@ from hocort.pipelines.minimap2 import Minimap2
 from hocort.pipelines.star import STAR
 from hocort.pipelines.kraken2 import Kraken2
 from hocort.pipelines.kraken2_bowtie2 import Kraken2Bowtie2
+from hocort.pipelines.bbmap import BBMap
