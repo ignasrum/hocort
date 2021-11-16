@@ -1,0 +1,13 @@
+#Summary
+#Generated on	Tue Nov 16 14:54:53 UTC 2021
+#Version	5
+chroms	1
+bases	21100
+defined	2400
+undefined	18700
+contigs	10
+scaffolds	10
+interpad	300
+source	/home/server/Documents/hocort/tests/test_data/fasta/genome.fna
+bytes	2500
+last modified	1636577436069
