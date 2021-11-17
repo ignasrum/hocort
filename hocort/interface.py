@@ -1,3 +1,7 @@
+"""
+Command line user interface for HoCoRT.
+
+"""
 from argparse import ArgumentParser
 from argparse import Action
 import sys
@@ -7,7 +11,7 @@ import logging
 import hocort.pipelines
 import hocort.version as version
 
-
+# Gets available pipelines from hocort.pipelines
 pipelines = {}
 for pipeline in dir(hocort.pipelines):
     if pipeline[0] != '_':
@@ -15,8 +19,34 @@ for pipeline in dir(hocort.pipelines):
         if inspect.isclass(m):
             pipelines[pipeline] = m
 
+
 class HelpAction(Action):
+    """
+    Called when '-h' or '--help' flags are given.
+
+    """
     def __call__(self, parser, namespace, values, option_string=None):
+        """
+        If a pipeline is selected, its interface is called with the '-h' flag.
+        Otherwise, the help message of this interface is printed together with the
+        names of pipelines available in hocort.pipelines module.
+
+        Parameters
+        ----------
+        parser : argparse.ArgumentParser
+            The object which contains this action.
+        namespace : argparse.Namespace
+            The argparse.Namespace object returned by parse_args().
+        values : list
+            The command-line arguments with any type conversion applied.
+        option_string : string
+            The option string which was used to invoke this action.
+
+        Returns
+        -------
+        None
+
+        """
         pipeline = namespace.pipeline
         if pipeline != None:
             pipeline_interface = pipelines[pipeline]().interface
@@ -30,12 +60,44 @@ class HelpAction(Action):
         parser.exit()
 
 class VersionAction(Action):
+    """
+    Called when '-v' or '--version' flags are given.
+
+    """
     def __call__(self, parser, namespace, values, option_string=None):
+        """
+        When HoCoRT is ran with the '-v' or '--version' flags,
+        the __version__ and __last_modified attributes from hocort.version are written to the command line.
+
+        Parameters
+        ----------
+        parser : argparse.ArgumentParser
+            The object which contains this action.
+        namespace : argparse.Namespace
+            The argparse.Namespace object returned by parse_args().
+        values : list
+            The command-line arguments with any type conversion applied.
+        option_string : string
+            The option string which was used to invoke this action.
+
+        Returns
+        -------
+        None
+
+        """
         print(f'Version: {version.__version__}')
         print(f'Last modified: {version.__last_modified__}')
         parser.exit()
 
 def main():
+    """
+    Main function for user interface. Parses arguments and starts a pipeline if one is selected.
+
+    Returns
+    -------
+    None
+
+    """
     parser = ArgumentParser(
         prog='HoCoRT',
         description='HoCoRT: A Host Contamination Removal Tool',
