@@ -20,6 +20,7 @@ setup(
                       'pytest'],
     entry_points = {
         'console_scripts': ['hocort=hocort.__main__:main',
+                            'hocort-index=hocort.index:main',
                             'hocort-compare=hocort.compare:main'],
     }
 )
