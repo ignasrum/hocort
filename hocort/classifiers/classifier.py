@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class Classifier(ABC):
     @abstractmethod
-    def build_index(path_out, fasta_in):
+    def build_index(path_out, fasta_in, options=[], **kwargs):
         pass
 
     @abstractmethod

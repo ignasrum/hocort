@@ -6,11 +6,12 @@ from argparse import ArgumentParser
 from argparse import Action
 import sys
 import inspect
-import logging
 import os
 
 import hocort.aligners
+import hocort.classifiers
 import hocort.version as version
+from hocort.logger import Logger
 
 # Gets available aligners from hocort.aligners
 aligners = {}
@@ -19,6 +20,14 @@ for aligner in dir(hocort.aligners):
         m = getattr(hocort.aligners, aligner)
         if inspect.isclass(m):
             aligners[aligner] = m
+
+# Gets available classifiers from hocort.classifiers
+classifiers = {}
+for classifier in dir(hocort.classifiers):
+    if classifier[0] != '_':
+        m = getattr(hocort.classifiers, classifier)
+        if inspect.isclass(m):
+            classifiers[classifier] = m
 
 
 class HelpAction(Action):
@@ -52,6 +61,11 @@ class HelpAction(Action):
         print('\nAvailable aligners:')
         for aligner in aligners:
             print(f'    {aligner}')
+
+        print('\nAvailable classifiers:')
+        for classifier in classifiers:
+            print(f'    {classifier}')
+
         parser.exit()
 
 class VersionAction(Action):
@@ -96,13 +110,13 @@ def main():
     parser = ArgumentParser(
         prog='HoCoRT',
         description='HoCoRT: A Host Contamination Removal Tool',
-        usage='hocort-index aligner -i <fasta> -o <path> [options]',
+        usage='hocort-index tool -i <fasta> -o <path> [options]',
         add_help=False
     )
     parser.add_argument(
-        'aligner',
+        'tool',
         type=str,
-        help='str: aligner to generate index for (required)'
+        help='str: tool to generate index for (required)'
     )
     parser.add_argument(
         '-i',
@@ -151,32 +165,36 @@ def main():
     )
 
     parsed = parser.parse_args()
-    aligner = parsed.aligner
+    tool = parsed.tool
     ref = parsed.input
     out = parsed.output
     threads = parsed.threads if parsed.threads else 1
     debug = parsed.debug
 
-    logger = logging.getLogger(__file__)
-    log_level = logging.INFO
-    if debug: log_level = logging.DEBUG
-    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s - %(name)s', level=log_level)
-
+    logger = Logger(__file__, debug)
     logger.debug(str(parsed))
 
-    if not os.path.isdir(out):
+    s = os.path.split(out)
+    out_dir = s[0]
+    basename = s[1]
+    if not os.path.isdir(out_dir):
         logger.error(f'Output path does not exist: {out}')
+        return 1
+    if basename == '':
+        logger.error(f'No basename was given (dir/basename): {basename}')
         return 1
 
     try:
-        if aligner not in aligners.keys():
-            logger.error(f'Invalid aligner: {aligner}')
+        tool_build_index = None
+        if tool in aligners.keys():
+            tool_build_index = aligners[tool].build_index
+        elif tool in classifiers.keys():
+            tool_build_index = classifiers[tool].build_index
+        else:
+            logger.error(f'Invalid tool: {tool}')
             return
-        aligner_build_index = aligners[aligner].build_index
-        logger.info(f'Building index with {aligner}')
-        returncode, stdout, stderr = aligner_build_index(out, ref, threads=threads)
-        logger.info(f'{stdout}')
-        logger.info(f'{stderr}')
+        logger.info(f'Building index with {tool}')
+        returncode = tool_build_index(out, ref, threads=threads)
         logger.info(f'Process exited with returncode: {returncode}')
     except Exception as e:
         logger.error(e)

@@ -1,12 +1,18 @@
+import logging
+
 import hocort.execute as exe
 from hocort.aligners.aligner import Aligner
 
+logger = logging.getLogger(__file__)
+
 
 class Bowtie2(Aligner):
-    def build_index(path_out, fasta_in, threads=1, options=[]):
+    def build_index(path_out, fasta_in, threads=1, options=[], **kwargs):
         cmd = ['bowtie2-build'] + options + ['--threads', str(threads), fasta_in, path_out]
         returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
-        return returncode[0], stdout[0], stderr[0]
+        logger.info('\n' + stdout[0])
+        logger.info('\n' + stderr[0])
+        return returncode[0]
 
     def align_sam(index, seq1, output, seq2=None, threads=1, options=[]):
         cmd = ['bowtie2', '-p', str(threads), '-x', index, '-q', '-S', output] + options
