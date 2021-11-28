@@ -1,5 +1,3 @@
-![hocort logo](https://github.com/ignasrum/hocort/blob/main/docs/images/logo.png)
-
 # HoCoRT
 <strong>Ho</strong>st <strong>Co</strong>ntamination <strong>R</strong>emoval <strong>T</strong>ool (<strong>HoCoRT</strong>)
 
