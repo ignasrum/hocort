@@ -7,7 +7,31 @@ logger = logging.getLogger(__file__)
 
 
 class Kraken2(Classifier):
+    """
+    Kraken2 implementation of the Classifier abstract base class.
+
+    """
     def build_index(path_out, fasta_in, threads=1, options=[], **kwargs):
+        """
+        Builds an index.
+
+        Parameters
+        ----------
+        path_out : string
+            Path where the output index is written.
+        fasta_in : string
+            Path where the input FASTA file is located.
+        threads : int
+            Number of threads to use.
+        options : list
+            An options list where additional arguments may be specified.
+
+        Returns
+        -------
+        returncode : int
+            Resulting returncode after the process is finished.
+
+        """
         # 1. download taxonomy
             # kraken2-build --threads n --download-taxonomy --db database
         logger.info('Downloading taxonomy, this may take a while...')
@@ -50,6 +74,32 @@ class Kraken2(Classifier):
         return 0
 
     def classify(index, seq1, classified_out, unclassified_out, seq2=None, threads=1, options=[]):
+        """
+        Matches sequences to a reference database and classifies them.
+
+        Parameters
+        ----------
+        index : string
+            Path where the output index is written.
+        seq1 : string
+            Path where the first input FastQ file is located.
+        classified_out : string
+            Path where the output FastQ file with matching sequences is written.
+        unclassified_out : string
+            Path where the output FastQ file with non-matching sequences is written.
+        seq2 : string
+            Path where the second input FastQ file is located.
+        threads : int
+            Number of threads to use.
+        options : list
+            An options list where additional arguments may be specified.
+
+        Returns
+        -------
+        returncode : int
+            Resulting returncode after the process is finished.
+
+        """
         cmd = ['kraken2', '--threads', str(threads), '--db', index, '--classified-out', classified_out, '--unclassified-out', unclassified_out] + options
         if seq2:
             cmd += ['--paired', seq1, seq2]

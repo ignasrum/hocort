@@ -7,7 +7,31 @@ logger = logging.getLogger(__file__)
 
 
 class Bowtie2(Aligner):
+    """
+    Bowtie2 implementation of the Aligner abstract base class.
+
+    """
     def build_index(path_out, fasta_in, threads=1, options=[], **kwargs):
+        """
+        Builds an index.
+
+        Parameters
+        ----------
+        path_out : string
+            Path where the output index is written.
+        fasta_in : string
+            Path where the input FASTA file is located.
+        threads : int
+            Number of threads to use.
+        options : list
+            An options list where additional arguments may be specified.
+
+        Returns
+        -------
+        returncode : int
+            Resulting returncode after the process is finished.
+
+        """
         cmd = ['bowtie2-build'] + options + ['--threads', str(threads), fasta_in, path_out]
         returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
         logger.info('\n' + stdout[0])
@@ -15,6 +39,30 @@ class Bowtie2(Aligner):
         return returncode[0]
 
     def align_sam(index, seq1, output, seq2=None, threads=1, options=[]):
+        """
+        Aligns FastQ sequences to reference genome and outputs a SAM file.
+
+        Parameters
+        ----------
+        index : string
+            Path where the aligner index is located.
+        seq1 : string
+            Path where the first input FastQ file is located.
+        output : string
+            Path where the output SAM file is written.
+        seq2 : string
+            Path where the second input FastQ file is located.
+        threads : int
+            Number of threads to use.
+        options : list
+            An options list where additional arguments may be specified.
+
+        Returns
+        -------
+        returncode : int
+            Resulting returncode after the process is finished.
+
+        """
         cmd = ['bowtie2', '-p', str(threads), '-x', index, '-q', '-S', output] + options
         if seq2:
             cmd += ['-1', seq1, '-2', seq2]
@@ -23,6 +71,30 @@ class Bowtie2(Aligner):
         return exe.execute(cmd, decode_stderr=True)
 
     def align_bam(index, seq1, output, seq2=None, threads=1, options=[]):
+        """
+        Aligns FastQ sequences to reference genome and outputs a BAM file.
+
+        Parameters
+        ----------
+        index : string
+            Path where the aligner index is located.
+        seq1 : string
+            Path where the first input FastQ file is located.
+        output : string
+            Path where the output BAM file is written.
+        seq2 : string
+            Path where the second input FastQ file is located.
+        threads : int
+            Number of threads to use.
+        options : list
+            An options list where additional arguments may be specified.
+
+        Returns
+        -------
+        returncode : int
+            Resulting returncode after the process is finished.
+
+        """
         cmd1 = ['bowtie2', '-p', str(threads), '-x', index, '-q'] + options
         if seq2:
             cmd1 += ['-1', seq1, '-2', seq2]
