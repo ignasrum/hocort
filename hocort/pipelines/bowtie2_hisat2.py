@@ -8,20 +8,69 @@ from hocort.pipelines.hisat2 import HISAT2
 
 
 class Bowtie2HISAT2(Pipeline):
+    """
+    Bowtie2HISAT2 pipeline which first runs Bowtie2 in 'end-to-end' mode, then runs HISAT2. It maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
+
+    """
     def __init__(self, dir=None):
+        """
+        Constructor which sets temporary file directory if specified.
+
+        Parameters
+        ----------
+        dir : string
+            Path where the temporary files are written.
+
+        Returns
+        -------
+        None
+
+        """
         super().__init__(__file__, dir=dir)
 
-    def run(self, bt2_idx, hs2_idx, seq1, out1, seq2=None, out2=None, threads=1, intermediary='SAM', hcfilter='f'):
+    def run(self, bt2_idx, hs2_idx, seq1, out1, seq2=None, out2=None, intermediary='SAM', hcfilter=False, threads=1, mapq=0):
+        """
+        Run function which starts the pipeline.
+
+        Parameters
+        ----------
+        bt2_idx : string
+            Path where the Bowtie2 index is located.
+        hs2_idx : string
+            Path where the HISAT2 index is located.
+        seq1 : string
+            Path where the first input FastQ file is located.
+        out1 : string
+            Path where the first output FastQ file will be written.
+        seq2 : string
+            Path where the second input FastQ file is located.
+        out2 : string
+            Path where the second output FastQ file will be written.
+        intermediary : string
+            The format of the intermediary mapping file. SAM or BAM.
+        hcfilter : bool
+            Whether to exclude or include the matching sequences from the output files.
+        threads : int
+            Number of threads to use.
+        mapq : int
+            Mapping quality lower bound.
+
+        Returns
+        -------
+        returncode : int
+            Resulting returncode after the process is finished.
+
+        """
         self.debug_log_args(self.run.__name__, locals())
         self.logger.info(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
         temp1 = f'{self.temp_dir.name}/temp1.fastq'
         temp2 = None if seq2 == None else f'{self.temp_dir.name}/temp2.fastq'
-        returncode = Bowtie2().run(bt2_idx, seq1, temp1, seq2=seq2, out2=temp2, mode='end-to-end', threads=threads, intermediary=intermediary, hcfilter=hcfilter)
+        returncode = Bowtie2().run(bt2_idx, seq1, temp1, seq2=seq2, out2=temp2, mode='end-to-end', threads=threads, intermediary=intermediary, hcfilter=hcfilter, mapq=mapq)
         if returncode != 0:
             self.logger.error('Pipeline was terminated')
             return 1
-        returncode = HISAT2().run(hs2_idx, temp1, out1, seq2=temp2, out2=out2, threads=threads, intermediary=intermediary, hcfilter=hcfilter)
+        returncode = HISAT2().run(hs2_idx, temp1, out1, seq2=temp2, out2=out2, threads=threads, intermediary=intermediary, hcfilter=hcfilter, mapq=mapq)
         if returncode != 0:
             self.logger.error('Pipeline was terminated')
             return 1
@@ -30,6 +79,19 @@ class Bowtie2HISAT2(Pipeline):
         return 0
 
     def interface(self, args):
+        """
+        Main function for the user interface. Parses arguments and starts the pipeline.
+
+        Parameters
+        ----------
+        args : list
+            This list is parsed by ArgumentParser.
+
+        Returns
+        -------
+        None
+
+        """
         parser = ArgumentParser(
             description=f'{self.__class__.__name__} pipeline',
             usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--intermediary <format>] [--host_contam_filter <bool>] --bowtie2_index <idx> --hisat2_index <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
@@ -87,9 +149,9 @@ class Bowtie2HISAT2(Pipeline):
         parser.add_argument(
             '-f',
             '--host_contam_filter',
-            choices=['t', 'f'],
-            default='f',
-            help='str: set to true to keep host sequences, false to keep everything besides host sequences (default: f)'
+            choices=['True', 'False'],
+            default='False',
+            help='str: set to True to keep host sequences, False to keep everything besides host sequences (default: False)'
         )
         parsed = parser.parse_args(args=args)
 
@@ -99,7 +161,7 @@ class Bowtie2HISAT2(Pipeline):
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
         intermediary = parsed.intermediary
-        hcfilter = parsed.host_contam_filter
+        hcfilter = True if parsed.host_contam_filter == 'True' else False
 
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]

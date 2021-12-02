@@ -6,10 +6,10 @@ from argparse import ArgumentParser
 from argparse import Action
 import sys
 import inspect
-import logging
 
 import hocort.pipelines
 import hocort.version as version
+from hocort.logger import Logger
 
 # Gets available pipelines from hocort.pipelines
 pipelines = {}
@@ -134,18 +134,11 @@ def main():
     pipeline = args.pipeline
     debug = args.debug
 
-    logger = logging.getLogger(__file__)
-    log_level = logging.INFO
-    if debug: log_level = logging.DEBUG
-    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s - %(name)s', level=log_level)
-
+    logger = Logger(__file__, debug=debug)
     logger.debug(str(args))
 
-    try:
-        if pipeline not in pipelines.keys():
-            logger.error(f'Invalid pipeline: {pipeline}')
-            return
-        pipeline_interface = pipelines[pipeline]().interface
-        pipeline_interface(unknown_args)
-    except Exception as e:
-        logger.error(e)
+    if pipeline not in pipelines.keys():
+        logger.error(f'Invalid pipeline: {pipeline}')
+        return
+    pipeline_interface = pipelines[pipeline]().interface
+    pipeline_interface(unknown_args)

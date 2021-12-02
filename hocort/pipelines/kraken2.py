@@ -10,10 +10,51 @@ from hocort.parse.fastq import FastQ
 
 
 class Kraken2(Pipeline):
+    """
+    Kraken2 pipeline which maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
+
+    """
     def __init__(self, dir=None):
+        """
+        Constructor which sets temporary file directory if specified.
+
+        Parameters
+        ----------
+        dir : string
+            Path where the temporary files are written.
+
+        Returns
+        -------
+        None
+
+        """
         super().__init__(__file__, dir=dir)
 
     def run(self, idx, seq1, out, seq2=None, threads=1, options=[]):
+        """
+        Run function which starts the pipeline.
+
+        Parameters
+        ----------
+        idx : string
+            Path where the index is located.
+        seq1 : string
+            Path where the first input FastQ file is located.
+        out : string
+            Path (directory) where the output FastQ files will be written.
+        seq2 : string
+            Path where the second input FastQ file is located.
+        threads : int
+            Number of threads to use.
+        options : list
+            An options list where additional arguments may be specified.
+
+        Returns
+        -------
+        returncode : int
+            Resulting returncode after the process is finished.
+
+        """
         self.debug_log_args(self.run.__name__, locals())
 
         if len(options) > 0:
@@ -40,7 +81,6 @@ class Kraken2(Pipeline):
 
         self.logger.info('Classifying reads with Kraken2')
         returncode, stdout, stderr = kr2.classify(idx, seq1, class_out, unclass_out, seq2=seq2, threads=threads, options=options)
-        self.logger.info('\n' + stderr[0])
         if returncode[0] != 0:
             self.logger.error('Pipeline was terminated')
             return 1
@@ -50,6 +90,19 @@ class Kraken2(Pipeline):
         return 0
 
     def interface(self, args):
+        """
+        Main function for the user interface. Parses arguments and starts the pipeline.
+
+        Parameters
+        ----------
+        args : list
+            This list is parsed by ArgumentParser.
+
+        Returns
+        -------
+        None
+
+        """
         parser = ArgumentParser(
             description=f'{self.__class__.__name__} pipeline',
             usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'

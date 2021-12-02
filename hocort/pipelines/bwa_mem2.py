@@ -10,10 +10,59 @@ from hocort.parse.fastq import FastQ
 
 
 class BWA_MEM2(Pipeline):
+    """
+    BWA-MEM2 pipeline which maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
+
+    """
     def __init__(self, dir=None):
+        """
+        Constructor which sets temporary file directory if specified.
+
+        Parameters
+        ----------
+        dir : string
+            Path where the temporary files are written.
+
+        Returns
+        -------
+        None
+
+        """
         super().__init__(__file__, dir=dir)
 
-    def run(self, idx, seq1, out1, seq2=None, out2=None, intermediary='SAM', hcfilter='f', threads=1, mapq=0, options=[]):
+    def run(self, idx, seq1, out1, seq2=None, out2=None, intermediary='SAM', hcfilter=False, threads=1, mapq=0, options=[]):
+        """
+        Run function which starts the pipeline.
+
+        Parameters
+        ----------
+        idx : string
+            Path where the index is located.
+        seq1 : string
+            Path where the first input FastQ file is located.
+        out1 : string
+            Path where the first output FastQ file will be written.
+        seq2 : string
+            Path where the second input FastQ file is located.
+        out2 : string
+            Path where the second output FastQ file will be written.
+        intermediary : string
+            The format of the intermediary mapping file. SAM or BAM.
+        hcfilter : bool
+            Whether to exclude or include the matching sequences from the output files.
+        threads : int
+            Number of threads to use.
+        mapq : int
+            Mapping quality lower bound.
+        options : list
+            An options list where additional arguments may be specified.
+
+        Returns
+        -------
+        returncode : int
+            Resulting returncode after the process is finished.
+
+        """
         self.debug_log_args(self.run.__name__, locals())
         self.logger.info('Starting pipeline')
         start_time = time.time()
@@ -32,8 +81,6 @@ class BWA_MEM2(Pipeline):
         self.logger.info('Aligning reads with BWA-MEM2')
         if intermediary == 'BAM':
             returncode, stdout, stderr = bwa_mem2.align_bam(idx, seq1, bwa_mem2_output, seq2=seq2, threads=threads, options=options)
-            self.logger.info('\n' + stderr[0])
-            self.logger.info('\n' + stderr[1])
             if returncode[0] != 0 or returncode[1] != 0:
                 self.logger.error('Pipeline was terminated')
                 return 1
@@ -41,7 +88,6 @@ class BWA_MEM2(Pipeline):
             query_names = BAM.extract_ids(bwa_mem2_output, mapping_quality=mapq, threads=threads, add_slash=add_slash)
         else:
             returncode, stdout, stderr = bwa_mem2.align_sam(idx, seq1, bwa_mem2_output, seq2=seq2, threads=threads, options=options)
-            self.logger.info('\n' + stderr[0])
             if returncode[0] != 0:
                 self.logger.error('Pipeline was terminated')
                 return 1
@@ -59,6 +105,19 @@ class BWA_MEM2(Pipeline):
         return 0
 
     def interface(self, args):
+        """
+        Main function for the user interface. Parses arguments and starts the pipeline.
+
+        Parameters
+        ----------
+        args : list
+            This list is parsed by ArgumentParser.
+
+        Returns
+        -------
+        None
+
+        """
         parser = ArgumentParser(
             description=f'{self.__class__.__name__} pipeline',
             usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--intermediary <format>] [--host_contam_filter <bool>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
@@ -108,9 +167,9 @@ class BWA_MEM2(Pipeline):
         parser.add_argument(
             '-f',
             '--host_contam_filter',
-            choices=['t', 'f'],
-            default='f',
-            help='str: set to true to keep host sequences, false to keep everything besides host sequences (default: f)'
+            choices=['True', 'False'],
+            default='False',
+            help='str: set to True to keep host sequences, False to keep everything besides host sequences (default: False)'
         )
         parsed = parser.parse_args(args=args)
 
@@ -119,7 +178,7 @@ class BWA_MEM2(Pipeline):
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
         intermediary = parsed.intermediary
-        hcfilter = parsed.host_contam_filter
+        hcfilter = True if parsed.host_contam_filter == 'True' else False
 
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]
