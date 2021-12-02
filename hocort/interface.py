@@ -137,11 +137,8 @@ def main():
     logger = Logger(__file__, debug=debug)
     logger.debug(str(args))
 
-    try:
-        if pipeline not in pipelines.keys():
-            logger.error(f'Invalid pipeline: {pipeline}')
-            return
-        pipeline_interface = pipelines[pipeline]().interface
-        pipeline_interface(unknown_args)
-    except Exception as e:
-        logger.error(e)
+    if pipeline not in pipelines.keys():
+        logger.error(f'Invalid pipeline: {pipeline}')
+        return
+    pipeline_interface = pipelines[pipeline]().interface
+    pipeline_interface(unknown_args)

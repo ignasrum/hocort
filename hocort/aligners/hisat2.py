@@ -69,7 +69,10 @@ class HISAT2(Aligner):
             cmd += ['-1', seq1, '-2', seq2]
         else: cmd += ['-U', seq1]
 
-        return exe.execute(cmd, decode_stderr=True)
+        returncode, stdout, stderr = exe.execute(cmd, decode_stderr=True)
+        logger.info('\n' + stdout[0])
+        logger.info('\n' + stderr[0])
+        return returncode[0]
 
     def align_bam(index, seq1, output, seq2=None, threads=1, options=[]):
         """
@@ -92,8 +95,8 @@ class HISAT2(Aligner):
 
         Returns
         -------
-        returncode : int
-            Resulting returncode after the process is finished.
+        [hisat2_returncode, samtools_returncode] : list of ints
+            Resulting returncodes after the processes are finished.
 
         """
         cmd1 = ['hisat2', '-p', str(threads), '-x', index] + options
@@ -103,4 +106,8 @@ class HISAT2(Aligner):
 
         cmd2 = ['samtools', 'view', '-@', str(threads), '-b', '-o', output]
 
-        return exe.execute_pipe(cmd1, cmd2, decode_stderr=True)
+        returncode, stdout, stderr = exe.execute_pipe(cmd1, cmd2, decode_stderr=True)
+        logger.info('\n' + stderr[0])
+        logger.info('\n' + stdout[0])
+        logger.info('\n' + stderr[1])
+        return returncode

@@ -69,7 +69,10 @@ class STAR(Aligner):
         if seq2:
             cmd += [seq2]
 
-        return exe.execute(cmd, decode_stderr=True)
+        returncode, stdout, stderr = exe.execute(cmd, decode_stderr=True)
+        logger.info('\n' + stdout[0])
+        logger.info('\n' + stderr[0])
+        return returncode[0]
 
     def align_bam(index, seq1, output, seq2=None, threads=1, options=[]):
         """
@@ -101,4 +104,7 @@ class STAR(Aligner):
         if seq2:
             cmd += [seq2]
 
-        return exe.execute(cmd, decode_stderr=True)
+        returncode, stdout, stderr = exe.execute(cmd, decode_stderr=True)
+        logger.info('\n' + stdout[0])
+        logger.info('\n' + stderr[0])
+        return returncode[0]

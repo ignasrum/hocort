@@ -67,7 +67,10 @@ class BWA_MEM2(Aligner):
             cmd += [seq2]
         cmd += options
 
-        return exe.execute(cmd, decode_stderr=True)
+        returncode, stdout, stderr = exe.execute(cmd, decode_stderr=True)
+        logger.info('\n' + stdout[0])
+        logger.info('\n' + stderr[0])
+        return returncode[0]
 
     def align_bam(index, seq1, output, seq2=None, threads=1, options=[]):
         """
@@ -90,8 +93,8 @@ class BWA_MEM2(Aligner):
 
         Returns
         -------
-        returncode : int
-            Resulting returncode after the process is finished.
+        [bwa_mem2_returncode, samtools_returncode] : list of ints
+            Resulting returncodes after the processes are finished.
 
         """
         cmd1 = ['bwa-mem2', 'mem', '-t', str(threads), index, seq1]
@@ -101,4 +104,8 @@ class BWA_MEM2(Aligner):
 
         cmd2 = ['samtools', 'view', '-@', str(threads), '-b', '-o', output]
 
-        return exe.execute_pipe(cmd1, cmd2, decode_stderr=True)
+        returncode, stdout, stderr = exe.execute_pipe(cmd1, cmd2, decode_stderr=True)
+        logger.info('\n' + stderr[0])
+        logger.info('\n' + stdout[0])
+        logger.info('\n' + stderr[1])
+        return returncode
