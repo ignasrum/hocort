@@ -4,7 +4,7 @@
 Host contamination removal from high-throughput sequencing reads for Linux and Mac OS.
 
 # Installation:
-[How To Use](https://github.com/ignasrum/hocort/wiki/User-Guide)
+[User Guide](https://github.com/ignasrum/hocort/wiki/User-Guide)
 
 # Wiki
 Documentation is in the [wiki pages](https://github.com/ignasrum/hocort/wiki)
