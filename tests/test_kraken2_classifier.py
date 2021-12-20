@@ -15,36 +15,29 @@ seq2 = f'{path}/test_data/sequences/sequences2.fastq'
 no_path = ''
 
 def test_idx_no_path():
-    returncode, stdout, stderr = kr2.classify(no_path, seq1, class_out, unclass_out)
-    print(stderr[0])
-    assert returncode[0] == 2
+    returncode = kr2.classify(no_path, seq1, class_out, unclass_out)
+    assert returncode == 2
 
 def test_seq1_no_path():
-    returncode, stdout, stderr = kr2.classify(idx, no_path, class_out, unclass_out)
-    print(stderr[0])
-    assert returncode[0] == 0
+    returncode = kr2.classify(idx, no_path, class_out, unclass_out)
+    assert returncode == 0
 
 def test_output_no_path():
-    returncode, stdout, stderr = kr2.classify(idx, seq1, class_out, unclass_out)
-    print(stderr[0])
-    assert returncode[0] == 0
+    returncode = kr2.classify(idx, seq1, class_out, unclass_out)
+    assert returncode == 0
 
 def test_seq1_seq2_no_path():
-    returncode, stdout, stderr = kr2.classify(idx, no_path, class_out, unclass_out, seq2=no_path)
-    print(stderr[0])
-    assert returncode[0] == 0
+    returncode = kr2.classify(idx, no_path, class_out, unclass_out, seq2=no_path)
+    assert returncode == 0
 
 def test_seq2_no_path():
-    returncode, stdout, stderr = kr2.classify(idx, seq1, class_out, unclass_out, seq2=no_path)
-    print(stderr[0])
-    assert returncode[0] == 0
+    returncode = kr2.classify(idx, seq1, class_out, unclass_out, seq2=no_path)
+    assert returncode == 0
 
 def test_1():
-    returncode, stdout, stderr = kr2.classify(idx, seq1, class_out, unclass_out)
-    print(stderr[0])
-    assert returncode[0] == 0
+    returncode = kr2.classify(idx, seq1, class_out, unclass_out)
+    assert returncode == 0
 
 def test_2():
-    returncode, stdout, stderr = kr2.classify(idx, seq1, class_out, unclass_out, seq2=seq2)
-    print(stderr[0])
-    assert returncode[0] == 0
+    returncode = kr2.classify(idx, seq1, class_out, unclass_out, seq2=seq2)
+    assert returncode == 0

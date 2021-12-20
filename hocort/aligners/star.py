@@ -69,7 +69,7 @@ class STAR(Aligner):
         if seq2:
             cmd += [seq2]
 
-        returncode, stdout, stderr = exe.execute(cmd, decode_stderr=True)
+        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
         logger.info('\n' + stdout[0])
         logger.info('\n' + stderr[0])
         return returncode[0]
@@ -104,7 +104,7 @@ class STAR(Aligner):
         if seq2:
             cmd += [seq2]
 
-        returncode, stdout, stderr = exe.execute(cmd, decode_stderr=True)
+        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
         logger.info('\n' + stdout[0])
         logger.info('\n' + stderr[0])
         return returncode[0]

@@ -11,17 +11,17 @@ ids = f'{path}/test_data/sequences/ids.list'
 no_path = ''
 
 def test_fastq_valid():
-    returncode, stdout, stderr = FastQ.filter_by_id(seq1, output, ids)
-    assert returncode[0] == 0
+    returncode = FastQ.filter_by_id(seq1, output, ids)
+    assert returncode == 0
 
 def test_fastq_no_path_seq1():
-    returncode, stdout, stderr = FastQ.filter_by_id(no_path, output, ids)
-    assert returncode[0] == 1
+    returncode = FastQ.filter_by_id(no_path, output, ids)
+    assert returncode == 1
 
 def test_fastq_no_path_output():
-    returncode, stdout, stderr = FastQ.filter_by_id(seq1, no_path, ids)
-    assert returncode[0] == 0
+    returncode = FastQ.filter_by_id(seq1, no_path, ids)
+    assert returncode == 0
 
 def test_fastq_no_path_ids():
-    returncode, stdout, stderr = FastQ.filter_by_id(seq1, output, no_path)
-    assert returncode[0] == 0
+    returncode = FastQ.filter_by_id(seq1, output, no_path)
+    assert returncode == 0

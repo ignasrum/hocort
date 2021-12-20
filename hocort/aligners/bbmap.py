@@ -70,7 +70,7 @@ class BBMap(Aligner):
         else: cmd += [f'in={seq1}']
         cmd += options
 
-        returncode, stdout, stderr = exe.execute(cmd, decode_stderr=True)
+        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
         logger.info('\n' + stdout[0])
         logger.info('\n' + stderr[0])
         return returncode[0]
@@ -106,7 +106,7 @@ class BBMap(Aligner):
         else: cmd += [f'in={seq1}']
         cmd += options
 
-        returncode, stdout, stderr = exe.execute(cmd, decode_stderr=True)
+        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
         logger.info('\n' + stdout[0])
         logger.info('\n' + stderr[0])
         return returncode[0]

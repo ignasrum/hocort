@@ -13,45 +13,46 @@ seq2 = f'{path}/test_data/sequences/sequences2.fastq'
 no_path = ''
 
 def test_build_idx():
-    returncode, stdout, stderr = bb.build_index(output, fasta)
-    assert returncode[0] == 0
+    returncode = bb.build_index(output, fasta)
+    assert returncode == 0
 
 def test_build_idx_no_input():
-    returncode, stdout, stderr = bb.build_index(output, no_path)
-    assert returncode[0] == 1
+    returncode = bb.build_index(output, no_path)
+    assert returncode == 1
 
 def test_idx_no_path():
-    returncode, stdout, stderr = bb.align_sam(no_path, seq1, output)
-    assert returncode[0] == 1
+    returncode = bb.align_sam(no_path, seq1, output)
+    print(returncode)
+    assert returncode == 1
 
 def test_seq1_no_path():
-    returncode, stdout, stderr = bb.align_sam(idx, no_path, output)
-    assert returncode[0] == 0
+    returncode = bb.align_sam(idx, no_path, output)
+    assert returncode == 0
 
 def test_output_no_path():
-    returncode, stdout, stderr = bb.align_sam(idx, seq1, no_path)
-    assert returncode[0] == 0
+    returncode = bb.align_sam(idx, seq1, no_path)
+    assert returncode == 0
 
 def test_seq1_seq2_no_path():
-    returncode, stdout, stderr = bb.align_sam(idx, no_path, output, seq2=no_path)
-    assert returncode[0] == 0
+    returncode = bb.align_sam(idx, no_path, output, seq2=no_path)
+    assert returncode == 0
 
 def test_seq2_no_path():
-    returncode, stdout, stderr = bb.align_sam(idx, seq1, output, seq2=no_path)
-    assert returncode[0] == 0
+    returncode = bb.align_sam(idx, seq1, output, seq2=no_path)
+    assert returncode == 0
 
 def test_sam_1():
-    returncode, stdout, stderr = bb.align_sam(idx, seq1, output)
-    assert returncode[0] == 0
+    returncode = bb.align_sam(idx, seq1, output)
+    assert returncode == 0
 
 def test_sam_2():
-    returncode, stdout, stderr = bb.align_sam(idx, seq1, output, seq2=seq2)
-    assert returncode[0] == 0
+    returncode = bb.align_sam(idx, seq1, output, seq2=seq2)
+    assert returncode == 0
 
 def test_bam_1():
-    returncode, stdout, stderr = bb.align_bam(idx, seq1, output)
-    assert returncode[0] == 0
+    returncode = bb.align_bam(idx, seq1, output)
+    assert returncode == 0
 
 def test_bam_2():
-    returncode, stdout, stderr = bb.align_bam(idx, seq1, output, seq2=seq2)
-    assert returncode[0] == 0
+    returncode = bb.align_bam(idx, seq1, output, seq2=seq2)
+    assert returncode == 0

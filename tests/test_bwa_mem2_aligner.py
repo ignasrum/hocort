@@ -13,49 +13,47 @@ seq2 = f'{path}/test_data/sequences/sequences2.fastq'
 no_path = ''
 
 def test_build_idx():
-    returncode, stdout, stderr = bwa_mem2.build_index(output, fasta)
-    assert returncode[0] == 0
+    returncode = bwa_mem2.build_index(output, fasta)
+    assert returncode == 0
 
 def test_build_idx_no_input():
-    returncode, stdout, stderr = bwa_mem2.build_index(output, no_path)
-    assert returncode[0] == 1
+    returncode = bwa_mem2.build_index(output, no_path)
+    assert returncode == 1
 
 def test_idx_no_path():
-    returncode, stdout, stderr = bwa_mem2.align_sam(no_path, seq1, output)
-    print(stdout[0])
-    print(stderr[0])
-    assert returncode[0] == 1
+    returncode = bwa_mem2.align_sam(no_path, seq1, output)
+    assert returncode == 1
 
 def test_seq1_no_path():
-    returncode, stdout, stderr = bwa_mem2.align_sam(idx, no_path, output)
-    assert returncode[0] == -11
+    returncode = bwa_mem2.align_sam(idx, no_path, output)
+    assert returncode == -11
 
 def test_output_no_path():
-    returncode, stdout, stderr = bwa_mem2.align_sam(idx, seq1, no_path)
-    assert returncode[0] == 1
+    returncode = bwa_mem2.align_sam(idx, seq1, no_path)
+    assert returncode == 1
 
 def test_seq1_seq2_no_path():
-    returncode, stdout, stderr = bwa_mem2.align_sam(idx, no_path, output, seq2=no_path)
-    assert returncode[0] == -11
+    returncode = bwa_mem2.align_sam(idx, no_path, output, seq2=no_path)
+    assert returncode == -11
 
 def test_seq2_no_path():
-    returncode, stdout, stderr = bwa_mem2.align_sam(idx, seq1, output, seq2=no_path)
-    assert returncode[0] == 0
+    returncode = bwa_mem2.align_sam(idx, seq1, output, seq2=no_path)
+    assert returncode == 0
 
 def test_sam_1():
-    returncode, stdout, stderr = bwa_mem2.align_sam(idx, seq1, output)
-    assert returncode[0] == 0
+    returncode = bwa_mem2.align_sam(idx, seq1, output)
+    assert returncode == 0
 
 def test_sam_2():
-    returncode, stdout, stderr = bwa_mem2.align_sam(idx, seq1, output, seq2=seq2)
-    assert returncode[0] == 0
+    returncode = bwa_mem2.align_sam(idx, seq1, output, seq2=seq2)
+    assert returncode == 0
 
 def test_bam_1():
-    returncode, stdout, stderr = bwa_mem2.align_bam(idx, seq1, output)
+    returncode = bwa_mem2.align_bam(idx, seq1, output)
     assert returncode[0] == 0
     assert returncode[1] == 0
 
 def test_bam_2():
-    returncode, stdout, stderr = bwa_mem2.align_bam(idx, seq1, output, seq2=seq2)
+    returncode = bwa_mem2.align_bam(idx, seq1, output, seq2=seq2)
     assert returncode[0] == 0
     assert returncode[1] == 0

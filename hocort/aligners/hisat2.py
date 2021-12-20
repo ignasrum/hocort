@@ -69,7 +69,7 @@ class HISAT2(Aligner):
             cmd += ['-1', seq1, '-2', seq2]
         else: cmd += ['-U', seq1]
 
-        returncode, stdout, stderr = exe.execute(cmd, decode_stderr=True)
+        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
         logger.info('\n' + stdout[0])
         logger.info('\n' + stderr[0])
         return returncode[0]
@@ -106,7 +106,7 @@ class HISAT2(Aligner):
 
         cmd2 = ['samtools', 'view', '-@', str(threads), '-b', '-o', output]
 
-        returncode, stdout, stderr = exe.execute_pipe(cmd1, cmd2, decode_stderr=True)
+        returncode, stdout, stderr = exe.execute_pipe(cmd1, cmd2, decode_stdout=True, decode_stderr=True)
         logger.info('\n' + stderr[0])
         logger.info('\n' + stdout[0])
         logger.info('\n' + stderr[1])

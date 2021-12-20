@@ -80,17 +80,17 @@ class BBMap(Pipeline):
 
         self.logger.info('Aligning reads with BBMap')
         if intermediary == 'BAM':
-            returncode, stdout, stderr = bb.align_bam(idx, seq1, bbmap_output, seq2=seq2, threads=threads, options=options)
+            returncode = bb.align_bam(idx, seq1, bbmap_output, seq2=seq2, threads=threads, options=options)
             bbmap_output += '.bam'
-            if returncode[0] != 0:
+            if returncode != 0:
                 self.logger.error('Pipeline was terminated')
                 return 1
             self.logger.info('Extracting sequence ids')
             query_names = BAM.extract_ids(bbmap_output, mapping_quality=mapq, threads=threads, add_slash=add_slash)
         else:
-            returncode, stdout, stderr = bb.align_sam(idx, seq1, bbmap_output, seq2=seq2, threads=threads, options=options)
+            returncode = bb.align_sam(idx, seq1, bbmap_output, seq2=seq2, threads=threads, options=options)
             bbmap_output += '.sam'
-            if returncode[0] != 0:
+            if returncode != 0:
                 self.logger.error('Pipeline was terminated')
                 return 1
             self.logger.info('Extracting sequence ids')

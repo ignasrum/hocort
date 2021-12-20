@@ -80,8 +80,8 @@ class Kraken2(Pipeline):
             options = []
 
         self.logger.info('Classifying reads with Kraken2')
-        returncode, stdout, stderr = kr2.classify(idx, seq1, class_out, unclass_out, seq2=seq2, threads=threads, options=options)
-        if returncode[0] != 0:
+        returncode = kr2.classify(idx, seq1, class_out, unclass_out, seq2=seq2, threads=threads, options=options)
+        if returncode != 0:
             self.logger.error('Pipeline was terminated')
             return 1
 

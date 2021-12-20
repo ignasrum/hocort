@@ -13,54 +13,45 @@ seq2 = f'{path}/test_data/sequences/sequences2.fastq'
 no_path = ''
 
 def test_build_idx():
-    returncode, stdout, stderr = STAR.build_index(output, fasta)
-    assert returncode[0] == 0
+    returncode = STAR.build_index(output, fasta)
+    assert returncode == 0
 
 def test_build_idx_no_input():
-    returncode, stdout, stderr = STAR.build_index(output, no_path)
-    assert returncode[0] == 102
+    returncode = STAR.build_index(output, no_path)
+    assert returncode == 102
 
 def test_idx_no_path():
-    returncode, stdout, stderr = STAR.align_sam(no_path, seq1, output)
-    print(stderr[0])
-    assert returncode[0] == 102
+    returncode = STAR.align_sam(no_path, seq1, output)
+    assert returncode == 102
 
 def test_seq1_no_path():
-    returncode, stdout, stderr = STAR.align_sam(idx, no_path, output)
-    print(stderr[0])
-    assert returncode[0] == 102
+    returncode = STAR.align_sam(idx, no_path, output)
+    assert returncode == 102
 
 def test_output_no_path():
-    returncode, stdout, stderr = STAR.align_sam(idx, seq1, no_path)
-    print(stderr[0])
-    assert returncode[0] == 102
+    returncode = STAR.align_sam(idx, seq1, no_path)
+    assert returncode == 102
 
 def test_seq1_seq2_no_path():
-    returncode, stdout, stderr = STAR.align_sam(idx, no_path, output, seq2=no_path)
-    print(stderr[0])
-    assert returncode[0] == 102
+    returncode = STAR.align_sam(idx, no_path, output, seq2=no_path)
+    assert returncode == 102
 
 def test_seq2_no_path():
-    returncode, stdout, stderr = STAR.align_sam(idx, seq1, output, seq2=no_path)
-    print(stderr[0])
-    assert returncode[0] == 0
+    returncode = STAR.align_sam(idx, seq1, output, seq2=no_path)
+    assert returncode == 0
 
 def test_sam_1():
-    returncode, stdout, stderr = STAR.align_sam(idx, seq1, output)
-    print(stderr[0])
-    assert returncode[0] == 0
+    returncode = STAR.align_sam(idx, seq1, output)
+    assert returncode == 0
 
 def test_sam_2():
-    returncode, stdout, stderr = STAR.align_sam(idx, seq1, output, seq2=seq2)
-    print(stderr[0])
-    assert returncode[0] == 0
+    returncode = STAR.align_sam(idx, seq1, output, seq2=seq2)
+    assert returncode == 0
 
 def test_bam_1():
-    returncode, stdout, stderr = STAR.align_bam(idx, seq1, output)
-    print(stderr[0])
-    assert returncode[0] == 0
+    returncode = STAR.align_bam(idx, seq1, output)
+    assert returncode == 0
 
 def test_bam_2():
-    returncode, stdout, stderr = STAR.align_bam(idx, seq1, output, seq2=seq2)
-    print(stderr[0])
-    assert returncode[0] == 0
+    returncode = STAR.align_bam(idx, seq1, output, seq2=seq2)
+    assert returncode == 0

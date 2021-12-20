@@ -80,16 +80,16 @@ class STAR(Pipeline):
 
         self.logger.info('Aligning reads with STAR')
         if intermediary == 'BAM':
-            returncode, stdout, stderr = star.align_bam(idx, seq1, output_path, seq2=seq2, threads=threads, options=options)
-            if returncode[0] != 0:
+            returncode = star.align_bam(idx, seq1, output_path, seq2=seq2, threads=threads, options=options)
+            if returncode != 0:
                 self.logger.error('Pipeline was terminated')
                 return 1
             self.logger.info('Extracting sequence ids')
             output_file = f'{self.temp_dir.name}/Aligned.out.bam'
             query_names = BAM.extract_ids(output_file, mapping_quality=mapq, threads=threads, add_slash=add_slash)
         else:
-            returncode, stdout, stderr = star.align_sam(idx, seq1, output_path, seq2=seq2, threads=threads, options=options)
-            if returncode[0] != 0:
+            returncode = star.align_sam(idx, seq1, output_path, seq2=seq2, threads=threads, options=options)
+            if returncode != 0:
                 self.logger.error('Pipeline was terminated')
                 return 1
             self.logger.info('Extracting sequence ids')
