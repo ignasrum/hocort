@@ -58,11 +58,9 @@ class HelpAction(Action):
         """
         parser.print_help()
 
-        print('\nAvailable aligners:')
+        print('\nAvailable tools:')
         for aligner in aligners:
             print(f'    {aligner}')
-
-        print('\nAvailable classifiers:')
         for classifier in classifiers:
             print(f'    {classifier}')
 
@@ -177,11 +175,11 @@ def main():
     s = os.path.split(out)
     out_dir = s[0]
     basename = s[1]
+    if basename == '' or basename == out:
+        logger.error(f'No basename was given (dir/basename): {basename}')
+        return 1
     if not os.path.isdir(out_dir):
         logger.error(f'Output path does not exist: {out}')
-        return 1
-    if basename == '':
-        logger.error(f'No basename was given (dir/basename): {basename}')
         return 1
 
     try:
