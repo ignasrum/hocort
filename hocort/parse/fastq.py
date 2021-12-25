@@ -36,8 +36,8 @@ class FastQ:
         include_arg = 't' if include else 'f'
         cmd = ['filterbyname.sh', f'in={input_path}', f'out={output_path}', f'names={filter_path}', f'include={include_arg}', 'ow=t'] + options
 
-        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
-        logger.info('\n' + stdout[0])
-        logger.info('\n' + stderr[0])
-        return returncode[0]
+        returncode, stdout, stderr = exe.execute(cmd)
+        logger.info('\n' + stdout)
+        logger.info('\n' + stderr)
+        return returncode
 

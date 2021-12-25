@@ -36,40 +36,37 @@ class Kraken2(Classifier):
             # kraken2-build --threads n --download-taxonomy --db database
         logger.info('Downloading taxonomy, this may take a while...')
         cmd1 = ['kraken2-build', '--threads', str(threads), '--download-taxonomy', '--db', path_out]
-        returncode1, stdout1, stderr1 = exe.execute(cmd1, decode_stdout=True, decode_stderr=True)
-        logger.info('\n' + stdout1[0])
-        logger.info('\n' + stderr1[0])
-        if(returncode1[0] != 0): return returncode1[0], stdout1[0], stderr1[0]
+        returncode1, stdout1, stderr1 = exe.execute(cmd1)
+        logger.info('\n' + stdout1)
+        logger.info('\n' + stderr1)
+        if(returncode1 != 0): return returncode1
 
         # 2. add fasta to library
             # kraken2-build --threads n --add-to-library reference.fna --db database
         logger.info('Adding reference fasta to library...')
         cmd2 = ['kraken2-build', '--threads', str(threads), '--add-to-library', fasta_in, '--db', path_out]
-        returncode2, stdout2, stderr2 = exe.execute(cmd2, decode_stdout=True, decode_stderr=True)
-        logger.info('\n' + stdout2[0])
-        logger.info('\n' + stderr2[0])
-        if(returncode2[0] != 0): return returncode2[0], stdout2[0], stderr2[0]
+        returncode2, stdout2, stderr2 = exe.execute(cmd2)
+        logger.info('\n' + stdout2)
+        logger.info('\n' + stderr2)
+        if(returncode2 != 0): return returncode2
 
         # 3. build db from library
             # kraken2-build --threads n --build --db database
         logger.info('Building database...')
         cmd3 = ['kraken2-build', '--threads', str(threads), '--build', '--db', path_out]
-        returncode3, stdout3, stderr3 = exe.execute(cmd3, decode_stdout=True, decode_stderr=True)
-        logger.info('\n' + stdout3[0])
-        logger.info('\n' + stderr3[0])
-        if(returncode3[0] != 0): return returncode3[0], stdout3[0], stderr3[0]
+        returncode3, stdout3, stderr3 = exe.execute(cmd3)
+        logger.info('\n' + stdout3)
+        logger.info('\n' + stderr3)
+        if(returncode3 != 0): return returncode3
 
         # 4. clean up unnecessary files
             # kraken2-build --threads n --clean --db database 
         logger.info('Cleaning up...')
         cmd4 = ['kraken2-build', '--threads', str(threads), '--clean', '--db', path_out]
-        returncode4, stdout4, stderr4 = exe.execute(cmd4, decode_stdout=True, decode_stderr=True)
-        logger.info('\n' + stdout4[0])
-        logger.info('\n' + stderr4[0])
-        if(returncode4[0] != 0): return returncode4[0], stdout4[0], stderr4[0]
-
-        stdout = stdout1[0] + stdout2[0] + stdout3[0] + stdout4[0]
-        stderr = stderr1[0] + stderr2[0] + stderr3[0] + stderr4[0]
+        returncode4, stdout4, stderr4 = exe.execute(cmd4)
+        logger.info('\n' + stdout4)
+        logger.info('\n' + stderr4)
+        if(returncode4 != 0): return returncode4
 
         return 0
 
@@ -105,7 +102,8 @@ class Kraken2(Classifier):
             cmd += ['--paired', seq1, seq2]
         else: cmd += [seq1]
 
-        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
-        logger.info('\n' + stdout[0])
-        logger.info('\n' + stderr[0])
-        return returncode[0]
+        returncode, stdout, stderr = exe.execute(cmd)
+        logger.info('\n' + stdout)
+        logger.info('\n' + stderr)
+
+        return returncode

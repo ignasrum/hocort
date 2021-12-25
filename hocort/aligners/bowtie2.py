@@ -33,10 +33,11 @@ class Bowtie2(Aligner):
 
         """
         cmd = ['bowtie2-build'] + options + ['--threads', str(threads), fasta_in, path_out]
-        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
-        logger.info('\n' + stdout[0])
-        logger.info('\n' + stderr[0])
-        return returncode[0]
+        returncode, stdout, stderr = exe.execute(cmd)
+        logger.info('\n' + stdout)
+        logger.info('\n' + stderr)
+
+        return returncode
 
     def align_sam(index, seq1, output, seq2=None, threads=1, options=[]):
         """
@@ -68,10 +69,11 @@ class Bowtie2(Aligner):
             cmd += ['-1', seq1, '-2', seq2]
         else: cmd += ['-U', seq1]
 
-        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
-        logger.info('\n' + stdout[0])
-        logger.info('\n' + stderr[0])
-        return returncode[0]
+        returncode, stdout, stderr = exe.execute(cmd)
+        logger.info('\n' + stdout)
+        logger.info('\n' + stderr)
+
+        return returncode
 
     def align_bam(index, seq1, output, seq2=None, threads=1, options=[]):
         """
@@ -94,7 +96,7 @@ class Bowtie2(Aligner):
 
         Returns
         -------
-        [bowtie2_returncode, samtools_returncode] : list of ints
+        (bowtie2_returncode, samtools_returncode) : tuple of ints
             Resulting returncodes after the processes are finished.
 
         """
@@ -105,8 +107,9 @@ class Bowtie2(Aligner):
 
         cmd2 = ['samtools', 'view', '-@', str(threads), '-b', '-o', output]
 
-        returncode, stdout, stderr = exe.execute_pipe(cmd1, cmd2, decode_stdout=True, decode_stderr=True)
+        returncode, stdout, stderr = exe.execute_pipe(cmd1, cmd2)
         logger.info('\n' + stderr[0])
-        logger.info('\n' + stdout[0])
+        logger.info('\n' + stdout)
         logger.info('\n' + stderr[1])
+
         return returncode

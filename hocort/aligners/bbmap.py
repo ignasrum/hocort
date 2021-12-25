@@ -34,10 +34,11 @@ class BBMap(Aligner):
         """
         cmd = ['bbmap.sh', f'threads={str(threads)}', f'ref={fasta_in}', f'path={path_out}']
 
-        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
-        logger.info('\n' + stdout[0])
-        logger.info('\n' + stderr[0])
-        return returncode[0]
+        returncode, stdout, stderr = exe.execute(cmd)
+        logger.info('\n' + stdout)
+        logger.info('\n' + stderr)
+
+        return returncode
 
     def align_sam(index, seq1, output, seq2=None, threads=1, options=[]):
         """
@@ -70,10 +71,11 @@ class BBMap(Aligner):
         else: cmd += [f'in={seq1}']
         cmd += options
 
-        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
-        logger.info('\n' + stdout[0])
-        logger.info('\n' + stderr[0])
-        return returncode[0]
+        returncode, stdout, stderr = exe.execute(cmd)
+        logger.info('\n' + stdout)
+        logger.info('\n' + stderr)
+
+        return returncode
 
     def align_bam(index, seq1, output, seq2=None, threads=1, options=[]):
         """
@@ -106,7 +108,8 @@ class BBMap(Aligner):
         else: cmd += [f'in={seq1}']
         cmd += options
 
-        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
-        logger.info('\n' + stdout[0])
-        logger.info('\n' + stderr[0])
-        return returncode[0]
+        returncode, stdout, stderr = exe.execute(cmd)
+        logger.info('\n' + stdout)
+        logger.info('\n' + stderr)
+
+        return returncode

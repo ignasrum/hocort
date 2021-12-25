@@ -192,9 +192,11 @@ def main():
             tool_build_index = classifiers[tool].build_index
         else:
             logger.error(f'Invalid tool: {tool}')
-            return
+            return 1
         logger.info(f'Building index with {tool}')
         returncode = tool_build_index(out, ref, threads=threads)
         logger.info(f'Process exited with returncode: {returncode}')
+        return returncode
     except Exception as e:
         logger.error(e)
+        return 1

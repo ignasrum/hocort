@@ -34,10 +34,11 @@ class STAR(Aligner):
         """
         cmd = ['STAR', '--runThreadN', str(threads)] + options + ['--runMode', 'genomeGenerate', '--genomeDir', path_out, '--genomeFastaFiles', fasta_in]
 
-        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
-        logger.info('\n' + stdout[0])
-        logger.info('\n' + stderr[0])
-        return returncode[0]
+        returncode, stdout, stderr = exe.execute(cmd)
+        logger.info('\n' + stdout)
+        logger.info('\n' + stderr)
+
+        return returncode
 
     def align_sam(index, seq1, output, seq2=None, threads=1, options=[]):
         """
@@ -69,10 +70,11 @@ class STAR(Aligner):
         if seq2:
             cmd += [seq2]
 
-        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
-        logger.info('\n' + stdout[0])
-        logger.info('\n' + stderr[0])
-        return returncode[0]
+        returncode, stdout, stderr = exe.execute(cmd)
+        logger.info('\n' + stdout)
+        logger.info('\n' + stderr)
+
+        return returncode
 
     def align_bam(index, seq1, output, seq2=None, threads=1, options=[]):
         """
@@ -104,7 +106,8 @@ class STAR(Aligner):
         if seq2:
             cmd += [seq2]
 
-        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
-        logger.info('\n' + stdout[0])
-        logger.info('\n' + stderr[0])
-        return returncode[0]
+        returncode, stdout, stderr = exe.execute(cmd)
+        logger.info('\n' + stdout)
+        logger.info('\n' + stderr)
+
+        return returncode

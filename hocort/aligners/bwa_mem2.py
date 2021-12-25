@@ -32,10 +32,11 @@ class BWA_MEM2(Aligner):
         """
         cmd = ['bwa-mem2', 'index', '-p', path_out, fasta_in]
 
-        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
-        logger.info('\n' + stdout[0])
-        logger.info('\n' + stderr[0])
-        return returncode[0]
+        returncode, stdout, stderr = exe.execute(cmd)
+        logger.info('\n' + stdout)
+        logger.info('\n' + stderr)
+
+        return returncode
 
     def align_sam(index, seq1, output, seq2=None, threads=1, options=[]):
         """
@@ -67,10 +68,11 @@ class BWA_MEM2(Aligner):
             cmd += [seq2]
         cmd += options
 
-        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
-        logger.info('\n' + stdout[0])
-        logger.info('\n' + stderr[0])
-        return returncode[0]
+        returncode, stdout, stderr = exe.execute(cmd)
+        logger.info('\n' + stdout)
+        logger.info('\n' + stderr)
+
+        return returncode
 
     def align_bam(index, seq1, output, seq2=None, threads=1, options=[]):
         """
@@ -93,7 +95,7 @@ class BWA_MEM2(Aligner):
 
         Returns
         -------
-        [bwa_mem2_returncode, samtools_returncode] : list of ints
+        (bwa_mem2_returncode, samtools_returncode) : tuple of ints
             Resulting returncodes after the processes are finished.
 
         """
@@ -104,8 +106,9 @@ class BWA_MEM2(Aligner):
 
         cmd2 = ['samtools', 'view', '-@', str(threads), '-b', '-o', output]
 
-        returncode, stdout, stderr = exe.execute_pipe(cmd1, cmd2, decode_stdout=True, decode_stderr=True)
+        returncode, stdout, stderr = exe.execute_pipe(cmd1, cmd2)
         logger.info('\n' + stderr[0])
-        logger.info('\n' + stdout[0])
+        logger.info('\n' + stdout)
         logger.info('\n' + stderr[1])
+
         return returncode

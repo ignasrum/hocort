@@ -34,10 +34,11 @@ class Minimap2(Aligner):
         """
         cmd = ['minimap2', '-t', str(threads), '-d', path_out] + options + [fasta_in]
 
-        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
-        logger.info('\n' + stdout[0])
-        logger.info('\n' + stderr[0])
-        return returncode[0]
+        returncode, stdout, stderr = exe.execute(cmd)
+        logger.info('\n' + stdout)
+        logger.info('\n' + stderr)
+
+        return returncode
 
     def align_sam(index, seq1, output, seq2=None, threads=1, options=[]):
         """
@@ -69,10 +70,11 @@ class Minimap2(Aligner):
         if seq2:
             cmd += [seq2]
 
-        returncode, stdout, stderr = exe.execute(cmd, decode_stdout=True, decode_stderr=True)
-        logger.info('\n' + stdout[0])
-        logger.info('\n' + stderr[0])
-        return returncode[0]
+        returncode, stdout, stderr = exe.execute(cmd)
+        logger.info('\n' + stdout)
+        logger.info('\n' + stderr)
+
+        return returncode
 
     def align_bam(index, seq1, output, seq2=None, threads=1, options=[]):
         """
@@ -95,7 +97,7 @@ class Minimap2(Aligner):
 
         Returns
         -------
-        [minimap2_returncode, samtools_returncode] : list of ints
+        (minimap2_returncode, samtools_returncode) : tuple of ints
             Resulting returncodes after the processes are finished.
 
         """
@@ -106,8 +108,9 @@ class Minimap2(Aligner):
 
         cmd2 = ['samtools', 'view', '-@', str(threads), '-b', '-o', output]
 
-        returncode, stdout, stderr = exe.execute_pipe(cmd1, cmd2, decode_stdout=True, decode_stderr=True)
+        returncode, stdout, stderr = exe.execute_pipe(cmd1, cmd2)
         logger.info('\n' + stderr[0])
-        logger.info('\n' + stdout[0])
+        logger.info('\n' + stdout)
         logger.info('\n' + stderr[1])
+
         return returncode
