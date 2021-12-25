@@ -1,2 +1,4 @@
 hocort/__pycache__/
 tests/__pycache__/
+build
+hocort.egg-info

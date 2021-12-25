@@ -103,7 +103,7 @@ class Kraken2(Classifier):
         else: cmd += [seq1]
 
         returncode, stdout, stderr = exe.execute(cmd)
-        logger.info('\n' + stdout)
+        #logger.info('\n' + stdout)
         logger.info('\n' + stderr)
 
         return returncode
