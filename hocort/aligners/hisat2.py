@@ -32,6 +32,7 @@ class HISAT2(Aligner):
             Resulting returncode after the process is finished.
 
         """
+        if not path_out or not fasta_in: return 1
         cmd = ['hisat2-build'] + options + ['-p', str(threads), fasta_in, path_out]
 
         returncode, stdout, stderr = exe.execute(cmd)
@@ -65,6 +66,7 @@ class HISAT2(Aligner):
             Resulting returncode after the process is finished.
 
         """
+        if not index or not seq1 or not output: return 1
         cmd = ['hisat2', '-p', str(threads), '-x', index, '-S', output] + options
         if seq2:
             cmd += ['-1', seq1, '-2', seq2]
@@ -101,6 +103,7 @@ class HISAT2(Aligner):
             Resulting returncodes after the processes are finished.
 
         """
+        if not index or not seq1 or not output: return 1
         cmd1 = ['hisat2', '-p', str(threads), '-x', index] + options
         if seq2:
             cmd1 += ['-1', seq1, '-2', seq2]

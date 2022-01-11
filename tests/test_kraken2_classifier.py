@@ -16,10 +16,34 @@ no_path = ''
 
 def test_idx_no_path():
     returncode = kr2.classify(no_path, seq1, class_out, unclass_out)
+    assert returncode == 1
+
+def test_idx_path():
+    returncode = kr2.classify(temp_dir.name, seq1, class_out, unclass_out)
     assert returncode == 2
 
 def test_seq1_no_path():
     returncode = kr2.classify(idx, no_path, class_out, unclass_out)
+    assert returncode == 1
+
+def test_seq1_path():
+    returncode = kr2.classify(idx, temp_dir.name, class_out, unclass_out)
+    assert returncode == 0
+
+def test_class_out_no_path():
+    returncode = kr2.classify(idx, seq1, no_path, unclass_out)
+    assert returncode == 1
+
+def test_class_out_path():
+    returncode = kr2.classify(idx, seq1, temp_dir.name, unclass_out)
+    assert returncode == 0
+
+def test_unclass_out_no_path():
+    returncode = kr2.classify(idx, seq1, class_out, no_path)
+    assert returncode == 1
+
+def test_unclass_out_path():
+    returncode = kr2.classify(idx, seq1, class_out, temp_dir.name)
     assert returncode == 0
 
 def test_output_no_path():
@@ -28,6 +52,10 @@ def test_output_no_path():
 
 def test_seq1_seq2_no_path():
     returncode = kr2.classify(idx, no_path, class_out, unclass_out, seq2=no_path)
+    assert returncode == 1
+
+def test_seq1_seq2_path():
+    returncode = kr2.classify(idx, temp_dir.name, class_out, unclass_out, seq2=temp_dir.name)
     assert returncode == 0
 
 def test_seq2_no_path():

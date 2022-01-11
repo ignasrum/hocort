@@ -32,6 +32,7 @@ class Kraken2(Classifier):
             Resulting returncode after the process is finished.
 
         """
+        if not path_out or not fasta_in: return 1
         # 1. download taxonomy
             # kraken2-build --threads n --download-taxonomy --db database
         logger.info('Downloading taxonomy, this may take a while...')
@@ -97,6 +98,7 @@ class Kraken2(Classifier):
             Resulting returncode after the process is finished.
 
         """
+        if not index or not seq1 or not classified_out or not unclassified_out: return 1
         cmd = ['kraken2', '--threads', str(threads), '--db', index, '--classified-out', classified_out, '--unclassified-out', unclassified_out] + options
         if seq2:
             cmd += ['--paired', seq1, seq2]

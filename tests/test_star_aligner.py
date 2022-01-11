@@ -18,23 +18,23 @@ def test_build_idx():
 
 def test_build_idx_no_input():
     returncode = STAR.build_index(output, no_path)
-    assert returncode == 102
+    assert returncode == 1
 
 def test_idx_no_path():
     returncode = STAR.align_sam(no_path, seq1, output)
-    assert returncode == 102
+    assert returncode == 1
 
 def test_seq1_no_path():
     returncode = STAR.align_sam(idx, no_path, output)
-    assert returncode == 102
+    assert returncode == 1
 
 def test_output_no_path():
     returncode = STAR.align_sam(idx, seq1, no_path)
-    assert returncode == 102
+    assert returncode == 1
 
 def test_seq1_seq2_no_path():
     returncode = STAR.align_sam(idx, no_path, output, seq2=no_path)
-    assert returncode == 102
+    assert returncode == 1
 
 def test_seq2_no_path():
     returncode = STAR.align_sam(idx, seq1, output, seq2=no_path)

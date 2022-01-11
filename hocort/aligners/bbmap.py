@@ -32,6 +32,7 @@ class BBMap(Aligner):
             Resulting returncode after the process is finished.
 
         """
+        if not path_out or not fasta_in: return 1
         cmd = ['bbmap.sh', f'threads={str(threads)}', f'ref={fasta_in}', f'path={path_out}']
 
         returncode, stdout, stderr = exe.execute(cmd)
@@ -65,6 +66,7 @@ class BBMap(Aligner):
             Resulting returncode after the process is finished.
 
         """
+        if not index or not seq1 or not output: return 1
         cmd = ['bbmap.sh', f'threads={str(threads)}', f'path={index}', f'out={output}.sam']
         if seq2:
             cmd += [f'in={seq1}', f'in2={seq2}']
@@ -102,6 +104,7 @@ class BBMap(Aligner):
             Resulting returncode after the process is finished.
 
         """
+        if not index or not seq1 or not output: return 1
         cmd = ['bbmap.sh', f'threads={str(threads)}', f'path={index}', f'out={output}.bam']
         if seq2:
             cmd += [f'in={seq1}', f'in2={seq2}']

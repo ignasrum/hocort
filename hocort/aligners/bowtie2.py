@@ -32,6 +32,7 @@ class Bowtie2(Aligner):
             Resulting returncode after the process is finished.
 
         """
+        if not path_out or not fasta_in: return 1
         cmd = ['bowtie2-build'] + options + ['--threads', str(threads), fasta_in, path_out]
         returncode, stdout, stderr = exe.execute(cmd)
         logger.info('\n' + stdout)
@@ -64,6 +65,7 @@ class Bowtie2(Aligner):
             Resulting returncode after the process is finished.
 
         """
+        if not index or not seq1 or not output: return 1
         cmd = ['bowtie2', '-p', str(threads), '-x', index, '-q', '-S', output] + options
         if seq2:
             cmd += ['-1', seq1, '-2', seq2]
@@ -100,6 +102,7 @@ class Bowtie2(Aligner):
             Resulting returncodes after the processes are finished.
 
         """
+        if not index or not seq1 or not output: return 1
         cmd1 = ['bowtie2', '-p', str(threads), '-x', index, '-q'] + options
         if seq2:
             cmd1 += ['-1', seq1, '-2', seq2]

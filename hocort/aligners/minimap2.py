@@ -32,6 +32,7 @@ class Minimap2(Aligner):
             Resulting returncode after the process is finished.
 
         """
+        if not path_out or not fasta_in: return 1
         cmd = ['minimap2', '-t', str(threads), '-d', path_out] + options + [fasta_in]
 
         returncode, stdout, stderr = exe.execute(cmd)
@@ -65,6 +66,7 @@ class Minimap2(Aligner):
             Resulting returncode after the process is finished.
 
         """
+        if not index or not seq1 or not output: return 1
         cmd = ['minimap2', '-t', str(threads), '-a', '-o', output] + options
         cmd += [index, seq1]
         if seq2:
@@ -101,6 +103,7 @@ class Minimap2(Aligner):
             Resulting returncodes after the processes are finished.
 
         """
+        if not index or not seq1 or not output: return 1
         cmd1 = ['minimap2', '-t', str(threads), '-a'] + options
         cmd1 += [index, seq1]
         if seq2:

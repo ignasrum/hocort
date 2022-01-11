@@ -26,7 +26,7 @@ def test_pipeline_idx_no_path():
 
 def test_pipeline_seq1_no_path():
     returncode = Kraken2().run(idx, no_path, out)
-    assert returncode == 0
+    assert returncode == 1
 
 def test_pipeline_out1_no_path():
     returncode = Kraken2().run(idx, seq1, no_path)
@@ -34,7 +34,7 @@ def test_pipeline_out1_no_path():
 
 def test_pipeline_seq1_seq2_no_path():
     returncode = Kraken2().run(idx, no_path, out, seq2=no_path)
-    assert returncode == 0
+    assert returncode == 1
 
 def test_pipeline_seq2_no_path():
     returncode = Kraken2().run(idx, seq1, out, seq2=no_path)

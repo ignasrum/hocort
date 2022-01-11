@@ -27,15 +27,27 @@ def test_idx_no_path():
 
 def test_seq1_no_path():
     returncode = bb.align_sam(idx, no_path, output)
-    assert returncode == 0
+    assert returncode == 1
+
+def test_seq1_path():
+    returncode = bb.align_sam(idx, temp_dir.name, output)
+    assert returncode == 1
 
 def test_output_no_path():
     returncode = bb.align_sam(idx, seq1, no_path)
+    assert returncode == 1
+
+def test_output_path():
+    returncode = bb.align_sam(idx, seq1, temp_dir.name)
     assert returncode == 0
 
 def test_seq1_seq2_no_path():
     returncode = bb.align_sam(idx, no_path, output, seq2=no_path)
-    assert returncode == 0
+    assert returncode == 1
+
+def test_seq1_seq2_path():
+    returncode = bb.align_sam(idx, temp_dir.name, output, seq2=temp_dir)
+    assert returncode == 2
 
 def test_seq2_no_path():
     returncode = bb.align_sam(idx, seq1, output, seq2=no_path)

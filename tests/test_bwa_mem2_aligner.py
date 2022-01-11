@@ -26,7 +26,11 @@ def test_idx_no_path():
 
 def test_seq1_no_path():
     returncode = bwa_mem2.align_sam(idx, no_path, output)
-    assert returncode == -11
+    assert returncode == 1
+
+def test_seq1_path():
+    returncode = bwa_mem2.align_sam(idx, temp_dir.name, output)
+    assert returncode == 1
 
 def test_output_no_path():
     returncode = bwa_mem2.align_sam(idx, seq1, no_path)
@@ -34,7 +38,11 @@ def test_output_no_path():
 
 def test_seq1_seq2_no_path():
     returncode = bwa_mem2.align_sam(idx, no_path, output, seq2=no_path)
-    assert returncode == -11
+    assert returncode == 1
+
+def test_seq1_seq2_path():
+    returncode = bwa_mem2.align_sam(idx, temp_dir.name, output, seq2=temp_dir.name)
+    assert returncode == 1
 
 def test_seq2_no_path():
     returncode = bwa_mem2.align_sam(idx, seq1, output, seq2=no_path)

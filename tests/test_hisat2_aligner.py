@@ -22,6 +22,10 @@ def test_build_idx_no_input():
 
 def test_idx_no_path():
     returncode = hs2.align_sam(no_path, seq1, output)
+    assert returncode == 1
+
+def test_idx_path():
+    returncode = hs2.align_sam(temp_dir.name, seq1, output)
     assert returncode == 255
 
 def test_seq1_no_path():

@@ -32,6 +32,7 @@ class STAR(Aligner):
             Resulting returncode after the process is finished.
 
         """
+        if not path_out or not fasta_in: return 1
         cmd = ['STAR', '--runThreadN', str(threads)] + options + ['--runMode', 'genomeGenerate', '--genomeDir', path_out, '--genomeFastaFiles', fasta_in]
 
         returncode, stdout, stderr = exe.execute(cmd)
@@ -65,6 +66,7 @@ class STAR(Aligner):
             Resulting returncode after the process is finished.
 
         """
+        if not index or not seq1 or not output: return 1
         cmd = ['STAR', '--runThreadN', str(threads), '--genomeDir', index, '--outFileNamePrefix', output] + options
         cmd += ['--readFilesIn', seq1]
         if seq2:
@@ -101,6 +103,7 @@ class STAR(Aligner):
             Resulting returncode after the process is finished.
 
         """
+        if not index or not seq1 or not output: return 1
         cmd = ['STAR', '--runThreadN', str(threads), '--genomeDir', index, '--outFileNamePrefix', output, '--outSAMtype BAM Unsorted'] + options
         cmd += ['--readFilesIn', seq1]
         if seq2:

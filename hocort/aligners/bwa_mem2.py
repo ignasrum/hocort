@@ -30,6 +30,7 @@ class BWA_MEM2(Aligner):
             Resulting returncode after the process is finished.
 
         """
+        if not path_out or not fasta_in: return 1
         cmd = ['bwa-mem2', 'index', '-p', path_out, fasta_in]
 
         returncode, stdout, stderr = exe.execute(cmd)
@@ -63,6 +64,7 @@ class BWA_MEM2(Aligner):
             Resulting returncode after the process is finished.
 
         """
+        if not index or not seq1 or not output: return 1
         cmd = ['bwa-mem2', 'mem', '-t', str(threads), '-o', output, index, seq1]
         if seq2:
             cmd += [seq2]
@@ -99,6 +101,7 @@ class BWA_MEM2(Aligner):
             Resulting returncodes after the processes are finished.
 
         """
+        if not index or not seq1 or not output: return 1
         cmd1 = ['bwa-mem2', 'mem', '-t', str(threads), index, seq1]
         if seq2:
             cmd1 += [seq2]

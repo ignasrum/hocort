@@ -22,6 +22,10 @@ def test_build_idx_no_input():
 
 def test_idx_no_path():
     returncode = bt2.align_sam(no_path, seq1, output)
+    assert returncode == 1
+
+def test_idx_path():
+    returncode = bt2.align_sam(temp_dir.name, seq1, output)
     assert returncode == 255
 
 def test_seq1_no_path():
@@ -30,7 +34,11 @@ def test_seq1_no_path():
 
 def test_output_no_path():
     returncode = bt2.align_sam(idx, seq1, no_path)
-    assert returncode == 0
+    assert returncode == 1
+
+def test_output_path():
+    returncode = bt2.align_sam(idx, seq1, temp_dir.name)
+    assert returncode == 1
 
 def test_seq1_seq2_no_path():
     returncode = bt2.align_sam(idx, no_path, output, seq2=no_path)

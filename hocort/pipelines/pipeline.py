@@ -78,6 +78,7 @@ class Pipeline(ABC):
 
         """
         seq_ids_output = f'{self.temp_dir.name}/removed.list'
+        if seq2 and not out2: return 1
         try:
             with open(seq_ids_output, 'w') as f:
                 for query in query_names:
