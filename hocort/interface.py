@@ -2,7 +2,6 @@
 Command line user interface for HoCoRT.
 
 """
-from argparse import ArgumentParser
 from argparse import Action
 import sys
 import inspect
@@ -10,6 +9,8 @@ import inspect
 import hocort.pipelines
 import hocort.version as version
 from hocort.logger import Logger
+from hocort.parser import ArgParser
+
 
 # Gets available pipelines from hocort.pipelines
 pipelines = {}
@@ -19,18 +20,15 @@ for pipeline in dir(hocort.pipelines):
         if inspect.isclass(m):
             pipelines[pipeline] = m
 
-
 class HelpAction(Action):
     """
     Called when '-h' or '--help' flags are given.
-
     """
     def __call__(self, parser, namespace, values, option_string=None):
         """
         If a pipeline is selected, its interface is called with the '-h' flag.
         Otherwise, the help message of this interface is printed together with the
         names of pipelines available in hocort.pipelines module.
-
         Parameters
         ----------
         parser : argparse.ArgumentParser
@@ -41,11 +39,9 @@ class HelpAction(Action):
             The command-line arguments with any type conversion applied.
         option_string : string
             The option string which was used to invoke this action.
-
         Returns
         -------
         None
-
         """
         pipeline = namespace.pipeline
         if pipeline != None:
@@ -54,40 +50,37 @@ class HelpAction(Action):
         else:
             parser.print_help()
 
-        print('\nAvailable pipelines:')
-        for pipeline in pipelines:
-            print(f'    {pipeline}')
         parser.exit()
 
-class VersionAction(Action):
+def extra_help():
     """
-    Called when '-v' or '--version' flags are given.
+    Returns string containing some help information about available pipelines.
+
+    Returns
+    -------
+    message : str
+        Message containing information about available pipelines.
 
     """
-    def __call__(self, parser, namespace, values, option_string=None):
-        """
-        When HoCoRT is ran with the '-v' or '--version' flags,
-        the __version__ and __last_modified attributes from hocort.version are written to the command line.
+    message = '\nAvailable pipelines:'
+    for pipeline in pipelines:
+        message += f'\n    {pipeline}'
+    message += '\n'
+    return message
 
-        Parameters
-        ----------
-        parser : argparse.ArgumentParser
-            The object which contains this action.
-        namespace : argparse.Namespace
-            The argparse.Namespace object returned by parse_args().
-        values : list
-            The command-line arguments with any type conversion applied.
-        option_string : string
-            The option string which was used to invoke this action.
+def print_version():
+    """
+    Returns string containing version information.
 
-        Returns
-        -------
-        None
+    Returns
+    -------
+    message : str
+        Message containing version information.
 
-        """
-        print(f'Version: {version.__version__}')
-        print(f'Last modified: {version.__last_modified__}')
-        parser.exit()
+    """
+    message = f'Version: {version.__version__}'
+    message += f'\nLast modified: {version.__last_modified__}'
+    return message
 
 def main():
     """
@@ -98,7 +91,9 @@ def main():
     None
 
     """
-    parser = ArgumentParser(
+    parser = ArgParser(
+        extra_help=extra_help,
+        print_version=print_version,
         prog='HoCoRT',
         description='HoCoRT: A Host Contamination Removal Tool',
         usage='hocort [pipeline] [options]',
@@ -116,20 +111,12 @@ def main():
         help='flag: verbose output'
     )
     parser.add_argument(
-        '-v',
-        '--version',
-        action=VersionAction,
-        nargs=0,
-        help='flag: print version'
-    )
-    parser.add_argument(
         '-h',
         '--help',
         action=HelpAction,
         nargs=0,
         help='flag: print help'
     )
-
     args, unknown_args = parser.parse_known_args()
     pipeline = args.pipeline
     debug = args.debug
@@ -139,6 +126,6 @@ def main():
 
     if pipeline not in pipelines.keys():
         logger.error(f'Invalid pipeline: {pipeline}')
-        return
+        sys.exit(1)
     pipeline_interface = pipelines[pipeline]().interface
     pipeline_interface(unknown_args)

@@ -2,8 +2,6 @@
 Index generation helper tool for HoCoRT.
 
 """
-from argparse import ArgumentParser
-from argparse import Action
 import sys
 import inspect
 import os
@@ -12,6 +10,7 @@ import hocort.aligners
 import hocort.classifiers
 import hocort.version as version
 from hocort.logger import Logger
+from hocort.parser import ArgParser
 
 # Gets available aligners from hocort.aligners
 aligners = {}
@@ -29,72 +28,37 @@ for classifier in dir(hocort.classifiers):
         if inspect.isclass(m):
             classifiers[classifier] = m
 
-
-class HelpAction(Action):
+def extra_help():
     """
-    Called when '-h' or '--help' flags are given.
+    Returns string containing some help information about available tools.
 
-    """
-    def __call__(self, parser, namespace, values, option_string=None):
-        """
-        The help message of this interface is printed together with the
-        names of aligners available in hocort.aligners module.
-
-        Parameters
-        ----------
-        parser : argparse.ArgumentParser
-            The object which contains this action.
-        namespace : argparse.Namespace
-            The argparse.Namespace object returned by parse_args().
-        values : list
-            The command-line arguments with any type conversion applied.
-        option_string : string
-            The option string which was used to invoke this action.
-
-        Returns
-        -------
-        None
-
-        """
-        parser.print_help()
-
-        print('\nAvailable tools:')
-        for aligner in aligners:
-            print(f'    {aligner}')
-        for classifier in classifiers:
-            print(f'    {classifier}')
-
-        parser.exit()
-
-class VersionAction(Action):
-    """
-    Called when '-v' or '--version' flags are given.
+    Returns
+    -------
+    message : str
+        Message containing information about available tools.
 
     """
-    def __call__(self, parser, namespace, values, option_string=None):
-        """
-        When HoCoRT is ran with the '-v' or '--version' flags,
-        the __version__ and __last_modified attributes from hocort.version are written to the command line.
+    message = '\nAvailable tools:'
+    for aligner in aligners:
+        message += f'\n    {aligner}'
+    for classifier in classifiers:
+        message += f'\n    {classifier}'
+    message += '\n'
+    return message
 
-        Parameters
-        ----------
-        parser : argparse.ArgumentParser
-            The object which contains this action.
-        namespace : argparse.Namespace
-            The argparse.Namespace object returned by parse_args().
-        values : list
-            The command-line arguments with any type conversion applied.
-        option_string : string
-            The option string which was used to invoke this action.
+def print_version():
+    """
+    Returns string containing version information.
 
-        Returns
-        -------
-        None
+    Returns
+    -------
+    message : str
+        Message containing version information.
 
-        """
-        print(f'Version: {version.__version__}')
-        print(f'Last modified: {version.__last_modified__}')
-        parser.exit()
+    """
+    message = f'Version: {version.__version__}'
+    message += f'\nLast modified: {version.__last_modified__}'
+    return message
 
 def main():
     """
@@ -105,11 +69,12 @@ def main():
     None
 
     """
-    parser = ArgumentParser(
+    parser = ArgParser(
+        extra_help=extra_help,
+        print_version=print_version,
         prog='HoCoRT',
         description='HoCoRT: A Host Contamination Removal Tool',
-        usage='hocort-index tool -i <fasta> -o <path> [options]',
-        add_help=False
+        usage='hocort-index tool -i <fasta> -o <path> [options]'
     )
     parser.add_argument(
         'tool',
@@ -147,20 +112,6 @@ def main():
         action='store_true',
         help='flag: verbose output'
     )
-    parser.add_argument(
-        '-v',
-        '--version',
-        action=VersionAction,
-        nargs=0,
-        help='flag: print version'
-    )
-    parser.add_argument(
-        '-h',
-        '--help',
-        action=HelpAction,
-        nargs=0,
-        help='flag: print help'
-    )
 
     parsed = parser.parse_args()
     tool = parsed.tool
@@ -177,10 +128,10 @@ def main():
     basename = s[1]
     if basename == '' or basename == out:
         logger.error(f'No basename was given (dir/basename): {basename}')
-        return 1
+        sys.exit(1)
     if not os.path.isdir(out_dir):
         logger.error(f'Output path does not exist: {out}')
-        return 1
+        sys.exit(1)
 
     try:
         tool_build_index = None
@@ -190,11 +141,11 @@ def main():
             tool_build_index = classifiers[tool].build_index
         else:
             logger.error(f'Invalid tool: {tool}')
-            return 1
+            sys.exit(1)
         logger.info(f'Building index with {tool}')
         returncode = tool_build_index(out, ref, threads=threads)
         logger.info(f'Process exited with returncode: {returncode}')
-        return returncode
+        sys.exit(returncode)
     except Exception as e:
         logger.error(e)
-        return 1
+        sys.exit(1)
