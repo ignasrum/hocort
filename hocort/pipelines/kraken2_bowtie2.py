@@ -62,7 +62,7 @@ class Kraken2Bowtie2(Pipeline):
 
         """
         self.debug_log_args(self.run.__name__, locals())
-        self.logger.info(f'Starting pipeline: {self.__class__.__name__}')
+        self.logger.error(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
         kr2_out = self.temp_dir.name
@@ -81,7 +81,7 @@ class Kraken2Bowtie2(Pipeline):
             return 1
 
         end_time = time.time()
-        self.logger.info(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
+        self.logger.error(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return 0
 
     def interface(self, args):

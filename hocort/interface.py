@@ -111,6 +111,12 @@ def main():
         help='flag: verbose output'
     )
     parser.add_argument(
+        '-q',
+        '--quiet',
+        action='store_true',
+        help='flag: quiet output (overrides -d/--debug)'
+    )
+    parser.add_argument(
         '-h',
         '--help',
         action=HelpAction,
@@ -120,8 +126,9 @@ def main():
     args, unknown_args = parser.parse_known_args()
     pipeline = args.pipeline
     debug = args.debug
+    quiet = args.quiet
 
-    logger = Logger(__file__, debug=debug)
+    logger = Logger(__file__, debug=debug, quiet=quiet)
     logger.debug(str(args))
 
     if pipeline not in pipelines.keys():

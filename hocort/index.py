@@ -112,16 +112,23 @@ def main():
         action='store_true',
         help='flag: verbose output'
     )
+    parser.add_argument(
+        '-q',
+        '--quiet',
+        action='store_true',
+        help='flag: quiet output (overrides -d/--debug)'
+    )
 
-    parsed = parser.parse_args()
-    tool = parsed.tool
-    ref = parsed.input
-    out = parsed.output
-    threads = parsed.threads if parsed.threads else 1
-    debug = parsed.debug
+    args = parser.parse_args()
+    tool = args.tool
+    ref = args.input
+    out = args.output
+    threads = args.threads if args.threads else 1
+    debug = args.debug
+    quiet = args.quiet
 
-    logger = Logger(__file__, debug)
-    logger.debug(str(parsed))
+    logger = Logger(__file__, debug=debug, quiet=quiet)
+    logger.debug(str(args))
 
     s = os.path.split(out)
     out_dir = s[0]
@@ -142,9 +149,9 @@ def main():
         else:
             logger.error(f'Invalid tool: {tool}')
             sys.exit(1)
-        logger.info(f'Building index with {tool}')
+        logger.error(f'Building index with {tool}')
         returncode = tool_build_index(out, ref, threads=threads)
-        logger.info(f'Process exited with returncode: {returncode}')
+        logger.error(f'Process exited with returncode: {returncode}')
         sys.exit(returncode)
     except Exception as e:
         logger.error(e)
