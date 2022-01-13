@@ -6,7 +6,7 @@ class Logger:
     Logger class which preconfigures the logging package.
 
     """
-    def __init__(self, name, debug=False, quiet=False):
+    def __init__(self, name, debug=False, quiet=False, filename=None):
         """
         Initializes and preconfigures the logging package.
 
@@ -18,6 +18,8 @@ class Logger:
             Switch to enable/disable debug output mode.
         quiet : bool
             Switch to enable/disable quiet output mode. Only error messages are written.
+        filename : string
+            Filename of log file. If falsy string (empty or None), no log file is created.
 
         Returns
         -------
@@ -28,7 +30,12 @@ class Logger:
         log_level = logging.INFO
         if debug: log_level = logging.DEBUG
         if quiet: log_level = logging.ERROR
-        logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s - %(name)s', level=log_level)
+        format_style = '%(asctime)s - %(levelname)s - %(message)s - %(name)s'
+        filemode = 'a'
+        if filename:
+            logging.basicConfig(filename=filename, filemode=filemode, format=format_style, level=log_level)
+        else:
+            logging.basicConfig(format=format_style, level=log_level)
 
     def info(self, msg):
         """
