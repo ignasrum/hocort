@@ -46,7 +46,7 @@ def extra_help():
     message += '\n'
     return message
 
-def print_version():
+def version_info():
     """
     Returns string containing version information.
 
@@ -71,7 +71,7 @@ def main():
     """
     parser = ArgParser(
         extra_help=extra_help,
-        print_version=print_version,
+        version_info=version_info,
         prog='HoCoRT',
         description='HoCoRT: A Host Contamination Removal Tool',
         usage='hocort-index tool -i <fasta> -o <path> [options]'

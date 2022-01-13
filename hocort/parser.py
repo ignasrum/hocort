@@ -3,18 +3,19 @@ from argparse import Action
 import sys
 
 
-def create_version_action(print_version):
+def create_version_action(version_info):
     """
-    Description
+    Creates custom argparse.Action which prints version information.
 
     Parameters
     ----------
-    print_version : argparse.ArgumentParser
-        The object which contains this action.
+    version_info : function
+        Function which returns a string containing version information.
 
     Returns
     -------
-    None
+    VersionAction : argparse.Action
+        A custom argparse.Action which prints version information.
 
     """
     class VersionAction(Action):
@@ -42,28 +43,75 @@ def create_version_action(print_version):
             None
 
             """
-            print(print_version())
+            print(version_info())
             parser.exit()
     return VersionAction
 
 class ArgParser(ArgumentParser):
-    def __init__(self, extra_help=None, print_version=None, *args, **kwargs):
+    """
+    An extension for argparse.ArgumentParser. Alters some message printing behaviours.
+
+    """
+    def __init__(self, extra_help=None, version_info=None, *args, **kwargs):
+        """
+        Constructor. Creates a version argument.
+
+        Parameters
+        ----------
+        extra_help : function
+            Function which returns a string containing extra help information.
+        version_info : function
+            Function which returns a string containing version information.
+
+        Returns
+        -------
+        None
+
+        """
         self.extra_help = extra_help
         super(ArgParser, self).__init__(*args, **kwargs)
-        if print_version:
+        if version_info:
             self.add_argument(
                 '-v',
                 '--version',
-                action=create_version_action(print_version),
+                action=create_version_action(version_info),
                 nargs=0,
                 help='flag: print version'
             )
 
+    # OVERRIDING
     def print_help(self, file=None):
+        """
+        Prints help information.
+
+        Parameters
+        ----------
+        file : file
+            File where help information is written.
+
+        Returns
+        -------
+        None
+
+        """
         if file is None:
             file = sys.stdout
         message = self.format_help() + self.extra_help() if self.extra_help else self.format_help()
         self._print_message(message, file)
 
+    # OVERRIDING
     def print_usage(self, file=None):
+        """
+        Prints usage information.
+
+        Parameters
+        ----------
+        file : file
+            File where usage information is written.
+
+        Returns
+        -------
+        None
+
+        """
         self.print_help(file)
