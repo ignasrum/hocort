@@ -1,10 +1,10 @@
-from argparse import ArgumentParser
 import time
 import os
 
 from hocort.pipelines.pipeline import Pipeline
 from hocort.pipelines.bowtie2 import Bowtie2
 from hocort.pipelines.kraken2 import Kraken2
+from hocort.parser import ArgParser
 
 
 class Kraken2Bowtie2(Pipeline):
@@ -98,9 +98,9 @@ class Kraken2Bowtie2(Pipeline):
         None
 
         """
-        parser = ArgumentParser(
+        parser = ArgParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--intermediary <format>] [--host_contam_filter <bool>] --bowtie2_index <idx> --kraken2_index <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
+            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--intermediary <format>] [--host-contam-filter <bool>] --bowtie2_index <idx> --kraken2_index <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
         )
         parser.add_argument(
             '-b',

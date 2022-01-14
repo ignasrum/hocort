@@ -1,4 +1,3 @@
-from argparse import ArgumentParser
 import time
 import os
 
@@ -7,6 +6,7 @@ from hocort.classifiers.kraken2 import Kraken2 as kr2
 from hocort.parse.sam import SAM
 from hocort.parse.bam import BAM
 from hocort.parse.fastq import FastQ
+from hocort.parser import ArgParser
 
 
 class Kraken2(Pipeline):
@@ -103,7 +103,7 @@ class Kraken2(Pipeline):
         None
 
         """
-        parser = ArgumentParser(
+        parser = ArgParser(
             description=f'{self.__class__.__name__} pipeline',
             usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
         )

@@ -1,4 +1,3 @@
-from argparse import ArgumentParser
 import os
 import time
 
@@ -7,6 +6,7 @@ from hocort.aligners.bwa_mem2 import BWA_MEM2 as bwa_mem2
 from hocort.parse.sam import SAM
 from hocort.parse.bam import BAM
 from hocort.parse.fastq import FastQ
+from hocort.parser import ArgParser
 
 
 class BWA_MEM2(Pipeline):
@@ -118,9 +118,9 @@ class BWA_MEM2(Pipeline):
         None
 
         """
-        parser = ArgumentParser(
+        parser = ArgParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--intermediary <format>] [--host_contam_filter <bool>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
+            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--intermediary <format>] [--host-contam-filter <bool>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
         )
         parser.add_argument(
             '-x',
