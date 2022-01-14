@@ -137,7 +137,7 @@ class Bowtie2Bowtie2(Pipeline):
         )
         parser.add_argument(
             '-f',
-            '--host_contam_filter',
+            '--host-contam-filter',
             choices=['True', 'False'],
             default='False',
             help='str: set to True to keep host sequences, False to keep everything besides host sequences (default: False)'
