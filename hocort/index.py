@@ -9,7 +9,7 @@ import os
 import hocort.aligners
 import hocort.classifiers
 import hocort.version as version
-from hocort.logger import Logger
+import hocort.logging
 from hocort.parser import ArgParser
 
 # Gets available aligners from hocort.aligners
@@ -134,7 +134,7 @@ def main():
     quiet = args.quiet
     log_file = args.log_file
 
-    logger = Logger(__file__, debug=debug, quiet=quiet, filename=log_file)
+    logger = hocort.logging.configure_logger(__file__, debug=debug, quiet=quiet, filename=log_file)
     logger.debug(str(args))
 
     s = os.path.split(out)
@@ -156,9 +156,9 @@ def main():
         else:
             logger.error(f'Invalid tool: {tool}')
             sys.exit(1)
-        logger.error(f'Building index with {tool}')
+        logger.warning(f'Building index with {tool}')
         returncode = tool_build_index(out, ref, threads=threads)
-        logger.error(f'Process exited with returncode: {returncode}')
+        logger.warning(f'Process exited with returncode: {returncode}')
         sys.exit(returncode)
     except Exception as e:
         logger.error(e)

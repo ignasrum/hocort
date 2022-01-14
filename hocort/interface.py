@@ -8,7 +8,7 @@ import inspect
 
 import hocort.pipelines
 import hocort.version as version
-from hocort.logger import Logger
+import hocort.logging
 from hocort.parser import ArgParser
 
 
@@ -135,7 +135,7 @@ def main():
     quiet = args.quiet
     log_file = args.log_file
 
-    logger = Logger(__file__, debug=debug, quiet=quiet, filename=log_file)
+    logger = hocort.logging.configure_logger(__file__, debug=debug, quiet=quiet, filename=log_file)
     logger.debug(str(args))
 
     if pipeline not in pipelines.keys():
