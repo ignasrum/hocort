@@ -29,7 +29,7 @@ class Logger:
         self.logger = logging.getLogger(name)
         log_level = logging.INFO
         if debug: log_level = logging.DEBUG
-        if quiet: log_level = logging.ERROR
+        if quiet: log_level = logging.WARNING
         format_style = '%(asctime)s - %(levelname)s - %(message)s - %(name)s'
         filemode = 'a'
         if filename:

@@ -62,7 +62,7 @@ class Kraken2(Pipeline):
         else:
             options = []
 
-        self.logger.error(f'Starting pipeline: {self.__class__.__name__}')
+        self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
         class_base = 'class'
@@ -86,7 +86,7 @@ class Kraken2(Pipeline):
             return 1
 
         end_time = time.time()
-        self.logger.error(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
+        self.logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return 0
 
     def interface(self, args):

@@ -62,7 +62,7 @@ class Bowtie2HISAT2(Pipeline):
 
         """
         self.debug_log_args(self.run.__name__, locals())
-        self.logger.error(f'Starting pipeline: {self.__class__.__name__}')
+        self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
         temp1 = f'{self.temp_dir.name}/temp1.fastq'
         temp2 = None if seq2 == None else f'{self.temp_dir.name}/temp2.fastq'
@@ -75,7 +75,7 @@ class Bowtie2HISAT2(Pipeline):
             self.logger.error('Pipeline was terminated')
             return 1
         end_time = time.time()
-        self.logger.error(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
+        self.logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return 0
 
     def interface(self, args):

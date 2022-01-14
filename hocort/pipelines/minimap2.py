@@ -69,7 +69,7 @@ class Minimap2(Pipeline):
         else:
             options = ['-A1', '-B4', '-O1,10', '-s100', '--end-bonus', '200']
 
-        self.logger.error(f'Starting pipeline: {self.__class__.__name__}')
+        self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
         minimap2_output = f'{self.temp_dir.name}/output'
@@ -99,7 +99,7 @@ class Minimap2(Pipeline):
             return 1
 
         end_time = time.time()
-        self.logger.error(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
+        self.logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return 0
 
     def interface(self, args):

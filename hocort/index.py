@@ -118,6 +118,12 @@ def main():
         action='store_true',
         help='flag: quiet output (overrides -d/--debug)'
     )
+    parser.add_argument(
+        '-l',
+        '--log-file',
+        type=str,
+        help='str: path to log file'
+    )
 
     args = parser.parse_args()
     tool = args.tool
@@ -126,8 +132,9 @@ def main():
     threads = args.threads if args.threads else 1
     debug = args.debug
     quiet = args.quiet
+    log_file = args.log_file
 
-    logger = Logger(__file__, debug=debug, quiet=quiet)
+    logger = Logger(__file__, debug=debug, quiet=quiet, filename=log_file)
     logger.debug(str(args))
 
     s = os.path.split(out)

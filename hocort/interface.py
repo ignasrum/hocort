@@ -102,7 +102,7 @@ def main():
     parser.add_argument(
         'pipeline',
         type=str,
-        help='str: pipeline to run'
+        help='str: pipeline to run (required)'
     )
     parser.add_argument(
         '-d',
@@ -117,6 +117,12 @@ def main():
         help='flag: quiet output (overrides -d/--debug)'
     )
     parser.add_argument(
+        '-l',
+        '--log-file',
+        type=str,
+        help='str: path to log file'
+    )
+    parser.add_argument(
         '-h',
         '--help',
         action=HelpAction,
@@ -127,8 +133,9 @@ def main():
     pipeline = args.pipeline
     debug = args.debug
     quiet = args.quiet
+    log_file = args.log_file
 
-    logger = Logger(__file__, debug=debug, quiet=quiet)
+    logger = Logger(__file__, debug=debug, quiet=quiet, filename=log_file)
     logger.debug(str(args))
 
     if pipeline not in pipelines.keys():

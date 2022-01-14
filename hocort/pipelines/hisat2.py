@@ -65,7 +65,7 @@ class HISAT2(Pipeline):
         """
         self.debug_log_args(self.run.__name__, locals())
 
-        self.logger.error(f'Starting pipeline: {self.__class__.__name__}')
+        self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
         hisat2_output = f'{self.temp_dir.name}/output'
@@ -101,7 +101,7 @@ class HISAT2(Pipeline):
             return 1
 
         end_time = time.time()
-        self.logger.error(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
+        self.logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return 0
 
     def interface(self, args):
