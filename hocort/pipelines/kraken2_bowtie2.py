@@ -1,5 +1,6 @@
 import time
 import os
+import tempfile
 
 from hocort.pipelines.pipeline import Pipeline
 from hocort.pipelines.bowtie2 import Bowtie2
@@ -12,7 +13,7 @@ class Kraken2Bowtie2(Pipeline):
     Bowtie2HISAT2 pipeline which first runs Kraken2, then runs Bowtie2 in 'end-to-end' mode. It maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
 
     """
-    def __init__(self, dir=None):
+    def __init__(self):
         """
         Constructor which sets temporary file directory if specified.
 
@@ -26,9 +27,10 @@ class Kraken2Bowtie2(Pipeline):
         None
 
         """
-        super().__init__(__file__, dir=dir)
+        super().__init__(__file__)
+        self.temp_dir = tempfile.TemporaryDirectory()
 
-    def run(self, bt2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, intermediary='SAM', hcfilter=False, threads=1, mapq=0):
+    def run(self, bt2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, hcfilter=False, threads=1):
         """
         Run function which starts the pipeline.
 
@@ -46,14 +48,10 @@ class Kraken2Bowtie2(Pipeline):
             Path where the second input FastQ file is located.
         out2 : string
             Path where the second output FastQ file will be written.
-        intermediary : string
-            The format of the intermediary mapping file. SAM or BAM.
         hcfilter : bool
             Whether to exclude or include the matching sequences from the output files.
         threads : int
             Number of threads to use.
-        mapq : int
-            Mapping quality lower bound when running Bowtie2 pipeline.
 
         Returns
         -------
@@ -65,17 +63,17 @@ class Kraken2Bowtie2(Pipeline):
         self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
-        kr2_out = self.temp_dir.name
+        kr2_out = self.temp_dir.name + '/out#.fastq'
         returncode = Kraken2().run(kr2_idx, seq1, kr2_out, seq2=seq2, threads=threads)
         if returncode != 0:
             self.logger.error('Pipeline was terminated')
             return 1
 
         # add hcfilter as option
-        temp1 = f'{self.temp_dir.name}/unclass_1.fq'
-        temp2 = None if seq2 == None else f'{self.temp_dir.name}/unclass_2.fq'
+        temp1 = f'{self.temp_dir.name}/out_1.fastq'
+        temp2 = None if seq2 == None else f'{self.temp_dir.name}/out_2.fastq'
 
-        returncode = Bowtie2().run(bt2_idx, temp1, out1, seq2=temp2, out2=out2, mode='end-to-end', threads=threads, intermediary=intermediary, hcfilter=hcfilter, mapq=mapq)
+        returncode = Bowtie2().run(bt2_idx, temp1, out1, seq2=temp2, out2=out2, mode='end-to-end', threads=threads, hcfilter=hcfilter)
         if returncode != 0:
             self.logger.error('Pipeline was terminated')
             return 1
@@ -100,7 +98,7 @@ class Kraken2Bowtie2(Pipeline):
         """
         parser = ArgParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--intermediary <format>] [--host-contam-filter <bool>] --bowtie2_index <idx> --kraken2_index <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
+            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--host-contam-filter <bool>] --bowtie2_index <idx> --kraken2_index <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
         )
         parser.add_argument(
             '-b',
@@ -146,13 +144,6 @@ class Kraken2Bowtie2(Pipeline):
             help='int: number of threads (default: max available on machine)'
         )
         parser.add_argument(
-            '-r',
-            '--intermediary',
-            choices=['SAM', 'BAM'],
-            default='SAM',
-            help='str: intermediary step output format (default: SAM)'
-        )
-        parser.add_argument(
             '-f',
             '--host-contam-filter',
             choices=['True', 'False'],
@@ -166,7 +157,6 @@ class Kraken2Bowtie2(Pipeline):
         seq = parsed.input
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
-        intermediary = parsed.intermediary
         hcfilter = True if parsed.host_contam_filter == 'True' else False
 
         seq1 = seq[0]
@@ -174,4 +164,4 @@ class Kraken2Bowtie2(Pipeline):
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        self.run(bt2_idx, kr2_idx, seq1, out1, seq2=seq2, out2=out2, threads=threads, intermediary=intermediary, hcfilter=hcfilter)
+        self.run(bt2_idx, kr2_idx, seq1, out1, seq2=seq2, out2=out2, threads=threads, hcfilter=hcfilter)

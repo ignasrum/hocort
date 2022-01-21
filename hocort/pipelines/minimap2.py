@@ -7,6 +7,7 @@ from hocort.parse.sam import SAM
 from hocort.parse.bam import BAM
 from hocort.parse.fastq import FastQ
 from hocort.parser import ArgParser
+from hocort.execute import execute
 
 
 class Minimap2(Pipeline):
@@ -14,7 +15,7 @@ class Minimap2(Pipeline):
     Minimap2 pipeline which maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
 
     """
-    def __init__(self, dir=None):
+    def __init__(self):
         """
         Constructor which sets temporary file directory if specified.
 
@@ -28,9 +29,9 @@ class Minimap2(Pipeline):
         None
 
         """
-        super().__init__(__file__, dir=dir)
+        super().__init__(__file__)
 
-    def run(self, idx, seq1, out1, seq2=None, out2=None, intermediary='SAM', hcfilter=False, threads=1, mapq=0, options=[]):
+    def run(self, idx, seq1, out1, seq2=None, out2=None, hcfilter=False, threads=1, options=[]):
         """
         Run function which starts the pipeline.
 
@@ -46,14 +47,10 @@ class Minimap2(Pipeline):
             Path where the second input FastQ file is located.
         out2 : string
             Path where the second output FastQ file will be written.
-        intermediary : string
-            The format of the intermediary mapping file. SAM or BAM.
         hcfilter : bool
             Whether to exclude or include the matching sequences from the output files.
         threads : int
             Number of threads to use.
-        mapq : int
-            Mapping quality lower bound.
         options : list
             An options list where additional arguments may be specified.
 
@@ -68,35 +65,23 @@ class Minimap2(Pipeline):
             options = options
         else:
             options = ['-A1', '-B4', '-O1,10', '-s100', '--end-bonus', '200']
+        options += ['-xsr']
 
         self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
-        minimap2_output = f'{self.temp_dir.name}/output'
+        mn2_cmd = mn2.align(idx, seq1, seq2=seq2, threads=threads, options=options)
+        fastq_cmd = SAM.sam_to_fastq(out1=out1, out2=out2, threads=threads, hcfilter=hcfilter)
 
-        query_names = []
+        returncodes, stdout, stderr = execute(mn2_cmd + fastq_cmd)
 
-        self.logger.info('Aligning reads with Minimap2')
-        if intermediary == 'BAM':
-            returncode = mn2.align_bam(idx, seq1, minimap2_output, seq2=seq2, threads=threads, options=options)
-            if returncode[0] != 0 or returncode[1] != 0:
-                self.logger.error('Pipeline was terminated')
-                return 1
-            self.logger.info('Extracting sequence ids')
-            query_names = BAM.extract_ids(minimap2_output, mapping_quality=mapq, threads=threads)
-        else:
-            returncode = mn2.align_sam(idx, seq1, minimap2_output, seq2=seq2, threads=threads, options=options)
-            if returncode != 0:
-                self.logger.error('Pipeline was terminated')
-                return 1
-            self.logger.info('Extracting sequence ids')
-            query_names = SAM.extract_ids(minimap2_output, mapping_quality=mapq, threads=threads)
+        self.logger.debug(returncodes)
+        self.logger.info(stdout)
+        for stde in stderr:
+            self.logger.info(stde)
 
-        # REMOVE FILTERED READS FROM ORIGINAL FASTQ FILES
-        returncode = self.filter(query_names, seq1, out1, seq2=seq2, out2=out2, hcfilter=hcfilter)
-        if returncode != 0:
-            self.logger.error('Pipeline was terminated')
-            return 1
+        for returncode in returncodes:
+            if returncode != 0: return 1
 
         end_time = time.time()
         self.logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
@@ -118,7 +103,7 @@ class Minimap2(Pipeline):
         """
         parser = ArgParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--intermediary <format>] [--host-contam-filter <bool>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
+            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--host-contam-filter <bool>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
         )
         parser.add_argument(
             '-x',
@@ -156,13 +141,6 @@ class Minimap2(Pipeline):
             help='int: number of threads (default: max available on machine)'
         )
         parser.add_argument(
-            '-r',
-            '--intermediary',
-            choices=['SAM', 'BAM'],
-            default='SAM',
-            help='str: intermediary step output format (default: SAM)'
-        )
-        parser.add_argument(
             '-f',
             '--host-contam-filter',
             choices=['True', 'False'],
@@ -175,7 +153,6 @@ class Minimap2(Pipeline):
         seq = parsed.input
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
-        intermediary = parsed.intermediary
         hcfilter = True if parsed.host_contam_filter == 'True' else False
 
         seq1 = seq[0]
@@ -183,4 +160,4 @@ class Minimap2(Pipeline):
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        self.run(idx, seq1, out1, out2=out2, seq2=seq2, intermediary=intermediary, hcfilter=hcfilter, threads=threads)
+        self.run(idx, seq1, out1, out2=out2, seq2=seq2, hcfilter=hcfilter, threads=threads)

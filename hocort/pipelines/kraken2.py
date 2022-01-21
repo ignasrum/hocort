@@ -7,6 +7,7 @@ from hocort.parse.sam import SAM
 from hocort.parse.bam import BAM
 from hocort.parse.fastq import FastQ
 from hocort.parser import ArgParser
+from hocort.execute import execute
 
 
 class Kraken2(Pipeline):
@@ -14,7 +15,7 @@ class Kraken2(Pipeline):
     Kraken2 pipeline which maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
 
     """
-    def __init__(self, dir=None):
+    def __init__(self):
         """
         Constructor which sets temporary file directory if specified.
 
@@ -28,9 +29,9 @@ class Kraken2(Pipeline):
         None
 
         """
-        super().__init__(__file__, dir=dir)
+        super().__init__(__file__)
 
-    def run(self, idx, seq1, out, seq2=None, threads=1, options=[]):
+    def run(self, idx, seq1, out, seq2=None, hcfilter=False, threads=1, options=[]):
         """
         Run function which starts the pipeline.
 
@@ -61,29 +62,28 @@ class Kraken2(Pipeline):
             options = options
         else:
             options = []
+        options += ['--output', '-']
 
         self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
-        class_base = 'class'
-        unclass_base = 'unclass'
-        if seq2:
-            class_out = f'{out}/{class_base}#.fq'
-            unclass_out = f'{out}/{unclass_base}#.fq'
+        class_out = None
+        unclass_out = None
+        if hcfilter:
+            class_out = out
         else:
-            class_out = f'{out}/{class_base}_1.fq'
-            unclass_out = f'{out}/{unclass_base}_1.fq'
+            unclass_out = out
 
-        if len(options) > 0:
-            options = options
-        else:
-            options = []
+        kr2_cmd = kr2.classify(idx, seq1, classified_out=class_out, unclassified_out=unclass_out, seq2=seq2, threads=threads, options=options)
+        returncodes, stdout, stderr = execute(kr2_cmd)
 
-        self.logger.info('Classifying reads with Kraken2')
-        returncode = kr2.classify(idx, seq1, class_out, unclass_out, seq2=seq2, threads=threads, options=options)
-        if returncode != 0:
-            self.logger.error('Pipeline was terminated')
-            return 1
+        self.logger.debug(returncodes)
+        self.logger.info(stdout)
+        for stde in stderr:
+            self.logger.info(stde)
+
+        for returncode in returncodes:
+            if returncode != 0: return 1
 
         end_time = time.time()
         self.logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
@@ -130,7 +130,7 @@ class Kraken2(Pipeline):
             required=True,
             type=str,
             metavar=('<out>'),
-            help='str: output path (required)'
+            help='str: output path kraken2 format (with # if paired input) (required)'
         )
         parser.add_argument(
             '-t',

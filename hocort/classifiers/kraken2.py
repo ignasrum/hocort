@@ -71,7 +71,7 @@ class Kraken2(Classifier):
 
         return 0
 
-    def classify(index, seq1, classified_out, unclassified_out, seq2=None, threads=1, options=[]):
+    def classify(index, seq1, classified_out=None, unclassified_out=None, seq2=None, threads=1, options=[]):
         """
         Matches sequences to a reference database and classifies them.
 
@@ -98,14 +98,15 @@ class Kraken2(Classifier):
             Resulting returncode after the process is finished.
 
         """
-        if not index or not seq1 or not classified_out or not unclassified_out: return 1
-        cmd = ['kraken2', '--threads', str(threads), '--db', index, '--classified-out', classified_out, '--unclassified-out', unclassified_out] + options
+        if not index or not seq1: return None
+        cmd = ['kraken2', '--threads', str(threads), '--db', index]
+        if classified_out:
+            cmd += ['--classified-out', classified_out]
+        if unclassified_out:
+            cmd += ['--unclassified-out', unclassified_out]
         if seq2:
             cmd += ['--paired', seq1, seq2]
         else: cmd += [seq1]
+        cmd += options
 
-        returncode, stdout, stderr = exe.execute(cmd)
-        #logger.info('\n' + stdout)
-        logger.info('\n' + stderr)
-
-        return returncode
+        return [cmd]

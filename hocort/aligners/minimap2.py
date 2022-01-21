@@ -32,16 +32,12 @@ class Minimap2(Aligner):
             Resulting returncode after the process is finished.
 
         """
-        if not path_out or not fasta_in: return 1
+        if not path_out or not fasta_in: return None
         cmd = ['minimap2', '-t', str(threads), '-d', path_out] + options + [fasta_in]
 
-        returncode, stdout, stderr = exe.execute(cmd)
-        logger.info('\n' + stdout)
-        logger.info('\n' + stderr)
+        return [cmd]
 
-        return returncode
-
-    def align_sam(index, seq1, output, seq2=None, threads=1, options=[]):
+    def align(index, seq1, output=None, seq2=None, threads=1, options=[]):
         """
         Aligns FastQ sequences to reference genome and outputs a SAM file.
 
@@ -66,54 +62,13 @@ class Minimap2(Aligner):
             Resulting returncode after the process is finished.
 
         """
-        if not index or not seq1 or not output: return 1
-        cmd = ['minimap2', '-t', str(threads), '-a', '-o', output] + options
+        if not index or not seq1: return None
+        cmd = ['minimap2', '-t', str(threads), '-a']
+        if output:
+            cmd += ['-o', output]
+        cmd += options
         cmd += [index, seq1]
         if seq2:
             cmd += [seq2]
 
-        returncode, stdout, stderr = exe.execute(cmd)
-        logger.info('\n' + stdout)
-        logger.info('\n' + stderr)
-
-        return returncode
-
-    def align_bam(index, seq1, output, seq2=None, threads=1, options=[]):
-        """
-        Aligns FastQ sequences to reference genome and outputs a BAM file.
-
-        Parameters
-        ----------
-        index : string
-            Path where the aligner index is located.
-        seq1 : string
-            Path where the first input FastQ file is located.
-        output : string
-            Path where the output BAM file is written.
-        seq2 : string
-            Path where the second input FastQ file is located.
-        threads : int
-            Number of threads to use.
-        options : list
-            An options list where additional arguments may be specified.
-
-        Returns
-        -------
-        (minimap2_returncode, samtools_returncode) : tuple of ints
-            Resulting returncodes after the processes are finished.
-
-        """
-        if not index or not seq1 or not output: return 1
-        cmd1 = ['minimap2', '-t', str(threads), '-a'] + options
-        cmd1 += [index, seq1]
-        if seq2:
-            cmd1 += [seq2]
-
-        cmd2 = ['samtools', 'view', '-@', str(threads), '-b', '-o', output]
-
-        returncode, stdout, stderr = exe.execute_pipe(cmd1, cmd2)
-        logger.info('\n' + stderr[0])
-        logger.info('\n' + stdout)
-        logger.info('\n' + stderr[1])
-
-        return returncode
+        return [cmd]
