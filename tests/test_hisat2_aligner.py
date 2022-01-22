@@ -1,6 +1,9 @@
-from hocort.aligners.hisat2 import HISAT2 as hs2
 import tempfile
 import os
+
+from hocort.aligners.hisat2 import HISAT2 as hs2
+
+from helper import helper
 
 temp_dir = tempfile.TemporaryDirectory()
 path = os.path.dirname(__file__)
@@ -13,51 +16,41 @@ seq2 = f'{path}/test_data/sequences/sequences2.fastq'
 no_path = ''
 
 def test_build_idx():
-    returncode = hs2.build_index(output, fasta)
-    assert returncode == 0
+    cmd = hs2.build_index(output, fasta)
+    helper(cmd, 0)
 
 def test_build_idx_no_input():
-    returncode = hs2.build_index(output, no_path)
-    assert returncode == 1
+    cmd = hs2.build_index(output, no_path)
+    assert cmd == None
 
 def test_idx_no_path():
-    returncode = hs2.align_sam(no_path, seq1, output)
-    assert returncode == 1
+    cmd = hs2.align(no_path, seq1, output)
+    assert cmd == None
 
 def test_idx_path():
-    returncode = hs2.align_sam(temp_dir.name, seq1, output)
-    assert returncode == 255
+    cmd = hs2.align(temp_dir.name, seq1, output)
+    helper(cmd, 255)
 
 def test_seq1_no_path():
-    returncode = hs2.align_sam(idx, no_path, output)
-    assert returncode == 1
+    cmd = hs2.align(idx, no_path, output)
+    assert cmd == None
 
 def test_output_no_path():
-    returncode = hs2.align_sam(idx, seq1, no_path)
-    assert returncode == 1
+    cmd = hs2.align(idx, seq1, no_path)
+    helper(cmd, 0)
 
 def test_seq1_seq2_no_path():
-    returncode = hs2.align_sam(idx, no_path, output, seq2=no_path)
-    assert returncode == 1
+    cmd = hs2.align(idx, no_path, output, seq2=no_path)
+    assert cmd == None
 
 def test_seq2_no_path():
-    returncode = hs2.align_sam(idx, seq1, output, seq2=no_path)
-    assert returncode == 0
+    cmd = hs2.align(idx, seq1, output, seq2=no_path)
+    helper(cmd, 0)
 
-def test_sam_1():
-    returncode = hs2.align_sam(idx, seq1, output)
-    assert returncode == 0
+def test_1():
+    cmd = hs2.align(idx, seq1, output)
+    helper(cmd, 0)
 
-def test_sam_2():
-    returncode = hs2.align_sam(idx, seq1, output, seq2=seq2)
-    assert returncode == 0
-
-def test_bam_1():
-    returncode = hs2.align_bam(idx, seq1, output)
-    assert returncode[0] == 0
-    assert returncode[1] == 0
-
-def test_bam_2():
-    returncode = hs2.align_bam(idx, seq1, output, seq2=seq2)
-    assert returncode[0] == 0
-    assert returncode[1] == 0
+def test_2():
+    cmd = hs2.align(idx, seq1, output, seq2=seq2)
+    helper(cmd, 0)

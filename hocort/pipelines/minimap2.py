@@ -4,8 +4,6 @@ import os
 from hocort.pipelines.pipeline import Pipeline
 from hocort.aligners.minimap2 import Minimap2 as mn2
 from hocort.parse.sam import SAM
-from hocort.parse.bam import BAM
-from hocort.parse.fastq import FastQ
 from hocort.parser import ArgParser
 from hocort.execute import execute
 
@@ -61,6 +59,7 @@ class Minimap2(Pipeline):
 
         """
         self.debug_log_args(self.run.__name__, locals())
+        if seq2 and not out2: return 1
         if len(options) > 0:
             options = options
         else:
@@ -71,6 +70,7 @@ class Minimap2(Pipeline):
         start_time = time.time()
 
         mn2_cmd = mn2.align(idx, seq1, seq2=seq2, threads=threads, options=options)
+        if mn2_cmd == None: return 1
         fastq_cmd = SAM.sam_to_fastq(out1=out1, out2=out2, threads=threads, hcfilter=hcfilter)
 
         returncodes, stdout, stderr = execute(mn2_cmd + fastq_cmd)

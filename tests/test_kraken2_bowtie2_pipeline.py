@@ -1,6 +1,7 @@
-from hocort.pipelines.kraken2_bowtie2 import Kraken2Bowtie2
 import tempfile
 import os
+
+from hocort.pipelines.kraken2_bowtie2 import Kraken2Bowtie2
 
 temp_dir = tempfile.TemporaryDirectory()
 path = os.path.dirname(__file__)

@@ -1,6 +1,7 @@
-from hocort.pipelines.bowtie2_hisat2 import Bowtie2HISAT2
 import tempfile
 import os
+
+from hocort.pipelines.bowtie2_hisat2 import Bowtie2HISAT2
 
 temp_dir = tempfile.TemporaryDirectory()
 path = os.path.dirname(__file__)

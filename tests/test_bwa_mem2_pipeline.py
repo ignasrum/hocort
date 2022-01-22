@@ -1,6 +1,7 @@
-from hocort.pipelines.bwa_mem2 import BWA_MEM2
 import tempfile
 import os
+
+from hocort.pipelines.bwa_mem2 import BWA_MEM2
 
 temp_dir = tempfile.TemporaryDirectory()
 path = os.path.dirname(__file__)
@@ -11,15 +12,6 @@ out1 = f'{temp_dir.name}/out1.fastq'
 seq2 = f'{path}/test_data/sequences/sequences2.fastq'
 out2 = f'{temp_dir.name}/out2.fastq'
 no_path = ''
-
-def test_pipeline_temp_dir():
-    path = '.'
-    returncode = BWA_MEM2(path).run(idx, seq1, out1, seq2=seq2, out2=out2)
-    assert returncode == 0
-
-def test_pipeline_mapq():
-    returncode = BWA_MEM2().run(idx, seq1, out1, seq2=seq2, out2=out2, mapq=2)
-    assert returncode == 0
 
 def test_pipeline_idx_no_path():
     returncode = BWA_MEM2().run(no_path, seq1, out1)
@@ -75,24 +67,12 @@ def test_pipeline_custom_options_2():
     returncode = BWA_MEM2().run(idx, seq1, out1, seq2=seq2, out2=out2, options=options)
     assert returncode == 0
 
-def test_pipeline_sam_1():
-    intermediary = 'SAM'
-    returncode = BWA_MEM2().run(idx, seq1, out1, intermediary=intermediary)
+def test_pipeline_1():
+    returncode = BWA_MEM2().run(idx, seq1, out1)
     assert returncode == 0
 
-def test_pipeline_sam_2():
-    intermediary = 'SAM'
-    returncode = BWA_MEM2().run(idx, seq1, out1, seq2=seq2, out2=out2, intermediary=intermediary)
-    assert returncode == 0
-
-def test_pipeline_sam_1():
-    intermediary = 'BAM'
-    returncode = BWA_MEM2().run(idx, seq1, out1, intermediary=intermediary)
-    assert returncode == 0
-
-def test_pipeline_sam_2():
-    intermediary = 'BAM'
-    returncode = BWA_MEM2().run(idx, seq1, out1, seq2=seq2, out2=out2, intermediary=intermediary)
+def test_pipeline_2():
+    returncode = BWA_MEM2().run(idx, seq1, out1, seq2=seq2, out2=out2)
     assert returncode == 0
 
 def test_pipeline_seq2_no_out2():

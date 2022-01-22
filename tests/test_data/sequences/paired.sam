@@ -9,7 +9,7 @@
 @SQ	SN:test7	LN:240
 @SQ	SN:test8	LN:240
 @SQ	SN:test9	LN:240
-@PG	ID:bowtie2	PN:bowtie2	VN:2.4.4	CL:"/home/test_user/miniconda3/envs/hocort/bin/bowtie2-align-s --wrapper basic-0 -x ../bowtie2/genome -S output.sam -1 sequences1.fastq -2 sequences2.fastq"
+@PG	ID:bowtie2	PN:bowtie2	VN:2.2.5	CL:"/home/server/miniconda3/envs/hocort/bin/bowtie2-align-s --wrapper basic-0 -x ../bowtie2/genome -S paired.sam -1 ../sequences/sequences1.fastq -2 ../sequences/sequences2.fastq"
 test0	65	test0	1	42	30M	=	81	110	AATTGGTCGTCAAAAGGAGATAGCAATTAT	CDFB7*AG>F:FGGFF,4F,+,GBB@,?,F	AS:i:0	XN:i:0	XM:i:0	XO:i:0	XG:i:0	NM:i:0	MD:Z:30	YS:i:0	YT:Z:DP
 test0	129	test0	81	42	30M	=	1	-110	AAAATACAGAGTGCCAACGGCTAACACTAC	FCGFAGGGGC?GCGFGFGFGGGG?GGGAGF	AS:i:0	XN:i:0	XM:i:0	XO:i:0	XG:i:0	NM:i:0	MD:Z:30	YS:i:0	YT:Z:DP
 test1	65	test1	1	42	30M	=	81	110	GGAGCGATGGAACGACAATCTTTACATCCG	=*@8@:,**3*5,,3,,+,+,,3*35;+,<	AS:i:0	XN:i:0	XM:i:0	XO:i:0	XG:i:0	NM:i:0	MD:Z:30	YS:i:0	YT:Z:DP

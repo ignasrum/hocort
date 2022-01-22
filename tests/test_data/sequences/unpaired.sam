@@ -1,0 +1,15 @@
+@HD	VN:1.0	SO:unsorted
+@SQ	SN:test0	LN:240
+@SQ	SN:test1	LN:240
+@SQ	SN:test2	LN:240
+@SQ	SN:test3	LN:240
+@SQ	SN:test4	LN:240
+@SQ	SN:test5	LN:240
+@SQ	SN:test6	LN:240
+@SQ	SN:test7	LN:240
+@SQ	SN:test8	LN:240
+@SQ	SN:test9	LN:240
+@PG	ID:bowtie2	PN:bowtie2	VN:2.2.5	CL:"/home/server/miniconda3/envs/hocort/bin/bowtie2-align-s --wrapper basic-0 -x ../bowtie2/genome -S unpaired.sam -U ../sequences/sequences1.fastq"
+test0/1	0	test0	1	42	30M	*	0	0	AATTGGTCGTCAAAAGGAGATAGCAATTAT	CDFB7*AG>F:FGGFF,4F,+,GBB@,?,F	AS:i:0	XN:i:0	XM:i:0	XO:i:0	XG:i:0	NM:i:0	MD:Z:30	YT:Z:UU
+test1/1	0	test1	1	42	30M	*	0	0	GGAGCGATGGAACGACAATCTTTACATCCG	=*@8@:,**3*5,,3,,+,+,,3*35;+,<	AS:i:0	XN:i:0	XM:i:0	XO:i:0	XG:i:0	NM:i:0	MD:Z:30	YT:Z:UU
+test2/1	0	test2	1	42	30M	*	0	0	GCTTGTGGCACTGTTTTTAACTACGCCAAC	CCCCCGGGGGGGGGEGGGGGGGGGGGGFGG	AS:i:0	XN:i:0	XM:i:0	XO:i:0	XG:i:0	NM:i:0	MD:Z:30	YT:Z:UU

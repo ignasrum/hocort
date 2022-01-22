@@ -11,7 +11,7 @@ class Bowtie2(Aligner):
     Bowtie2 implementation of the Aligner abstract base class.
 
     """
-    def build_index(path_out, fasta_in, threads=1, options=[], **kwargs):
+    def build_index(path_out, fasta_in, options=[], **kwargs):
         """
         Builds an index.
 
@@ -33,7 +33,7 @@ class Bowtie2(Aligner):
 
         """
         if not path_out or not fasta_in: return None
-        cmd = ['bowtie2-build'] + options + ['--threads', str(threads), fasta_in, path_out]
+        cmd = ['bowtie2-build'] + options + [fasta_in, path_out]
 
         return [cmd]
 

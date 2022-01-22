@@ -1,6 +1,9 @@
-from hocort.classifiers.kraken2 import Kraken2 as kr2
 import tempfile
 import os
+
+from hocort.classifiers.kraken2 import Kraken2 as kr2
+
+from helper import helper
 
 temp_dir = tempfile.TemporaryDirectory()
 path = os.path.dirname(__file__)
@@ -15,57 +18,57 @@ seq2 = f'{path}/test_data/sequences/sequences2.fastq'
 no_path = ''
 
 def test_idx_no_path():
-    returncode = kr2.classify(no_path, seq1, class_out, unclass_out)
-    assert returncode == 1
+    cmd = kr2.classify(no_path, seq1, class_out, unclass_out)
+    assert cmd == None
 
 def test_idx_path():
-    returncode = kr2.classify(temp_dir.name, seq1, class_out, unclass_out)
-    assert returncode == 2
+    cmd = kr2.classify(temp_dir.name, seq1, class_out, unclass_out)
+    helper(cmd, 2)
 
 def test_seq1_no_path():
-    returncode = kr2.classify(idx, no_path, class_out, unclass_out)
-    assert returncode == 1
+    cmd = kr2.classify(idx, no_path, class_out, unclass_out)
+    assert cmd == None
 
 def test_seq1_path():
-    returncode = kr2.classify(idx, temp_dir.name, class_out, unclass_out)
-    assert returncode == 0
+    cmd = kr2.classify(idx, temp_dir.name, class_out, unclass_out)
+    helper(cmd, 0)
 
 def test_class_out_no_path():
-    returncode = kr2.classify(idx, seq1, no_path, unclass_out)
-    assert returncode == 1
+    cmd = kr2.classify(idx, seq1, no_path, unclass_out)
+    helper(cmd, 0)
 
 def test_class_out_path():
-    returncode = kr2.classify(idx, seq1, temp_dir.name, unclass_out)
-    assert returncode == 0
+    cmd = kr2.classify(idx, seq1, temp_dir.name, unclass_out)
+    helper(cmd, 0)
 
 def test_unclass_out_no_path():
-    returncode = kr2.classify(idx, seq1, class_out, no_path)
-    assert returncode == 1
+    cmd = kr2.classify(idx, seq1, class_out, no_path)
+    helper(cmd, 0)
 
 def test_unclass_out_path():
-    returncode = kr2.classify(idx, seq1, class_out, temp_dir.name)
-    assert returncode == 0
+    cmd = kr2.classify(idx, seq1, class_out, temp_dir.name)
+    helper(cmd, 0)
 
 def test_output_no_path():
-    returncode = kr2.classify(idx, seq1, class_out, unclass_out)
-    assert returncode == 0
+    cmd = kr2.classify(idx, seq1, class_out, unclass_out)
+    helper(cmd, 0)
 
 def test_seq1_seq2_no_path():
-    returncode = kr2.classify(idx, no_path, class_out, unclass_out, seq2=no_path)
-    assert returncode == 1
+    cmd = kr2.classify(idx, no_path, class_out, unclass_out, seq2=no_path)
+    assert cmd == None
 
 def test_seq1_seq2_path():
-    returncode = kr2.classify(idx, temp_dir.name, class_out, unclass_out, seq2=temp_dir.name)
-    assert returncode == 0
+    cmd = kr2.classify(idx, temp_dir.name, class_out, unclass_out, seq2=temp_dir.name)
+    helper(cmd, 0)
 
 def test_seq2_no_path():
-    returncode = kr2.classify(idx, seq1, class_out, unclass_out, seq2=no_path)
-    assert returncode == 0
+    cmd = kr2.classify(idx, seq1, class_out, unclass_out, seq2=no_path)
+    helper(cmd, 0)
 
 def test_1():
-    returncode = kr2.classify(idx, seq1, class_out, unclass_out)
-    assert returncode == 0
+    cmd = kr2.classify(idx, seq1, class_out, unclass_out)
+    helper(cmd, 0)
 
 def test_2():
-    returncode = kr2.classify(idx, seq1, class_out, unclass_out, seq2=seq2)
-    assert returncode == 0
+    cmd = kr2.classify(idx, seq1, class_out, unclass_out, seq2=seq2)
+    helper(cmd, 0)

@@ -4,8 +4,6 @@ import os
 from hocort.pipelines.pipeline import Pipeline
 from hocort.classifiers.kraken2 import Kraken2 as kr2
 from hocort.parse.sam import SAM
-from hocort.parse.bam import BAM
-from hocort.parse.fastq import FastQ
 from hocort.parser import ArgParser
 from hocort.execute import execute
 
@@ -75,6 +73,7 @@ class Kraken2(Pipeline):
             unclass_out = out
 
         kr2_cmd = kr2.classify(idx, seq1, classified_out=class_out, unclassified_out=unclass_out, seq2=seq2, threads=threads, options=options)
+        if kr2_cmd == None: return 1
         returncodes, stdout, stderr = execute(kr2_cmd)
 
         self.logger.debug(returncodes)

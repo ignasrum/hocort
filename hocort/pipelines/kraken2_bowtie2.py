@@ -13,7 +13,7 @@ class Kraken2Bowtie2(Pipeline):
     Bowtie2HISAT2 pipeline which first runs Kraken2, then runs Bowtie2 in 'end-to-end' mode. It maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
 
     """
-    def __init__(self):
+    def __init__(self, dir=None):
         """
         Constructor which sets temporary file directory if specified.
 
@@ -28,7 +28,7 @@ class Kraken2Bowtie2(Pipeline):
 
         """
         super().__init__(__file__)
-        self.temp_dir = tempfile.TemporaryDirectory()
+        self.temp_dir = tempfile.TemporaryDirectory(dir=dir)
 
     def run(self, bt2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, hcfilter=False, threads=1):
         """
@@ -60,16 +60,16 @@ class Kraken2Bowtie2(Pipeline):
 
         """
         self.debug_log_args(self.run.__name__, locals())
+        if seq2 and not out2: return 1
         self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
-        kr2_out = self.temp_dir.name + '/out#.fastq'
-        returncode = Kraken2().run(kr2_idx, seq1, kr2_out, seq2=seq2, threads=threads)
+        kr2_out = self.temp_dir.name + '/out#.fastq' if seq2 and out2 else self.temp_dir.name + '/out_1.fastq'
+        returncode = Kraken2().run(kr2_idx, seq1, kr2_out, seq2=seq2, hcfilter=hcfilter, threads=threads)
         if returncode != 0:
             self.logger.error('Pipeline was terminated')
             return 1
 
-        # add hcfilter as option
         temp1 = f'{self.temp_dir.name}/out_1.fastq'
         temp2 = None if seq2 == None else f'{self.temp_dir.name}/out_2.fastq'
 

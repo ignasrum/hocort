@@ -65,7 +65,7 @@ class BBMap(Aligner):
         if not index or not seq1: return None
         cmd = ['bbmap.sh', f'threads={str(threads)}', f'path={index}']
         if output:
-            cmd += [output]
+            cmd += [f'out={output}']
         if seq2:
             cmd += [f'in={seq1}', f'in2={seq2}']
         else: cmd += [f'in={seq1}']

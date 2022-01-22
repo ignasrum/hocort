@@ -59,6 +59,7 @@ class BBMap(Pipeline):
 
         """
         self.debug_log_args(self.run.__name__, locals())
+        if seq2 and not out2: return 1
 
         self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
@@ -69,6 +70,7 @@ class BBMap(Pipeline):
             options = ['fast=t', 'local=t']
 
         bbmap_cmd = bb.align(idx, seq1, output='stdout.sam', seq2=seq2, threads=threads, options=options)
+        if bbmap_cmd == None: return 1
         fastq_cmd = SAM.sam_to_fastq(out1=out1, out2=out2, threads=threads, hcfilter=hcfilter)
 
         returncodes, stdout, stderr = execute(bbmap_cmd + fastq_cmd)

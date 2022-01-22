@@ -4,8 +4,6 @@ import os
 from hocort.pipelines.pipeline import Pipeline
 from hocort.aligners.bowtie2 import Bowtie2 as bt2
 from hocort.parse.sam import SAM
-from hocort.parse.bam import BAM
-from hocort.parse.fastq import FastQ
 from hocort.parser import ArgParser
 from hocort.execute import execute
 
@@ -63,6 +61,7 @@ class Bowtie2(Pipeline):
 
         """
         self.debug_log_args(self.run.__name__, locals())
+        if seq2 and not out2: return 1
         if len(options) > 0:
             options = options
         elif mode == 'local':
@@ -77,6 +76,7 @@ class Bowtie2(Pipeline):
         start_time = time.time()
 
         bowtie2_cmd = bt2.align(idx, seq1, seq2=seq2, threads=threads, options=options)
+        if bowtie2_cmd == None: return 1
         fastq_cmd = SAM.sam_to_fastq(out1=out1, out2=out2, threads=threads, hcfilter=hcfilter)
 
         returncodes, stdout, stderr = execute(bowtie2_cmd + fastq_cmd)

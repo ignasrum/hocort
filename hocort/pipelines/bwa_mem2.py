@@ -4,8 +4,6 @@ import time
 from hocort.pipelines.pipeline import Pipeline
 from hocort.aligners.bwa_mem2 import BWA_MEM2 as bwa_mem2
 from hocort.parse.sam import SAM
-from hocort.parse.bam import BAM
-from hocort.parse.fastq import FastQ
 from hocort.parser import ArgParser
 from hocort.execute import execute
 
@@ -61,6 +59,7 @@ class BWA_MEM2(Pipeline):
 
         """
         self.debug_log_args(self.run.__name__, locals())
+        if seq2 and not out2: return 1
         self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
         if len(options) > 0:
@@ -68,10 +67,11 @@ class BWA_MEM2(Pipeline):
         else:
             options = ['-O 20,20', '-E 6,6', '-L 2,2']
 
-        bbmap_cmd = bwa_mem2.align(idx, seq1, seq2=seq2, threads=threads, options=options)
+        bwa_mem2_cmd = bwa_mem2.align(idx, seq1, seq2=seq2, threads=threads, options=options)
+        if bwa_mem2_cmd == None: return 1
         fastq_cmd = SAM.sam_to_fastq(out1=out1, out2=out2, threads=threads, hcfilter=hcfilter)
 
-        returncodes, stdout, stderr = execute(bbmap_cmd + fastq_cmd)
+        returncodes, stdout, stderr = execute(bwa_mem2_cmd + fastq_cmd)
 
         self.logger.debug(returncodes)
         self.logger.info(stdout)
