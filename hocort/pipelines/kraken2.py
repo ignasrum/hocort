@@ -15,12 +15,7 @@ class Kraken2(Pipeline):
     """
     def __init__(self):
         """
-        Constructor which sets temporary file directory if specified.
-
-        Parameters
-        ----------
-        dir : string
-            Path where the temporary files are written.
+        Sets the logger file source filename.
 
         Returns
         -------
@@ -72,9 +67,9 @@ class Kraken2(Pipeline):
         else:
             unclass_out = out
 
-        kr2_cmd = kr2.classify(idx, seq1, classified_out=class_out, unclassified_out=unclass_out, seq2=seq2, threads=threads, options=options)
+        kr2_cmd = kr2().classify(idx, seq1, classified_out=class_out, unclassified_out=unclass_out, seq2=seq2, threads=threads, options=options)
         if kr2_cmd == None: return 1
-        returncodes, stdout, stderr = execute(kr2_cmd)
+        returncodes, stdout, stderr = execute(kr2_cmd, pipe=False)
 
         self.logger.debug(returncodes)
         self.logger.info(stdout)

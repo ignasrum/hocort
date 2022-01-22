@@ -11,7 +11,7 @@ class BBMap(Aligner):
     BBMap implementation of the Aligner abstract base class.
 
     """
-    def build_index(path_out, fasta_in, threads=1, options=[], **kwargs):
+    def build_index(self, path_out, fasta_in, threads=1, options=[], **kwargs):
         """
         Builds an index.
 
@@ -32,12 +32,16 @@ class BBMap(Aligner):
             Resulting returncode after the process is finished.
 
         """
-        if not path_out or not fasta_in: return None
-        cmd = ['bbmap.sh', f'threads={str(threads)}', f'ref={fasta_in}', f'path={path_out}']
+        if not path_out or not fasta_in: return 1
+        cmd = [['bbmap.sh', f'threads={str(threads)}', f'ref={fasta_in}', f'path={path_out}']]
+        returncode, stdout, stderr = exe.execute(cmd, pipe=False)
+        logger.info('\n' + stdout)
+        for stde in stderr:
+            logger.info('\n' + stde)
 
-        return [cmd]
+        return returncode[0]
 
-    def align(index, seq1, output=None, seq2=None, threads=1, options=[]):
+    def align(self, index, seq1, output=None, seq2=None, threads=1, options=[]):
         """
         Aligns FastQ sequences to reference genome and outputs a SAM file.
 
@@ -58,8 +62,8 @@ class BBMap(Aligner):
 
         Returns
         -------
-        returncode : int
-            Resulting returncode after the process is finished.
+        [cmd] : list
+            List of commands to be executed.
 
         """
         if not index or not seq1: return None

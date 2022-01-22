@@ -15,12 +15,7 @@ class Minimap2(Pipeline):
     """
     def __init__(self):
         """
-        Constructor which sets temporary file directory if specified.
-
-        Parameters
-        ----------
-        dir : string
-            Path where the temporary files are written.
+        Sets the logger file source filename.
 
         Returns
         -------
@@ -69,11 +64,11 @@ class Minimap2(Pipeline):
         self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
-        mn2_cmd = mn2.align(idx, seq1, seq2=seq2, threads=threads, options=options)
+        mn2_cmd = mn2().align(idx, seq1, seq2=seq2, threads=threads, options=options)
         if mn2_cmd == None: return 1
         fastq_cmd = SAM.sam_to_fastq(out1=out1, out2=out2, threads=threads, hcfilter=hcfilter)
 
-        returncodes, stdout, stderr = execute(mn2_cmd + fastq_cmd)
+        returncodes, stdout, stderr = execute(mn2_cmd + fastq_cmd, pipe=True)
 
         self.logger.debug(returncodes)
         self.logger.info(stdout)

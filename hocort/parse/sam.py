@@ -6,6 +6,28 @@ class SAM:
 
     """
     def select(input_path=None, output_path=None, paired=True, threads=1, hcfilter=False):
+        """
+        Takes SAM input, selects mapped/unmapped reads, and outputs SAM.
+
+        Parameters
+        ----------
+        input_path : string
+            Input SAM file path.
+        output_path : string
+            Output SAM file path.
+        paired : bool
+            Process reads as paired or unpaired.
+        threads : int
+            Number of threads to use.
+        hcfilter : bool
+            Whether to exclude or include the mapped sequences from the output files.
+
+        Returns
+        -------
+        [cmd] : list
+            List of commands to be executed.
+
+        """
         cmd = ['samtools', 'view', '--threads', f'{threads}', '-h']
         if paired:
             if hcfilter:
@@ -25,6 +47,28 @@ class SAM:
         return [cmd]
 
     def sam_to_fastq(input_path=None, out1=None, out2=None, threads=1, hcfilter=False):
+        """
+        Takes SAM input, selects mapped/unmapped reads, and outputs FastQ.
+
+        Parameters
+        ----------
+        input_path : string
+            Input SAM file path.
+        out1 : string
+            FastQ READ1 (if paired), READ_OTHER (if unpaired) output path.
+        out2 : string
+            FastQ READ2 output path.
+        threads : int
+            Number of threads to use.
+        hcfilter : bool
+            Whether to exclude or include the mapped sequences from the output files.
+
+        Returns
+        -------
+        [cmd] : list
+            List of commands to be executed.
+
+        """
         cmd = ['samtools', 'fastq', '--threads', f'{threads}', '-N']
         if out1 and out2:
             if hcfilter:

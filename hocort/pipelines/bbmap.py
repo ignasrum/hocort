@@ -15,12 +15,7 @@ class BBMap(Pipeline):
     """
     def __init__(self):
         """
-        Constructor which sets temporary file directory if specified.
-
-        Parameters
-        ----------
-        dir : string
-            Path where the temporary files are written.
+        Sets the logger file source filename.
 
         Returns
         -------
@@ -69,11 +64,11 @@ class BBMap(Pipeline):
         else:
             options = ['fast=t', 'local=t']
 
-        bbmap_cmd = bb.align(idx, seq1, output='stdout.sam', seq2=seq2, threads=threads, options=options)
+        bbmap_cmd = bb().align(idx, seq1, output='stdout.sam', seq2=seq2, threads=threads, options=options)
         if bbmap_cmd == None: return 1
         fastq_cmd = SAM.sam_to_fastq(out1=out1, out2=out2, threads=threads, hcfilter=hcfilter)
 
-        returncodes, stdout, stderr = execute(bbmap_cmd + fastq_cmd)
+        returncodes, stdout, stderr = execute(bbmap_cmd + fastq_cmd, pipe=True)
 
         self.logger.debug(returncodes)
         self.logger.info(stdout)

@@ -9,14 +9,12 @@ class Pipeline(ABC):
     """
     def __init__(self, logger_filename):
         """
-        Constructor which setups the logger and temporary directory.
+        Constructor which setups the logger.
 
         Parameters
         ----------
         logger_filename : string
             Logger name.
-        dir : string
-            Path where the temporary files are written.
 
         Returns
         -------

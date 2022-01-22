@@ -7,7 +7,7 @@ class Classifier(ABC):
 
     """
     @abstractmethod
-    def build_index(path_out, fasta_in, options=[], **kwargs):
+    def build_index(self, path_out, fasta_in, options=[], **kwargs):
         """
         Builds an index.
 
@@ -29,7 +29,7 @@ class Classifier(ABC):
         pass
 
     @abstractmethod
-    def classify(index, seq1, classified_out, unclassified_out, seq2=None, options=[]):
+    def classify(self, index, seq1, classified_out, unclassified_out, seq2=None, options=[]):
         """
         Matches sequences to a reference database and classifies them.
 
@@ -50,8 +50,8 @@ class Classifier(ABC):
 
         Returns
         -------
-        returncode : int
-            Resulting returncode after the process is finished.
+        [cmd] : list
+            List of commands to be executed.
 
         """
         pass

@@ -29,6 +29,7 @@ class Bowtie2HISAT2(Pipeline):
         """
         super().__init__(__file__)
         self.temp_dir = tempfile.TemporaryDirectory(dir=dir)
+        self.logger.debug(self.temp_dir.name)
 
     def run(self, bt2_idx, hs2_idx, seq1, out1, seq2=None, out2=None, hcfilter=False, threads=1):
         """

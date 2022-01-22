@@ -11,7 +11,7 @@ class Kraken2(Classifier):
     Kraken2 implementation of the Classifier abstract base class.
 
     """
-    def build_index(path_out, fasta_in, threads=1, options=[], **kwargs):
+    def build_index(self, path_out, fasta_in, threads=1, options=[], **kwargs):
         """
         Builds an index.
 
@@ -71,7 +71,7 @@ class Kraken2(Classifier):
 
         return 0
 
-    def classify(index, seq1, classified_out=None, unclassified_out=None, seq2=None, threads=1, options=[]):
+    def classify(self, index, seq1, classified_out=None, unclassified_out=None, seq2=None, threads=1, options=[]):
         """
         Matches sequences to a reference database and classifies them.
 
@@ -94,8 +94,8 @@ class Kraken2(Classifier):
 
         Returns
         -------
-        returncode : int
-            Resulting returncode after the process is finished.
+        [cmd] : list
+            List of commands to be executed.
 
         """
         if not index or not seq1: return None

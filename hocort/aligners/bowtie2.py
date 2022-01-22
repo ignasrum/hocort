@@ -11,7 +11,7 @@ class Bowtie2(Aligner):
     Bowtie2 implementation of the Aligner abstract base class.
 
     """
-    def build_index(path_out, fasta_in, options=[], **kwargs):
+    def build_index(self, path_out, fasta_in, options=[], **kwargs):
         """
         Builds an index.
 
@@ -32,12 +32,16 @@ class Bowtie2(Aligner):
             Resulting returncode after the process is finished.
 
         """
-        if not path_out or not fasta_in: return None
-        cmd = ['bowtie2-build'] + options + [fasta_in, path_out]
+        if not path_out or not fasta_in: return 1
+        cmd = [['bowtie2-build'] + options + [fasta_in, path_out]]
+        returncode, stdout, stderr = exe.execute(cmd, pipe=False)
+        logger.info('\n' + stdout)
+        for stde in stderr:
+            logger.info('\n' + stde)
 
-        return [cmd]
+        return returncode[0]
 
-    def align(index, seq1, output=None, seq2=None, threads=1, options=[]):
+    def align(self, index, seq1, output=None, seq2=None, threads=1, options=[]):
         """
         Aligns FastQ sequences to reference genome and outputs a SAM file.
 
@@ -58,8 +62,8 @@ class Bowtie2(Aligner):
 
         Returns
         -------
-        returncode : int
-            Resulting returncode after the process is finished.
+        [cmd] : list
+            List of commands to be executed.
 
         """
         if not index or not seq1: return None

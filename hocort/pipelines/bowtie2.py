@@ -15,12 +15,7 @@ class Bowtie2(Pipeline):
     """
     def __init__(self):
         """
-        Constructor which sets temporary file directory if specified.
-
-        Parameters
-        ----------
-        dir : string
-            Path where the temporary files are written.
+        Sets the logger file source filename.
 
         Returns
         -------
@@ -75,11 +70,11 @@ class Bowtie2(Pipeline):
         self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
-        bowtie2_cmd = bt2.align(idx, seq1, seq2=seq2, threads=threads, options=options)
+        bowtie2_cmd = bt2().align(idx, seq1, seq2=seq2, threads=threads, options=options)
         if bowtie2_cmd == None: return 1
         fastq_cmd = SAM.sam_to_fastq(out1=out1, out2=out2, threads=threads, hcfilter=hcfilter)
 
-        returncodes, stdout, stderr = execute(bowtie2_cmd + fastq_cmd)
+        returncodes, stdout, stderr = execute(bowtie2_cmd + fastq_cmd, pipe=True)
 
         self.logger.debug(returncodes)
         self.logger.info(stdout)
