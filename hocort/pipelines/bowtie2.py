@@ -24,7 +24,7 @@ class Bowtie2(Pipeline):
         """
         super().__init__(__file__)
 
-    def run(self, idx, seq1, out1, seq2=None, out2=None, hcfilter=False, mode='local', threads=1, quiet=False, options=[]):
+    def run(self, idx, seq1, out1, seq2=None, out2=None, hcfilter=False, mode='local', threads=1, options=[]):
         """
         Run function which starts the pipeline.
 
@@ -46,8 +46,6 @@ class Bowtie2(Pipeline):
             Bowtie2 execution mode. Can either be 'local' or 'end-to-end'.
         threads : int
             Number of threads to use.
-        quiet : bool
-            Toggles whether output is quiet or not.
         options : list
             An options list where additional arguments may be specified.
 
@@ -76,7 +74,7 @@ class Bowtie2(Pipeline):
         if bowtie2_cmd == None: return 1
         fastq_cmd = SAM.sam_to_fastq(out1=out1, out2=out2, threads=threads, hcfilter=hcfilter)
 
-        returncodes = exe.execute(bowtie2_cmd + fastq_cmd, pipe=True, quiet=quiet)
+        returncodes = exe.execute(bowtie2_cmd + fastq_cmd, pipe=True)
 
         self.logger.debug(returncodes)
         for returncode in returncodes:
@@ -86,7 +84,7 @@ class Bowtie2(Pipeline):
         self.logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return 0
 
-    def interface(self, args, quiet=False):
+    def interface(self, args):
         """
         Main function for the user interface. Parses arguments and starts the pipeline.
 
@@ -94,8 +92,6 @@ class Bowtie2(Pipeline):
         ----------
         args : list
             This list is parsed by ArgumentParser.
-        quiet : bool
-            Toggles whether output is quiet or not.
 
         Returns
         -------
@@ -169,4 +165,4 @@ class Bowtie2(Pipeline):
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        self.run(idx, seq1, out1, out2=out2, seq2=seq2, hcfilter=hcfilter, threads=threads, mode=mode, quiet=quiet)
+        self.run(idx, seq1, out1, out2=out2, seq2=seq2, hcfilter=hcfilter, threads=threads, mode=mode)

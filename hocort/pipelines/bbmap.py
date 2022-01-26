@@ -24,7 +24,7 @@ class BBMap(Pipeline):
         """
         super().__init__(__file__)
 
-    def run(self, idx, seq1, out1, seq2=None, out2=None, hcfilter=False, threads=1, quiet=False, options=[]):
+    def run(self, idx, seq1, out1, seq2=None, out2=None, hcfilter=False, threads=1, options=[]):
         """
         Run function which starts the pipeline.
 
@@ -44,8 +44,6 @@ class BBMap(Pipeline):
             Whether to exclude or include the matching sequences from the output files.
         threads : int
             Number of threads to use.
-        quiet : bool
-            Toggles whether output is quiet or not.
         options : list
             An options list where additional arguments may be specified.
 
@@ -70,7 +68,7 @@ class BBMap(Pipeline):
         if bbmap_cmd == None: return 1
         fastq_cmd = SAM.sam_to_fastq(out1=out1, out2=out2, threads=threads, hcfilter=hcfilter)
 
-        returncodes = exe.execute(bbmap_cmd + fastq_cmd, pipe=True, quiet=quiet)
+        returncodes = exe.execute(bbmap_cmd + fastq_cmd, pipe=True)
 
         self.logger.debug(returncodes)
         for returncode in returncodes:
@@ -80,7 +78,7 @@ class BBMap(Pipeline):
         self.logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return 0
 
-    def interface(self, args, quiet=False):
+    def interface(self, args):
         """
         Main function for the user interface. Parses arguments and starts the pipeline.
 
@@ -88,8 +86,6 @@ class BBMap(Pipeline):
         ----------
         args : list
             This list is parsed by ArgumentParser.
-        quiet : bool
-            Toggles whether output is quiet or not.
 
         Returns
         -------
@@ -155,4 +151,4 @@ class BBMap(Pipeline):
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        self.run(idx, seq1, out1, out2=out2, seq2=seq2, hcfilter=hcfilter, threads=threads, quiet=quiet)
+        self.run(idx, seq1, out1, out2=out2, seq2=seq2, hcfilter=hcfilter, threads=threads)

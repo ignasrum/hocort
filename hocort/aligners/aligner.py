@@ -7,7 +7,7 @@ class Aligner(ABC):
 
     """
     @abstractmethod
-    def build_index(self, path_out, fasta_in, quiet=False, options=[], **kwargs):
+    def build_index(self, path_out, fasta_in, options=[], **kwargs):
         """
         Builds an index.
 
@@ -17,8 +17,6 @@ class Aligner(ABC):
             Path where the output index is written.
         fasta_in : string
             Path where the input FASTA file is located.
-        quiet : bool
-            Toggles whether output is quiet or not.
         options : list
             An options list where additional arguments may be specified.
 

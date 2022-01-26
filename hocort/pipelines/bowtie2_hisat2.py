@@ -31,7 +31,7 @@ class Bowtie2HISAT2(Pipeline):
         self.temp_dir = tempfile.TemporaryDirectory(dir=dir)
         self.logger.debug(self.temp_dir.name)
 
-    def run(self, bt2_idx, hs2_idx, seq1, out1, seq2=None, out2=None, hcfilter=False, threads=1, quiet=False):
+    def run(self, bt2_idx, hs2_idx, seq1, out1, seq2=None, out2=None, hcfilter=False, threads=1):
         """
         Run function which starts the pipeline.
 
@@ -53,8 +53,6 @@ class Bowtie2HISAT2(Pipeline):
             Whether to exclude or include the matching sequences from the output files.
         threads : int
             Number of threads to use.
-        quiet : bool
-            Toggles whether output is quiet or not.
 
         Returns
         -------
@@ -68,11 +66,11 @@ class Bowtie2HISAT2(Pipeline):
         start_time = time.time()
         temp1 = f'{self.temp_dir.name}/temp1.fastq'
         temp2 = None if seq2 == None else f'{self.temp_dir.name}/temp2.fastq'
-        returncode = Bowtie2().run(bt2_idx, seq1, temp1, seq2=seq2, out2=temp2, mode='end-to-end', threads=threads, hcfilter=hcfilter, quiet=quiet)
+        returncode = Bowtie2().run(bt2_idx, seq1, temp1, seq2=seq2, out2=temp2, mode='end-to-end', threads=threads, hcfilter=hcfilter)
         if returncode != 0:
             self.logger.error('Pipeline was terminated')
             return 1
-        returncode = HISAT2().run(hs2_idx, temp1, out1, seq2=temp2, out2=out2, threads=threads, hcfilter=hcfilter, quiet=quiet)
+        returncode = HISAT2().run(hs2_idx, temp1, out1, seq2=temp2, out2=out2, threads=threads, hcfilter=hcfilter)
         if returncode != 0:
             self.logger.error('Pipeline was terminated')
             return 1
@@ -80,7 +78,7 @@ class Bowtie2HISAT2(Pipeline):
         self.logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return 0
 
-    def interface(self, args, quiet=False):
+    def interface(self, args):
         """
         Main function for the user interface. Parses arguments and starts the pipeline.
 
@@ -88,8 +86,6 @@ class Bowtie2HISAT2(Pipeline):
         ----------
         args : list
             This list is parsed by ArgumentParser.
-        quiet : bool
-            Toggles whether output is quiet or not.
 
         Returns
         -------
@@ -164,4 +160,4 @@ class Bowtie2HISAT2(Pipeline):
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        self.run(bt2_idx, hs2_idx, seq1, out1, seq2=seq2, out2=out2, threads=threads, hcfilter=hcfilter, quiet=quiet)
+        self.run(bt2_idx, hs2_idx, seq1, out1, seq2=seq2, out2=out2, threads=threads, hcfilter=hcfilter)
