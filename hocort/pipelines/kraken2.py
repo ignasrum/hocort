@@ -5,7 +5,7 @@ from hocort.pipelines.pipeline import Pipeline
 from hocort.classifiers.kraken2 import Kraken2 as kr2
 from hocort.parse.sam import SAM
 from hocort.parser import ArgParser
-from hocort.execute import execute
+import hocort.execute as exe
 
 
 class Kraken2(Pipeline):
@@ -24,7 +24,7 @@ class Kraken2(Pipeline):
         """
         super().__init__(__file__)
 
-    def run(self, idx, seq1, out, seq2=None, hcfilter=False, threads=1, options=[]):
+    def run(self, idx, seq1, out, seq2=None, hcfilter=False, threads=1, quiet=False, options=[]):
         """
         Run function which starts the pipeline.
 
@@ -40,6 +40,8 @@ class Kraken2(Pipeline):
             Path where the second input FastQ file is located.
         threads : int
             Number of threads to use.
+        quiet : bool
+            Toggles whether output is quiet or not.
         options : list
             An options list where additional arguments may be specified.
 
@@ -69,13 +71,9 @@ class Kraken2(Pipeline):
 
         kr2_cmd = kr2().classify(idx, seq1, classified_out=class_out, unclassified_out=unclass_out, seq2=seq2, threads=threads, options=options)
         if kr2_cmd == None: return 1
-        returncodes, stdout, stderr = execute(kr2_cmd, pipe=False)
+        returncodes = exe.execute(kr2_cmd, pipe=False, quiet=quiet)
 
         self.logger.debug(returncodes)
-        self.logger.info(stdout)
-        for stde in stderr:
-            self.logger.info(stde)
-
         for returncode in returncodes:
             if returncode != 0: return 1
 
@@ -83,7 +81,7 @@ class Kraken2(Pipeline):
         self.logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return 0
 
-    def interface(self, args):
+    def interface(self, args, quiet=False):
         """
         Main function for the user interface. Parses arguments and starts the pipeline.
 
@@ -91,6 +89,8 @@ class Kraken2(Pipeline):
         ----------
         args : list
             This list is parsed by ArgumentParser.
+        quiet : bool
+            Toggles whether output is quiet or not.
 
         Returns
         -------
@@ -145,4 +145,4 @@ class Kraken2(Pipeline):
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]
 
-        self.run(idx, seq1, out, seq2=seq2, threads=threads)
+        self.run(idx, seq1, out, seq2=seq2, threads=threads, quiet=quiet)

@@ -1,9 +1,6 @@
-from hocort.execute import execute
+import hocort.execute as exe
 
-def helper(cmd, expected):
-    returncodes, stdout, stderr = execute(cmd)
-    print(stdout)
-    for stde in stderr:
-        print(stde)
+def helper(cmd, expected, output=False):
+    returncodes = exe.execute(cmd, quiet=output)
     for returncode in returncodes:
         assert returncode == expected

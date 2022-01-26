@@ -11,7 +11,7 @@ class Kraken2(Classifier):
     Kraken2 implementation of the Classifier abstract base class.
 
     """
-    def build_index(self, path_out, fasta_in, threads=1, options=[], **kwargs):
+    def build_index(self, path_out, fasta_in, threads=1, quiet=False, options=[], **kwargs):
         """
         Builds an index.
 
@@ -23,6 +23,8 @@ class Kraken2(Classifier):
             Path where the input FASTA file is located.
         threads : int
             Number of threads to use.
+        quiet : bool
+            Toggles whether output is quiet or not.
         options : list
             An options list where additional arguments may be specified.
 
@@ -37,36 +39,28 @@ class Kraken2(Classifier):
             # kraken2-build --threads n --download-taxonomy --db database
         logger.info('Downloading taxonomy, this may take a while...')
         cmd1 = ['kraken2-build', '--threads', str(threads), '--download-taxonomy', '--db', path_out]
-        returncode1, stdout1, stderr1 = exe.execute(cmd1)
-        logger.info('\n' + stdout1)
-        logger.info('\n' + stderr1)
+        returncode1 = exe.execute(cmd1, quiet=quiet)
         if(returncode1 != 0): return returncode1
 
         # 2. add fasta to library
             # kraken2-build --threads n --add-to-library reference.fna --db database
         logger.info('Adding reference fasta to library...')
         cmd2 = ['kraken2-build', '--threads', str(threads), '--add-to-library', fasta_in, '--db', path_out]
-        returncode2, stdout2, stderr2 = exe.execute(cmd2)
-        logger.info('\n' + stdout2)
-        logger.info('\n' + stderr2)
+        returncode2 = exe.execute(cmd2, quiet=quiet)
         if(returncode2 != 0): return returncode2
 
         # 3. build db from library
             # kraken2-build --threads n --build --db database
         logger.info('Building database...')
         cmd3 = ['kraken2-build', '--threads', str(threads), '--build', '--db', path_out]
-        returncode3, stdout3, stderr3 = exe.execute(cmd3)
-        logger.info('\n' + stdout3)
-        logger.info('\n' + stderr3)
+        returncode3 = exe.execute(cmd3, quiet=quiet)
         if(returncode3 != 0): return returncode3
 
         # 4. clean up unnecessary files
             # kraken2-build --threads n --clean --db database 
         logger.info('Cleaning up...')
         cmd4 = ['kraken2-build', '--threads', str(threads), '--clean', '--db', path_out]
-        returncode4, stdout4, stderr4 = exe.execute(cmd4)
-        logger.info('\n' + stdout4)
-        logger.info('\n' + stderr4)
+        returncode4 = exe.execute(cmd4, quiet=quiet)
         if(returncode4 != 0): return returncode4
 
         return 0

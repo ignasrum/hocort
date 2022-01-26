@@ -46,7 +46,7 @@ class Pipeline(ABC):
         self.logger.debug(string + '\n')
 
     @abstractmethod
-    def run(self, seq1, seq2=None):
+    def run(self, seq1, seq2=None, quiet=False):
         """
         Aligns FastQ sequences to reference genome and outputs FastQ files with/without matching sequences.
 
@@ -56,6 +56,8 @@ class Pipeline(ABC):
             Path where the first input FastQ file is located.
         seq2 : string
             Path where the second input FastQ file is located.
+        quiet : bool
+            Toggles whether output is quiet or not.
 
         Returns
         -------
@@ -66,7 +68,7 @@ class Pipeline(ABC):
         pass
 
     @abstractmethod
-    def interface(self, args):
+    def interface(self, args, quiet=False):
         """
         Main function for the user interface. Parses arguments and starts the pipeline.
 
@@ -74,6 +76,8 @@ class Pipeline(ABC):
         ----------
         args : list
             This list is parsed by ArgumentParser.
+        quiet : bool
+            Toggles whether output is quiet or not.
 
         Returns
         -------

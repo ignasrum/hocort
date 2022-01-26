@@ -8,7 +8,7 @@ import logging
 logger = logging.getLogger(__file__)
 
 
-def execute(cmds, pipe=False):
+def execute(cmds, pipe=False, quiet=False):
     """
     Takes a list of commands, and spawns subprocesses.
 
@@ -24,35 +24,34 @@ def execute(cmds, pipe=False):
     -------
     returncodes : list
         List of returncodes from the executed subprocesses.
-    stdout : string
-        stdout of the last command/subprocess.
-    stderr : list
-        List of stderr messages from the subprocesses.
 
     """
     logger.debug(f'Commands: {cmds}')
 
     returncodes = []
-    stderr = []
     procs = []
+
+    stdin = None
     stdout = None
+    stderr = None
 
-    if pipe:
-        for cmd in cmds:
-            proc = subprocess.Popen(cmd, stdin=stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            procs.append(proc)
-            stdout = proc.stdout
-        for proc in procs:
-            proc.wait()
-        for proc in procs:
-            returncodes.append(proc.returncode)
-            stderr.append(proc.stderr.read().decode("utf-8"))
-        stdout = stdout.read().decode("utf-8")
-    else:
-        proc = subprocess.Popen(cmds[0], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, err = proc.communicate()
-        stderr.append(err.decode("utf-8"))
+    for cmd, i in zip(cmds, range(len(cmds))):
+        # if last cmd, don't catch stdout
+        if i == len(cmds) - 1:
+            stdin = stdout
+            stdout = None if not quiet else subprocess.PIPE
+            stderr = None if not quiet else subprocess.PIPE
+        else:
+            stdin = stdout if pipe else None
+            stdout = subprocess.PIPE if pipe else None
+            stderr = None if not quiet else subprocess.PIPE
+        proc = subprocess.Popen(cmd, stdin=stdin, stdout=stdout, stderr=stderr)
+        stdout = proc.stdout if pipe else None
+        procs.append(proc)
+
+    for proc in procs:
+        proc.wait()
+    for proc in procs:
         returncodes.append(proc.returncode)
-        stdout = out.decode("utf-8")
 
-    return returncodes, stdout, stderr
+    return returncodes

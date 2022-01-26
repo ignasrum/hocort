@@ -11,7 +11,6 @@ import hocort.classifiers
 import hocort.version as version
 import hocort.logging
 from hocort.parser import ArgParser
-from hocort.execute import execute
 
 # Gets available aligners from hocort.aligners
 aligners = {}
@@ -158,7 +157,7 @@ def main():
             logger.error(f'Invalid tool: {tool}')
             sys.exit(1)
         logger.warning(f'Building index with {tool}')
-        returncode = tool_build_index(out, ref, threads=threads)
+        returncode = tool_build_index(out, ref, threads=threads, quiet=quiet)
         logger.warning(f'Process exited with returncode: {returncode}')
         sys.exit(returncode)
     except Exception as e:

@@ -5,7 +5,7 @@ from hocort.pipelines.pipeline import Pipeline
 from hocort.aligners.bwa_mem2 import BWA_MEM2 as bwa_mem2
 from hocort.parse.sam import SAM
 from hocort.parser import ArgParser
-from hocort.execute import execute
+import hocort.execute as exe
 
 
 class BWA_MEM2(Pipeline):
@@ -24,7 +24,7 @@ class BWA_MEM2(Pipeline):
         """
         super().__init__(__file__)
 
-    def run(self, idx, seq1, out1, seq2=None, out2=None, hcfilter=False, threads=1, options=[]):
+    def run(self, idx, seq1, out1, seq2=None, out2=None, hcfilter=False, threads=1, quiet=False, options=[]):
         """
         Run function which starts the pipeline.
 
@@ -44,6 +44,8 @@ class BWA_MEM2(Pipeline):
             Whether to exclude or include the matching sequences from the output files.
         threads : int
             Number of threads to use.
+        quiet : bool
+            Toggles whether output is quiet or not.
         options : list
             An options list where additional arguments may be specified.
 
@@ -66,13 +68,9 @@ class BWA_MEM2(Pipeline):
         if bwa_mem2_cmd == None: return 1
         fastq_cmd = SAM.sam_to_fastq(out1=out1, out2=out2, threads=threads, hcfilter=hcfilter)
 
-        returncodes, stdout, stderr = execute(bwa_mem2_cmd + fastq_cmd, pipe=True)
+        returncodes = exe.execute(bwa_mem2_cmd + fastq_cmd, pipe=True, quiet=quiet)
 
         self.logger.debug(returncodes)
-        self.logger.info(stdout)
-        for stde in stderr:
-            self.logger.info(stde)
-
         for returncode in returncodes:
             if returncode != 0: return 1
 
@@ -80,7 +78,7 @@ class BWA_MEM2(Pipeline):
         self.logger.warning(f'Pipeline run time: {end_time - start_time} seconds')
         return 0
 
-    def interface(self, args):
+    def interface(self, args, quiet=False):
         """
         Main function for the user interface. Parses arguments and starts the pipeline.
 
@@ -88,6 +86,8 @@ class BWA_MEM2(Pipeline):
         ----------
         args : list
             This list is parsed by ArgumentParser.
+        quiet : bool
+            Toggles whether output is quiet or not.
 
         Returns
         -------
@@ -153,4 +153,4 @@ class BWA_MEM2(Pipeline):
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        self.run(idx, seq1, out1, out2=out2, seq2=seq2, hcfilter=hcfilter, threads=threads)
+        self.run(idx, seq1, out1, out2=out2, seq2=seq2, hcfilter=hcfilter, threads=threads, quiet=quiet)

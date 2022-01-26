@@ -11,7 +11,7 @@ class Bowtie2(Aligner):
     Bowtie2 implementation of the Aligner abstract base class.
 
     """
-    def build_index(self, path_out, fasta_in, options=[], **kwargs):
+    def build_index(self, path_out, fasta_in, quiet=False, options=[], **kwargs):
         """
         Builds an index.
 
@@ -23,6 +23,8 @@ class Bowtie2(Aligner):
             Path where the input FASTA file is located.
         threads : int
             Number of threads to use.
+        quiet : bool
+            Toggles whether output is quiet or not.
         options : list
             An options list where additional arguments may be specified.
 
@@ -34,11 +36,7 @@ class Bowtie2(Aligner):
         """
         if not path_out or not fasta_in: return 1
         cmd = [['bowtie2-build'] + options + [fasta_in, path_out]]
-        returncode, stdout, stderr = exe.execute(cmd, pipe=False)
-        logger.info('\n' + stdout)
-        for stde in stderr:
-            logger.info('\n' + stde)
-
+        returncode = exe.execute(cmd, pipe=False, quiet=quiet)
         return returncode[0]
 
     def align(self, index, seq1, output=None, seq2=None, threads=1, options=[]):

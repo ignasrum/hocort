@@ -142,4 +142,4 @@ def main():
         logger.error(f'Invalid pipeline: {pipeline}')
         sys.exit(1)
     pipeline_interface = pipelines[pipeline]().interface
-    pipeline_interface(unknown_args)
+    pipeline_interface(unknown_args, quiet=quiet)
