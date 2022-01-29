@@ -95,7 +95,7 @@ class Kraken2(Pipeline):
         """
         parser = ArgParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
+            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--host-contam-filter <bool>] -x <idx> -i <fastq_1> [<fastq_2>] -o <out#.fastq>'
         )
         parser.add_argument(
             '-x',
@@ -119,7 +119,7 @@ class Kraken2(Pipeline):
             '--output',
             required=True,
             type=str,
-            metavar=('<out>'),
+            metavar=('<out#.fastq>'),
             help='str: output path kraken2 format (with # if paired input) (required)'
         )
         parser.add_argument(
@@ -131,14 +131,22 @@ class Kraken2(Pipeline):
             default=os.cpu_count(),
             help='int: number of threads (default: max available on machine)'
         )
+        parser.add_argument(
+            '-f',
+            '--host-contam-filter',
+            choices=['True', 'False'],
+            default='False',
+            help='str: set to True to keep host sequences, False to keep everything besides host sequences (default: False)'
+        )
         parsed = parser.parse_args(args=args)
 
         idx = parsed.index
         seq = parsed.input
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
+        hcfilter = True if parsed.host_contam_filter == 'True' else False
 
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]
 
-        self.run(idx, seq1, out, seq2=seq2, threads=threads)
+        self.run(idx, seq1, out, seq2=seq2, hcfilter=hcfilter, threads=threads)
