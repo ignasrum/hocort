@@ -24,7 +24,7 @@ class Minimap2(Pipeline):
         """
         super().__init__(__file__)
 
-    def run(self, idx, seq1, out1, seq2=None, out2=None, hcfilter=False, threads=1, options=[]):
+    def run(self, idx, seq1, out1, seq2=None, out2=None, hcfilter=False, preset='illumina', threads=1, options=[]):
         """
         Run function which starts the pipeline.
 
@@ -42,6 +42,9 @@ class Minimap2(Pipeline):
             Path where the second output FastQ file will be written.
         hcfilter : bool
             Whether to exclude or include the matching sequences from the output files.
+        preset : str
+            Type of reads to align to reference.
+            Types: 'illumina', 'nanopore' or 'pacbio'
         threads : int
             Number of threads to use.
         options : list
@@ -59,7 +62,13 @@ class Minimap2(Pipeline):
             options = options
         else:
             options = ['-A1', '-B4', '-O1,10', '-s100', '--end-bonus', '200']
-        options += ['-xsr']
+
+        if preset == 'illumina':
+            options += ['-xsr']
+        elif preset == 'nanopore':
+            options += ['-xmap-ont']
+        elif preset == 'pacbio':
+            options += ['-xmap-pb']
 
         self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
@@ -94,7 +103,7 @@ class Minimap2(Pipeline):
         """
         parser = ArgParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--host-contam-filter <bool>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
+            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--host-contam-filter <bool>] [--preset <type>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
         )
         parser.add_argument(
             '-x',
@@ -138,6 +147,13 @@ class Minimap2(Pipeline):
             default='False',
             help='str: set to True to keep host sequences, False to keep everything besides host sequences (default: False)'
         )
+        parser.add_argument(
+            '-p',
+            '--preset',
+            choices=['illumina', 'nanopore', 'pacbio'],
+            default='illumina',
+            help='str: type of reads (default: illumina)'
+        )
         parsed = parser.parse_args(args=args)
 
         idx = parsed.index
@@ -145,10 +161,11 @@ class Minimap2(Pipeline):
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
         hcfilter = True if parsed.host_contam_filter == 'True' else False
+        preset = parsed.preset
 
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        self.run(idx, seq1, out1, out2=out2, seq2=seq2, hcfilter=hcfilter, threads=threads)
+        self.run(idx, seq1, out1, out2=out2, seq2=seq2, hcfilter=hcfilter, preset=preset, threads=threads)
