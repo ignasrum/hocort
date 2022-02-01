@@ -1,7 +1,10 @@
 import logging
+import os
+import sys
 
 import hocort.execute as exe
 from hocort.aligners.aligner import Aligner
+from hocort.parser import ArgParser
 
 logger = logging.getLogger(__file__)
 
@@ -26,14 +29,14 @@ class BWA_MEM2(Aligner):
 
         Returns
         -------
-        returncode : int
-            Resulting returncode after the process is finished.
+        [cmd] : list
+            List of commands to be executed.
 
         """
-        if not path_out or not fasta_in: return 1
-        cmd = [['bwa-mem2', 'index', '-p', path_out, fasta_in]]
-        returncode = exe.execute(cmd, pipe=False)
-        return returncode[0]
+        if not path_out or not fasta_in: return None
+        cmd = ['bwa-mem2', 'index', '-p', path_out, fasta_in]
+
+        return [cmd]
 
     def align(self, index, seq1, output=None, seq2=None, threads=1, options=[]):
         """
@@ -70,3 +73,56 @@ class BWA_MEM2(Aligner):
         cmd += options
 
         return [cmd]
+
+    def index_interface(self, args):
+        """
+        Main function for the index generation interface. Parses arguments and generates the index.
+
+        Parameters
+        ----------
+        args : list
+            This list is parsed by ArgumentParser.
+
+        Returns
+        -------
+        None
+
+        """
+        parser = ArgParser(
+            description=f'{self.__class__.__name__} aligner',
+            usage=f'hocort-index {self.__class__.__name__} [-h] -i <fasta> -o <index>'
+        )
+        parser.add_argument(
+            '-i',
+            '--input',
+            required=True,
+            type=str,
+            metavar=('<fasta>'),
+            help='str: path to sequence files, max 2 (required)'
+        )
+        parser.add_argument(
+            '-o',
+            '--output',
+            required=True,
+            type=str,
+            metavar=('<index>'),
+            help='str: path to output files, max 2 (required)'
+        )
+        parsed = parser.parse_args(args=args)
+
+        ref = parsed.input
+        out = parsed.output
+
+        s = os.path.split(out)
+        out_dir = s[0]
+        basename = s[1]
+        if basename == '' or basename == out:
+            logger.error(f'No basename was provided for output path (dir/basename): {basename}')
+            sys.exit(1)
+        if not os.path.isdir(out_dir):
+            logger.error(f'Output path does not exist: {out}')
+            sys.exit(1)
+
+        cmd = self.build_index(out, ref)
+        returncode = exe.execute(cmd, pipe=False, merge_stdout_stderr=True)
+        return returncode[0]

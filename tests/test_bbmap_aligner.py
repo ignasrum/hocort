@@ -17,12 +17,12 @@ seq2 = f'{path}/test_data/sequences/sequences2.fastq'
 no_path = ''
 
 def test_build_idx():
-    returncode = BBMap().build_index(idx_out, fasta)
-    assert returncode == 0
+    cmd = BBMap().build_index(idx_out, fasta)
+    helper(cmd, 0)
 
 def test_build_idx_no_input():
-    returncode = BBMap().build_index(idx_out, no_path)
-    assert returncode == 1
+    cmd = BBMap().build_index(idx_out, no_path)
+    assert cmd == None
 
 def test_idx_no_path():
     cmd = BBMap().align(no_path, seq1, output)

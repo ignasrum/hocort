@@ -2,5 +2,5 @@
 A file for storing version and last_modified variables.
 
 """
-__version__ = '0.2.0'
-__last_modified__ = '26 January 2022'
+__version__ = '0.2.1'
+__last_modified__ = '1 February 2022'

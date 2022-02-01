@@ -82,31 +82,6 @@ def main():
         help='str: tool to generate index for (required)'
     )
     parser.add_argument(
-        '-i',
-        '--input',
-        required=True,
-        type=str,
-        metavar=('<fasta>'),
-        help='str: path to reference genome fasta (required)'
-    )
-    parser.add_argument(
-        '-o',
-        '--output',
-        required=True,
-        type=str,
-        metavar=('<path>'),
-        help='str: path to output (required)'
-    )
-    parser.add_argument(
-        '-t',
-        '--threads',
-        required=False,
-        type=int,
-        metavar=('<int>'),
-        default=os.cpu_count(),
-        help='int: max number of threads (default: max available on machine)'
-    )
-    parser.add_argument(
         '-d',
         '--debug',
         action='store_true',
@@ -124,12 +99,8 @@ def main():
         type=str,
         help='str: path to log file'
     )
-
-    args = parser.parse_args()
+    args, unknown_args = parser.parse_known_args()
     tool = args.tool
-    ref = args.input
-    out = args.output
-    threads = args.threads if args.threads else 1
     debug = args.debug
     quiet = args.quiet
     log_file = args.log_file
@@ -137,29 +108,14 @@ def main():
     logger = hocort.logging.configure_logger(__file__, debug=debug, quiet=quiet, filename=log_file)
     logger.debug(str(args))
 
-    s = os.path.split(out)
-    out_dir = s[0]
-    basename = s[1]
-    if basename == '' or basename == out:
-        logger.error(f'No basename was given (dir/basename): {basename}')
+    interface = None
+    if tool in aligners.keys():
+        interface = aligners[tool]().index_interface
+    elif tool in classifiers.keys():
+        interface = classifiers[tool]().index_interface
+    else:
+        logger.error(f'Invalid tool: {tool}')
         sys.exit(1)
-    if not os.path.isdir(out_dir):
-        logger.error(f'Output path does not exist: {out}')
-        sys.exit(1)
-
-    try:
-        tool_build_index = None
-        if tool in aligners.keys():
-            tool_build_index = aligners[tool].build_index
-        elif tool in classifiers.keys():
-            tool_build_index = classifiers[tool].build_index
-        else:
-            logger.error(f'Invalid tool: {tool}')
-            sys.exit(1)
-        logger.warning(f'Building index with {tool}')
-        returncode = tool_build_index(out, ref, threads=threads)
-        logger.warning(f'Process exited with returncode: {returncode}')
-        sys.exit(returncode)
-    except Exception as e:
-        logger.error(e)
-        sys.exit(1)
+    returncode = interface(unknown_args)
+    logger.warning(f'Process exited with returncode: {returncode}')
+    sys.exit(returncode)

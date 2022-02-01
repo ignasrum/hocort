@@ -27,13 +27,15 @@ def configure_logger(name, debug=False, quiet=False, filename=None):
 
     """
     logger = logging.getLogger(name)
+    format_style = '%(asctime)s %(levelname)s | %(message)s'
     log_level = logging.INFO
-    if debug: log_level = logging.DEBUG
+    if debug:
+        log_level = logging.DEBUG
+        format_style = '%(asctime)s %(levelname)s | %(message)s --- %(name)s'
     if quiet: log_level = logging.WARNING
-    format_style = '%(asctime)s - %(levelname)s - %(message)s - %(name)s'
     filemode = 'a'
     if filename:
-        logging.basicConfig(filename=filename, filemode=filemode, format=format_style, level=log_level)
+        logging.basicConfig(format=format_style, level=log_level, filename=filename, filemode=filemode)
     else:
         logging.basicConfig(format=format_style, level=log_level)
     return logger

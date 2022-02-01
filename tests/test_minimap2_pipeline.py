@@ -75,6 +75,18 @@ def test_pipeline_2():
     returncode = Minimap2().run(idx, seq1, out1, seq2=seq2, out2=out2)
     assert returncode == 0
 
+def test_pipeline_preset_illumina():
+    returncode = Minimap2().run(idx, seq1, out1, seq2=seq2, out2=out2, preset='illumina')
+    assert returncode == 0
+
+def test_pipeline_preset_nanopore():
+    returncode = Minimap2().run(idx, seq1, out1, seq2=seq2, out2=out2, preset='nanopore')
+    assert returncode == 0
+
+def test_pipeline_preset_pacbio():
+    returncode = Minimap2().run(idx, seq1, out1, seq2=seq2, out2=out2, preset='pacbio')
+    assert returncode == 0
+
 def test_pipeline_seq2_no_out2():
     returncode = Minimap2().run(idx, seq1, out1, seq2=seq2)
     assert returncode == 1

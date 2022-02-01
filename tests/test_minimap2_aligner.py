@@ -16,12 +16,12 @@ seq2 = f'{path}/test_data/sequences/sequences2.fastq'
 no_path = ''
 
 def test_build_idx():
-    returncode = Minimap2().build_index(output, fasta)
-    assert returncode == 0
+    cmd = Minimap2().build_index(output, fasta)
+    helper(cmd, 0)
 
 def test_build_idx_no_input():
-    returncode = Minimap2().build_index(output, no_path)
-    assert returncode == 1
+    cmd = Minimap2().build_index(output, no_path)
+    assert cmd == None
 
 def test_idx_no_path():
     cmd = Minimap2().align(no_path, seq1, output)

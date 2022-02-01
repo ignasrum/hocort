@@ -8,7 +8,7 @@ import logging
 logger = logging.getLogger(__file__)
 
 
-def execute(cmds, pipe=False):
+def execute(cmds, pipe=False, merge_stdout_stderr=False):
     """
     Takes a list of commands, and spawns subprocesses.
 
@@ -19,6 +19,8 @@ def execute(cmds, pipe=False):
         Format: [[ls], [grep file]]
     pipe : bool
         Whether to pipe output from cmd1 to cmd2 etc.
+    merge_stdout_stderr : bool
+        Whether to merge stderr output into stdout.
 
     Returns
     -------
@@ -27,6 +29,7 @@ def execute(cmds, pipe=False):
 
     """
     logger.debug(f'Commands: {cmds}')
+    stderr = subprocess.STDOUT if merge_stdout_stderr else subprocess.PIPE
 
     returncodes = []
     procs = []
@@ -34,7 +37,7 @@ def execute(cmds, pipe=False):
     stdin = None
 
     for cmd, i in zip(cmds, range(len(cmds))):
-        proc = subprocess.Popen(cmd, stdin=stdin, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(cmd, stdin=stdin, stdout=subprocess.PIPE, stderr=stderr)
         # realtime print stdout and stderr
         if i == len(cmds) - 1 and pipe or not pipe:
             for line in iter(proc.stdout.readline, b''):
@@ -43,7 +46,7 @@ def execute(cmds, pipe=False):
         procs.append(proc)
 
     for proc in procs:
-        if proc.stderr:
+        if not merge_stdout_stderr and proc.stderr:
             for line in iter(proc.stderr.readline, b''):
                 logger.info(line.rstrip().decode('utf-8'))
         proc.wait()

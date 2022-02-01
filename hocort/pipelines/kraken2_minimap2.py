@@ -1,21 +1,26 @@
 import time
 import os
+import tempfile
 
 from hocort.pipelines.pipeline import Pipeline
-from hocort.aligners.minimap2 import Minimap2 as mn2
-from hocort.parse.sam import SAM
+from hocort.pipelines.minimap2 import Minimap2
+from hocort.pipelines.kraken2 import Kraken2
 from hocort.parser import ArgParser
-import hocort.execute as exe
 
 
-class Minimap2(Pipeline):
+class Kraken2Minimap2(Pipeline):
     """
-    Minimap2 pipeline which maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
+    Kraken2Minimap2 pipeline which first runs Kraken2, then runs Minimap2. It maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
 
     """
-    def __init__(self):
+    def __init__(self, dir=None):
         """
-        Sets the logger file source filename.
+        Constructor which sets temporary file directory if specified.
+
+        Parameters
+        ----------
+        dir : string
+            Path where the temporary files are written.
 
         Returns
         -------
@@ -23,15 +28,19 @@ class Minimap2(Pipeline):
 
         """
         super().__init__(__file__)
+        self.temp_dir = tempfile.TemporaryDirectory(dir=dir)
+        self.logger.debug(self.temp_dir.name)
 
-    def run(self, idx, seq1, out1, seq2=None, out2=None, hcfilter=False, preset='illumina', threads=1, options=[]):
+    def run(self, mn2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, hcfilter=False, preset='illumina', threads=1):
         """
         Run function which starts the pipeline.
 
         Parameters
         ----------
-        idx : string
-            Path where the index is located.
+        mn2_idx : string
+            Path where the Minimap2 index is located.
+        kr2_idx : string
+            Path where the Kraken2 index is located.
         seq1 : string
             Path where the first input FastQ file is located.
         out1 : string
@@ -47,8 +56,6 @@ class Minimap2(Pipeline):
             Types: 'illumina', 'nanopore' or 'pacbio'
         threads : int
             Number of threads to use.
-        options : list
-            An options list where additional arguments may be specified.
 
         Returns
         -------
@@ -58,31 +65,22 @@ class Minimap2(Pipeline):
         """
         self.debug_log_args(self.run.__name__, locals())
         if seq2 and not out2: return 1
-        if len(options) > 0:
-            options = options
-        else:
-            #options = ['-A1', '-B4', '-O1,10', '-s100', '--end-bonus', '200']
-            options = []
-
-        if preset == 'illumina':
-            options += ['-xsr']
-        elif preset == 'nanopore':
-            options += ['-xmap-ont']
-        elif preset == 'pacbio':
-            options += ['-xmap-pb']
-
         self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
-        mn2_cmd = mn2().align(idx, seq1, seq2=seq2, threads=threads, options=options)
-        if mn2_cmd == None: return 1
-        fastq_cmd = SAM.sam_to_fastq(out1=out1, out2=out2, threads=threads, hcfilter=hcfilter)
+        kr2_out = self.temp_dir.name + '/out#.fastq' if seq2 and out2 else self.temp_dir.name + '/out_1.fastq'
+        returncode = Kraken2().run(kr2_idx, seq1, kr2_out, seq2=seq2, hcfilter=hcfilter, threads=threads)
+        if returncode != 0:
+            self.logger.error('Pipeline was terminated')
+            return 1
 
-        returncodes = exe.execute(mn2_cmd + fastq_cmd, pipe=True)
+        temp1 = f'{self.temp_dir.name}/out_1.fastq'
+        temp2 = None if seq2 == None else f'{self.temp_dir.name}/out_2.fastq'
 
-        self.logger.debug(returncodes)
-        for returncode in returncodes:
-            if returncode != 0: return 1
+        returncode = Minimap2().run(mn2_idx, temp1, out1, seq2=temp2, out2=out2, threads=threads, hcfilter=hcfilter, preset=preset)
+        if returncode != 0:
+            self.logger.error('Pipeline was terminated')
+            return 1
 
         end_time = time.time()
         self.logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
@@ -104,15 +102,23 @@ class Minimap2(Pipeline):
         """
         parser = ArgParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--host-contam-filter <bool>] [--preset <type>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
+            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--host-contam-filter <bool>] --minimap2_index <idx> --kraken2_index <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
         )
         parser.add_argument(
-            '-x',
-            '--index',
+            '-m',
+            '--minimap2_index',
             required=True,
             type=str,
             metavar=('<idx>'),
             help='str: path to Minimap2 index (required)'
+        )
+        parser.add_argument(
+            '-k',
+            '--kraken2_index',
+            required=True,
+            type=str,
+            metavar=('<idx>'),
+            help='str: path to Kraken2 index (required)'
         )
         parser.add_argument(
             '-i',
@@ -157,7 +163,8 @@ class Minimap2(Pipeline):
         )
         parsed = parser.parse_args(args=args)
 
-        idx = parsed.index
+        mn2_idx = parsed.minimap2_index
+        kr2_idx = parsed.kraken2_index
         seq = parsed.input
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
@@ -169,4 +176,4 @@ class Minimap2(Pipeline):
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        self.run(idx, seq1, out1, out2=out2, seq2=seq2, hcfilter=hcfilter, preset=preset, threads=threads)
+        self.run(mn2_idx, kr2_idx, seq1, out1, seq2=seq2, out2=out2, threads=threads, hcfilter=hcfilter, preset=preset)

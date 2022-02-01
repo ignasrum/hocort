@@ -22,8 +22,8 @@ class Aligner(ABC):
 
         Returns
         -------
-        returncode : int
-            Resulting returncode after the process is finished.
+        [cmd] : list
+            List of commands to be executed.
 
         """
         pass
@@ -50,6 +50,23 @@ class Aligner(ABC):
         -------
         [cmd] : list
             List of commands to be executed.
+
+        """
+        pass
+
+    @abstractmethod
+    def index_interface(self, args):
+        """
+        Main function for the index generation interface. Parses arguments and generates the index.
+
+        Parameters
+        ----------
+        args : list
+            This list is parsed by ArgumentParser.
+
+        Returns
+        -------
+        None
 
         """
         pass

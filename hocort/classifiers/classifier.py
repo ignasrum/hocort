@@ -55,3 +55,20 @@ class Classifier(ABC):
 
         """
         pass
+
+    @abstractmethod
+    def index_interface(self, args):
+        """
+        Main function for the index generation interface. Parses arguments and generates the index.
+
+        Parameters
+        ----------
+        args : list
+            This list is parsed by ArgumentParser.
+
+        Returns
+        -------
+        None
+
+        """
+        pass

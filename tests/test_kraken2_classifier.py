@@ -17,6 +17,10 @@ output = f'{temp_dir.name}/output'
 seq2 = f'{path}/test_data/sequences/sequences2.fastq'
 no_path = ''
 
+def test_build_idx_no_input():
+    cmd = Kraken2().build_index(output, no_path)
+    assert cmd == None
+
 def test_idx_no_path():
     cmd = Kraken2().classify(no_path, seq1, class_out, unclass_out)
     assert cmd == None

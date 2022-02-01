@@ -1,7 +1,10 @@
 import logging
+import os
+import sys
 
 import hocort.execute as exe
 from hocort.classifiers.classifier import Classifier
+from hocort.parser import ArgParser
 
 logger = logging.getLogger(__file__)
 
@@ -28,40 +31,28 @@ class Kraken2(Classifier):
 
         Returns
         -------
-        returncode : int
-            Resulting returncode after the process is finished.
+        [cmd1, cmd2, cmd3, cmd4] : list
+            List of commands to be executed.
 
         """
-        if not path_out or not fasta_in: return 1
+        if not path_out or not fasta_in: return None
         # 1. download taxonomy
             # kraken2-build --threads n --download-taxonomy --db database
-        logger.info('Downloading taxonomy, this may take a while...')
-        cmd1 = [['kraken2-build', '--threads', str(threads), '--download-taxonomy', '--db', path_out]]
-        returncode1 = exe.execute(cmd1)[0]
-        if(returncode1 != 0): return returncode1
+        cmd1 = ['kraken2-build', '--threads', str(threads), '--download-taxonomy', '--db', path_out]
 
         # 2. add fasta to library
             # kraken2-build --threads n --add-to-library reference.fna --db database
-        logger.info('Adding reference fasta to library...')
-        cmd2 = [['kraken2-build', '--threads', str(threads), '--add-to-library', fasta_in, '--db', path_out]]
-        returncode2 = exe.execute(cmd2)[0]
-        if(returncode2 != 0): return returncode2
+        cmd2 = ['kraken2-build', '--threads', str(threads), '--add-to-library', fasta_in, '--db', path_out]
 
         # 3. build db from library
             # kraken2-build --threads n --build --db database
-        logger.info('Building database...')
-        cmd3 = [['kraken2-build', '--threads', str(threads), '--build', '--db', path_out]]
-        returncode3 = exe.execute(cmd3)[0]
-        if(returncode3 != 0): return returncode3
+        cmd3 = ['kraken2-build', '--threads', str(threads), '--build', '--db', path_out]
 
         # 4. clean up unnecessary files
             # kraken2-build --threads n --clean --db database 
-        logger.info('Cleaning up...')
-        cmd4 = [['kraken2-build', '--threads', str(threads), '--clean', '--db', path_out]]
-        returncode4 = exe.execute(cmd4)[0]
-        if(returncode4 != 0): return returncode4
+        cmd4 = ['kraken2-build', '--threads', str(threads), '--clean', '--db', path_out]
 
-        return 0
+        return [cmd1, cmd2, cmd3, cmd4]
 
     def classify(self, index, seq1, classified_out=None, unclassified_out=None, seq2=None, threads=1, options=[]):
         """
@@ -102,3 +93,73 @@ class Kraken2(Classifier):
         cmd += options
 
         return [cmd]
+
+    def index_interface(self, args):
+        """
+        Main function for the index generation interface. Parses arguments and generates the index.
+
+        Parameters
+        ----------
+        args : list
+            This list is parsed by ArgumentParser.
+
+        Returns
+        -------
+        None
+
+        """
+        parser = ArgParser(
+            description=f'{self.__class__.__name__} aligner',
+            usage=f'hocort-index {self.__class__.__name__} [-h] [--threads <int>] -i <fasta> -o <index>'
+        )
+        parser.add_argument(
+            '-i',
+            '--input',
+            required=True,
+            type=str,
+            metavar=('<fasta>'),
+            help='str: path to sequence files, max 2 (required)'
+        )
+        parser.add_argument(
+            '-o',
+            '--output',
+            required=True,
+            type=str,
+            metavar=('<index>'),
+            help='str: path to output files, max 2 (required)'
+        )
+        parser.add_argument(
+            '-t',
+            '--threads',
+            required=False,
+            type=int,
+            metavar=('<int>'),
+            default=os.cpu_count(),
+            help='int: number of threads (default: max available on machine)'
+        )
+        parsed = parser.parse_args(args=args)
+
+        ref = parsed.input
+        out = parsed.output
+        threads = parsed.threads
+
+        s = os.path.split(out)
+        out_dir = s[0]
+        basename = s[1]
+        if basename == '' or basename == out:
+            logger.error(f'No basename was provided for output path (dir/basename): {basename}')
+            sys.exit(1)
+        if not os.path.isdir(out_dir):
+            logger.error(f'Output path does not exist: {out}')
+            sys.exit(1)
+
+        cmds = self.build_index(out, ref, threads=threads)
+        logger.info('Downloading taxonomy, this may take a while...')
+        returncode = exe.execute([cmds[0]], pipe=False, merge_stdout_stderr=True)
+        logger.info('Adding reference fasta to library...')
+        returncode = exe.execute([cmds[1]], pipe=False, merge_stdout_stderr=True)
+        logger.info('Building database...')
+        returncode = exe.execute([cmds[2]], pipe=False, merge_stdout_stderr=True)
+        logger.info('Cleaning up...')
+        returncode = exe.execute([cmds[3]], pipe=False, merge_stdout_stderr=True)
+        return returncode[0]
