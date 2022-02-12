@@ -29,7 +29,6 @@ def execute(cmds, pipe=False, merge_stdout_stderr=False):
 
     """
     logger.debug(f'Commands: {cmds}')
-    stderr = subprocess.STDOUT if merge_stdout_stderr else subprocess.PIPE
 
     returncodes = []
     procs = []
@@ -37,6 +36,10 @@ def execute(cmds, pipe=False, merge_stdout_stderr=False):
     stdin = None
 
     for cmd, i in zip(cmds, range(len(cmds))):
+        if i == len(cmds) - 1:
+            stderr = subprocess.STDOUT if merge_stdout_stderr else subprocess.PIPE
+        else:
+            stderr = subprocess.STDOUT if not pipe and merge_stdout_stderr else subprocess.PIPE
         proc = subprocess.Popen(cmd, stdin=stdin, stdout=subprocess.PIPE, stderr=stderr)
         # realtime print stdout and stderr
         if i == len(cmds) - 1 and pipe or not pipe:
