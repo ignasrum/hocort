@@ -29,7 +29,7 @@ def test_idx_no_path():
 
 def test_idx_path():
     cmd = Bowtie2().align(temp_dir.name, seq1, output)
-    helper(cmd, 1)
+    helper(cmd, 255)
 
 def test_seq1_no_path():
     cmd = Bowtie2().align(idx, no_path, output)
