@@ -136,5 +136,6 @@ class BBMap(Aligner):
             sys.exit(1)
 
         cmd = self.build_index(out, ref, threads=threads)
+        logger.warning(f'Generating index for: {self.__class__.__name__}')
         returncode = exe.execute(cmd, pipe=False, merge_stdout_stderr=True)
         return returncode[0]
