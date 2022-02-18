@@ -62,7 +62,7 @@ class Bowtie2HISAT2(Pipeline):
         """
         self.debug_log_args(self.run.__name__, locals())
         if seq2 and not out2: return 1
-        self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
+        self.logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
         temp1 = f'{self.temp_dir.name}/temp1.fastq'
         temp2 = None if seq2 == None else f'{self.temp_dir.name}/temp2.fastq'
@@ -160,4 +160,4 @@ class Bowtie2HISAT2(Pipeline):
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        self.run(bt2_idx, hs2_idx, seq1, out1, seq2=seq2, out2=out2, threads=threads, hcfilter=hcfilter)
+        return self.run(bt2_idx, hs2_idx, seq1, out1, seq2=seq2, out2=out2, threads=threads, hcfilter=hcfilter)

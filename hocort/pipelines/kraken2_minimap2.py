@@ -65,7 +65,7 @@ class Kraken2Minimap2(Pipeline):
         """
         self.debug_log_args(self.run.__name__, locals())
         if seq2 and not out2: return 1
-        self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
+        self.logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
         kr2_out = self.temp_dir.name + '/out#.fastq' if seq2 and out2 else self.temp_dir.name + '/out_1.fastq'
@@ -176,4 +176,4 @@ class Kraken2Minimap2(Pipeline):
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        self.run(mn2_idx, kr2_idx, seq1, out1, seq2=seq2, out2=out2, threads=threads, hcfilter=hcfilter, preset=preset)
+        return self.run(mn2_idx, kr2_idx, seq1, out1, seq2=seq2, out2=out2, threads=threads, hcfilter=hcfilter, preset=preset)

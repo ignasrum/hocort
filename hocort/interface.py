@@ -142,4 +142,6 @@ def main():
         logger.error(f'Invalid pipeline: {pipeline}')
         sys.exit(1)
     pipeline_interface = pipelines[pipeline]().interface
-    pipeline_interface(unknown_args)
+    returncode = pipeline_interface(unknown_args)
+    logger.warning(f'Pipeline exited with returncode: {returncode}')
+    sys.exit(returncode)

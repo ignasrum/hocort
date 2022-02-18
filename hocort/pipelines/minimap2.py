@@ -71,7 +71,7 @@ class Minimap2(Pipeline):
         elif preset == 'pacbio':
             options += ['-xmap-pb']
 
-        self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
+        self.logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
         mn2_cmd = mn2().align(idx, seq1, seq2=seq2, threads=threads, options=options)
@@ -169,4 +169,4 @@ class Minimap2(Pipeline):
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        self.run(idx, seq1, out1, out2=out2, seq2=seq2, hcfilter=hcfilter, preset=preset, threads=threads)
+        return self.run(idx, seq1, out1, out2=out2, seq2=seq2, hcfilter=hcfilter, preset=preset, threads=threads)

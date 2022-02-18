@@ -56,7 +56,7 @@ class BBMap(Pipeline):
         self.debug_log_args(self.run.__name__, locals())
         if seq2 and not out2: return 1
 
-        self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
+        self.logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
         if len(options) > 0:
@@ -151,4 +151,4 @@ class BBMap(Pipeline):
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        self.run(idx, seq1, out1, out2=out2, seq2=seq2, hcfilter=hcfilter, threads=threads)
+        return self.run(idx, seq1, out1, out2=out2, seq2=seq2, hcfilter=hcfilter, threads=threads)

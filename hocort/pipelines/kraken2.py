@@ -57,7 +57,7 @@ class Kraken2(Pipeline):
             options = []
         options += ['--output', '-']
 
-        self.logger.warning(f'Starting pipeline: {self.__class__.__name__}')
+        self.logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
         class_out = None
@@ -149,4 +149,4 @@ class Kraken2(Pipeline):
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]
 
-        self.run(idx, seq1, out, seq2=seq2, hcfilter=hcfilter, threads=threads)
+        return self.run(idx, seq1, out, seq2=seq2, hcfilter=hcfilter, threads=threads)
