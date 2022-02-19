@@ -23,7 +23,7 @@ def test_pipeline_bt2_idx_no_path():
     returncode = Kraken2Bowtie2().run(no_path, kr2_idx, seq1, out1)
     assert returncode == 1
 
-def test_pipeline_hs2_idx_no_path():
+def test_pipeline_kr2_idx_no_path():
     returncode = Kraken2Bowtie2().run(bt2_idx, no_path, seq1, out1)
     assert returncode == 1
 

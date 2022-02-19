@@ -61,8 +61,8 @@ class Bowtie2Bowtie2(Pipeline):
         if seq2 and not out2: return 1
         self.logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
-        temp1 = f'{self.temp_dir.name}/temp1.fastq'
-        temp2 = None if seq2 == None else f'{self.temp_dir.name}/temp2.fastq'
+        temp1 = f'{self.temp_dir.name}/temp1.fastq.gz'
+        temp2 = None if seq2 == None else f'{self.temp_dir.name}/temp2.fastq.gz'
         returncode = Bowtie2().run(idx, seq1, temp1, seq2=seq2, out2=temp2, mode='end-to-end', hcfilter=hcfilter)
         if returncode != 0:
             self.logger.error('Pipeline was terminated')

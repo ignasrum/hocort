@@ -3,14 +3,14 @@ import os
 import tempfile
 
 from hocort.pipelines.pipeline import Pipeline
-from hocort.pipelines.bowtie2 import Bowtie2
 from hocort.pipelines.hisat2 import HISAT2
+from hocort.pipelines.kraken2 import Kraken2
 from hocort.parser import ArgParser
 
 
-class Bowtie2HISAT2(Pipeline):
+class Kraken2HISAT2(Pipeline):
     """
-    Bowtie2HISAT2 pipeline which first runs Bowtie2 in 'end-to-end' mode, then runs HISAT2. It maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
+    Kraken2HISAT2 pipeline which first runs Kraken2, then runs HISAT2. It maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
 
     """
     def __init__(self, dir=None):
@@ -31,16 +31,16 @@ class Bowtie2HISAT2(Pipeline):
         self.temp_dir = tempfile.TemporaryDirectory(dir=dir)
         self.logger.debug(self.temp_dir.name)
 
-    def run(self, bt2_idx, hs2_idx, seq1, out1, seq2=None, out2=None, hcfilter=False, threads=1):
+    def run(self, hs2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, hcfilter=False, threads=1):
         """
         Run function which starts the pipeline.
 
         Parameters
         ----------
-        bt2_idx : string
-            Path where the Bowtie2 index is located.
         hs2_idx : string
             Path where the HISAT2 index is located.
+        kr2_idx : string
+            Path where the Kraken2 index is located.
         seq1 : string
             Path where the first input FastQ file is located.
         out1 : string
@@ -64,16 +64,21 @@ class Bowtie2HISAT2(Pipeline):
         if seq2 and not out2: return 1
         self.logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
-        temp1 = f'{self.temp_dir.name}/temp1.fastq.gz'
-        temp2 = None if seq2 == None else f'{self.temp_dir.name}/temp2.fastq.gz'
-        returncode = Bowtie2().run(bt2_idx, seq1, temp1, seq2=seq2, out2=temp2, mode='end-to-end', threads=threads, hcfilter=hcfilter)
+
+        kr2_out = self.temp_dir.name + '/out#.fastq' if seq2 and out2 else self.temp_dir.name + '/out_1.fastq'
+        returncode = Kraken2().run(kr2_idx, seq1, kr2_out, seq2=seq2, hcfilter=hcfilter, threads=threads)
         if returncode != 0:
             self.logger.error('Pipeline was terminated')
             return 1
+
+        temp1 = f'{self.temp_dir.name}/out_1.fastq'
+        temp2 = None if seq2 == None else f'{self.temp_dir.name}/out_2.fastq'
+
         returncode = HISAT2().run(hs2_idx, temp1, out1, seq2=temp2, out2=out2, threads=threads, hcfilter=hcfilter)
         if returncode != 0:
             self.logger.error('Pipeline was terminated')
             return 1
+
         end_time = time.time()
         self.logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return 0
@@ -94,15 +99,7 @@ class Bowtie2HISAT2(Pipeline):
         """
         parser = ArgParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--host-contam-filter <bool>] --bowtie2_index <idx> --hisat2_index <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
-        )
-        parser.add_argument(
-            '-b',
-            '--bowtie2_index',
-            required=True,
-            type=str,
-            metavar=('<idx>'),
-            help='str: path to Bowtie2 index (required)'
+            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--host-contam-filter <bool>] --hisat2_index <idx> --kraken2_index <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
         )
         parser.add_argument(
             '-s',
@@ -111,6 +108,14 @@ class Bowtie2HISAT2(Pipeline):
             type=str,
             metavar=('<idx>'),
             help='str: path to HISAT2 index (required)'
+        )
+        parser.add_argument(
+            '-k',
+            '--kraken2_index',
+            required=True,
+            type=str,
+            metavar=('<idx>'),
+            help='str: path to Kraken2 index (required)'
         )
         parser.add_argument(
             '-i',
@@ -148,8 +153,8 @@ class Bowtie2HISAT2(Pipeline):
         )
         parsed = parser.parse_args(args=args)
 
-        bt2_idx = parsed.bowtie2_index
         hs2_idx = parsed.hisat2_index
+        kr2_idx = parsed.kraken2_index
         seq = parsed.input
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
@@ -160,4 +165,4 @@ class Bowtie2HISAT2(Pipeline):
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        return self.run(bt2_idx, hs2_idx, seq1, out1, seq2=seq2, out2=out2, threads=threads, hcfilter=hcfilter)
+        return self.run(hs2_idx, kr2_idx, seq1, out1, seq2=seq2, out2=out2, threads=threads, hcfilter=hcfilter)
