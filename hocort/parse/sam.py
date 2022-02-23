@@ -1,5 +1,3 @@
-import pysam
-
 class SAM:
     """
     SAM parsing and processing class.
