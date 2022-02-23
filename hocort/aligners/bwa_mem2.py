@@ -90,7 +90,7 @@ class BWA_MEM2(Aligner):
         """
         parser = ArgParser(
             description=f'{self.__class__.__name__} aligner',
-            usage=f'hocort-index {self.__class__.__name__} [-h] -i <fasta> -o <index>'
+            usage=f'hocort index {self.__class__.__name__} [-h] -i <fasta> -o <index>'
         )
         parser.add_argument(
             '-i',

@@ -94,7 +94,7 @@ class Bowtie2HISAT2(Pipeline):
         """
         parser = ArgParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--host-contam-filter <bool>] --bowtie2_index <idx> --hisat2_index <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
+            usage=f'hocort map {self.__class__.__name__} [-h] [--threads <int>] [--host-contam-filter <bool>] --bowtie2_index <idx> --hisat2_index <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
         )
         parser.add_argument(
             '-b',
