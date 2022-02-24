@@ -95,7 +95,7 @@ class Kraken2(Pipeline):
         """
         parser = ArgParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort {self.__class__.__name__} [-h] [--threads <int>] [--host-contam-filter <bool>] -x <idx> -i <fastq_1> [<fastq_2>] -o <out#.fastq>'
+            usage=f'hocort map {self.__class__.__name__} [-h] [--threads <int>] [--host-contam-filter <bool>] -x <idx> -i <fastq_1> [<fastq_2>] -o <out#.fastq>'
         )
         parser.add_argument(
             '-x',
