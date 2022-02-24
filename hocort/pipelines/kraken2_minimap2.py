@@ -150,6 +150,7 @@ class Kraken2Minimap2(Pipeline):
         parser.add_argument(
             '-f',
             '--host-contam-filter',
+            required=False,
             choices=['True', 'False'],
             default='False',
             help='str: set to True to keep host sequences, False to keep everything besides host sequences (default: False)'
@@ -157,6 +158,7 @@ class Kraken2Minimap2(Pipeline):
         parser.add_argument(
             '-p',
             '--preset',
+            required=False,
             choices=['illumina', 'nanopore', 'pacbio'],
             default='illumina',
             help='str: type of reads (default: illumina)'
