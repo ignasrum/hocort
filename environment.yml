@@ -1,0 +1,13 @@
+name: hocort
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bowtie2
+  - hisat2
+  - samtools
+  - kraken2
+  - bwa-mem2
+  - bbmap
+  - minimap2
