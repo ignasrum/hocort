@@ -127,7 +127,7 @@ class Kraken2Minimap2(Pipeline):
             type=str,
             nargs=('+'),
             metavar=('<fastq_1>', '<fastq_2>'),
-            help='str: path to sequence files, max 2 (required)'
+            help='str: path to sequence files, max 2 (.gz compression supported) (required)'
         )
         parser.add_argument(
             '-o',
@@ -136,7 +136,7 @@ class Kraken2Minimap2(Pipeline):
             type=str,
             nargs=('+'),
             metavar=('<fastq_1>', '<fastq_2>'),
-            help='str: path to output files, max 2 (required)'
+            help='str: path to output files, max 2 (.gz compression supported) (required)'
         )
         parser.add_argument(
             '-t',

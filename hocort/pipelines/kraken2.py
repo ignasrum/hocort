@@ -112,7 +112,7 @@ class Kraken2(Pipeline):
             type=str,
             nargs=('+'),
             metavar=('<fastq_1>', '<fastq_2>'),
-            help='str: path to sequence files, max 2 (required)'
+            help='str: path to sequence files, max 2 (.gz compression supported) (required)'
         )
         parser.add_argument(
             '-o',
@@ -120,7 +120,7 @@ class Kraken2(Pipeline):
             required=True,
             type=str,
             metavar=('<out#.fastq>'),
-            help='str: output path kraken2 format (with # if paired input) (required)'
+            help='str: output path kraken2 format (with # if paired input) (.gz compression NOT supported) (required)'
         )
         parser.add_argument(
             '-t',
