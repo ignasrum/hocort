@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>hocort.interface API documentation</title>
+<meta name="description" content="Command line user interface for HoCoRT." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>hocort.interface</code></h1>
+</header>
+<section id="section-intro">
+<p>Command line user interface for HoCoRT.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+Command line user interface for HoCoRT.
+
+&#34;&#34;&#34;
+from argparse import Action
+import sys
+import inspect
+
+import hocort.aligners
+import hocort.classifiers
+import hocort.pipelines
+import hocort.version as version
+import hocort.logging
+from hocort.parser import ArgParser
+
+
+# Gets available aligners from hocort.aligners
+aligners = {}
+for aligner in dir(hocort.aligners):
+    if aligner[0] != &#39;_&#39;:
+        m = getattr(hocort.aligners, aligner)
+        if inspect.isclass(m):
+            aligners[aligner] = m
+
+# Gets available classifiers from hocort.classifiers
+classifiers = {}
+for classifier in dir(hocort.classifiers):
+    if classifier[0] != &#39;_&#39;:
+        m = getattr(hocort.classifiers, classifier)
+        if inspect.isclass(m):
+            classifiers[classifier] = m
+
+# Gets available pipelines from hocort.pipelines
+pipelines = {}
+for pipeline in dir(hocort.pipelines):
+    if pipeline[0] != &#39;_&#39;:
+        m = getattr(hocort.pipelines, pipeline)
+        if inspect.isclass(m):
+            pipelines[pipeline] = m
+
+class HelpActionMap(Action):
+    &#34;&#34;&#34;
+    Called when &#39;-h&#39; or &#39;--help&#39; flags are given.
+    &#34;&#34;&#34;
+    def __call__(self, parser, namespace, values, option_string=None):
+        &#34;&#34;&#34;
+        If a pipeline is selected, its interface is called with the &#39;-h&#39; flag.
+        Otherwise, the help message of this interface is printed together with the
+        names of pipelines available in hocort.pipelines module.
+        Parameters
+        ----------
+        parser : argparse.ArgumentParser
+            The object which contains this action.
+        namespace : argparse.Namespace
+            The argparse.Namespace object returned by parse_args().
+        values : list
+            The command-line arguments with any type conversion applied.
+        option_string : string
+            The option string which was used to invoke this action.
+        Returns
+        -------
+        None
+        &#34;&#34;&#34;
+        pipeline = namespace.pipeline
+        if pipeline != None:
+            pipeline_interface = pipelines[pipeline]().interface
+            pipeline_interface([&#39;-h&#39;])
+        else:
+            parser.print_help()
+        parser.exit()
+
+class HelpActionIndex(Action):
+    &#34;&#34;&#34;
+    Called when &#39;-h&#39; or &#39;--help&#39; flags are given.
+    &#34;&#34;&#34;
+    def __call__(self, parser, namespace, values, option_string=None):
+        &#34;&#34;&#34;
+        If a pipeline is selected, its interface is called with the &#39;-h&#39; flag.
+        Otherwise, the help message of this interface is printed together with the
+        names of pipelines available in hocort.pipelines module.
+        Parameters
+        ----------
+        parser : argparse.ArgumentParser
+            The object which contains this action.
+        namespace : argparse.Namespace
+            The argparse.Namespace object returned by parse_args().
+        values : list
+            The command-line arguments with any type conversion applied.
+        option_string : string
+            The option string which was used to invoke this action.
+        Returns
+        -------
+        None
+        &#34;&#34;&#34;
+        tool = namespace.tool
+        if tool != None:
+            if tool in aligners:
+                tool_interface = aligners[tool]().index_interface
+                tool_interface([&#39;-h&#39;])
+            if tool in classifiers:
+                tool_interface = classifiers[tool]().index_interface
+                tool_interface([&#39;-h&#39;])
+        else:
+            parser.print_help()
+        parser.exit()
+
+def extra_help_map():
+    &#34;&#34;&#34;
+    Returns string containing some help information about available pipelines.
+
+    Returns
+    -------
+    message : str
+        Message containing information about available pipelines.
+
+    &#34;&#34;&#34;
+    message = &#39;\nAvailable pipelines:&#39;
+    for pipeline in pipelines:
+        message += f&#39;\n    {pipeline}&#39;
+    message += &#39;\n&#39;
+    return message
+
+def extra_help_index():
+    &#34;&#34;&#34;
+    Returns string containing some help information about available tools.
+
+    Returns
+    -------
+    message : str
+        Message containing information about available tools.
+
+    &#34;&#34;&#34;
+    message = &#39;\nAvailable tools:&#39;
+    for aligner in aligners:
+        message += f&#39;\n    {aligner}&#39;
+    for classifier in classifiers:
+        message += f&#39;\n    {classifier}&#39;
+    message += &#39;\n&#39;
+    return message
+
+def version_info():
+    &#34;&#34;&#34;
+    Returns string containing version information.
+
+    Returns
+    -------
+    message : str
+        Message containing version information.
+
+    &#34;&#34;&#34;
+    message = f&#39;Version: {version.__version__}&#39;
+    message += f&#39;\nLast modified: {version.__last_modified__}&#39;
+    return message
+
+def main():
+    &#34;&#34;&#34;
+    Main function for user interface. Parses arguments and starts a pipeline if one is selected.
+
+    Returns
+    -------
+    None
+
+    &#34;&#34;&#34;
+    # main program
+    parser = ArgParser(
+        version_info=version_info,
+        prog=&#39;HoCoRT&#39;,
+        description=&#39;HoCoRT: A Host Contamination Removal Tool&#39;,
+        usage=&#39;hocort [subcommand] [options]&#39;
+    )
+    parser.add_argument(
+        &#39;-d&#39;,
+        &#39;--debug&#39;,
+        action=&#39;store_true&#39;,
+        help=&#39;flag: verbose output&#39;
+    )
+    parser.add_argument(
+        &#39;-q&#39;,
+        &#39;--quiet&#39;,
+        action=&#39;store_true&#39;,
+        help=&#39;flag: quiet output (overrides -d/--debug)&#39;
+    )
+    parser.add_argument(
+        &#39;-l&#39;,
+        &#39;--log-file&#39;,
+        type=str,
+        help=&#39;str: path to log file&#39;
+    )
+    subparsers = parser.add_subparsers(
+        dest=&#39;subcommand&#39;,
+        title=&#39;available subcommands&#39;,
+        metavar=&#39;subcommand&#39;,
+        required=True
+    )
+    # map subcommand
+    parser_map = subparsers.add_parser(
+        &#39;map&#39;,
+        prog=&#39;HoCoRT&#39;,
+        description=&#39;HoCoRT: A Host Contamination Removal Tool&#39;,
+        usage=&#39;hocort map [pipeline] [options]&#39;,
+        extra_help=extra_help_map,
+        help=&#39;Map reads to reference and remove contamination&#39;,
+        add_help=False
+    )
+    parser_map.add_argument(
+        &#39;pipeline&#39;,
+        type=str,
+        help=&#39;str: pipeline to run (required)&#39;
+    )
+    parser_map.add_argument(
+        &#39;-h&#39;,
+        &#39;--help&#39;,
+        action=HelpActionMap,
+        nargs=0,
+        help=&#39;flag: print help&#39;
+    )
+    # index subcommand
+    parser_index = subparsers.add_parser(
+        &#39;index&#39;,
+        prog=&#39;HoCoRT&#39;,
+        description=&#39;HoCoRT: A Host Contamination Removal Tool&#39;,
+        usage=&#39;hocort index [tool] [options]&#39;,
+        extra_help=extra_help_index,
+        help=&#39;Build index/-es for supported tools&#39;,
+        add_help=False
+    )
+    parser_index.add_argument(
+        &#39;tool&#39;,
+        type=str,
+        help=&#39;str: tool to generate index for (required)&#39;
+    )
+    parser_index.add_argument(
+        &#39;-h&#39;,
+        &#39;--help&#39;,
+        action=HelpActionIndex,
+        nargs=0,
+        help=&#39;flag: print help&#39;
+    )
+
+    args, unknown_args = parser.parse_known_args()
+    cmd = args.subcommand
+    debug = args.debug
+    quiet = args.quiet
+    log_file = args.log_file
+    logger = hocort.logging.configure_logger(__file__, debug=debug, quiet=quiet, filename=log_file)
+    logger.debug(str(args))
+
+
+    if cmd == &#39;map&#39; and args.pipeline:
+        if args.pipeline not in pipelines.keys():
+            logger.error(f&#39;Invalid pipeline: {args.pipeline}&#39;)
+            sys.exit(1)
+        pipeline_interface = pipelines[args.pipeline]().interface
+        returncode = pipeline_interface(unknown_args)
+        logger.warning(f&#39;Pipeline exited with returncode: {returncode}&#39;)
+        sys.exit(returncode)
+    if cmd == &#39;index&#39; and args.tool:
+        interface = None
+        if args.tool in aligners.keys():
+            interface = aligners[args.tool]().index_interface
+        elif tool in classifiers.keys():
+            interface = classifiers[args.tool]().index_interface
+        else:
+            logger.error(f&#39;Invalid tool: {args.tool}&#39;)
+            sys.exit(1)
+        returncode = interface(unknown_args)
+        logger.warning(f&#39;Process exited with returncode: {returncode}&#39;)
+        sys.exit(returncode)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="hocort.interface.extra_help_index"><code class="name flex">
+<span>def <span class="ident">extra_help_index</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns string containing some help information about available tools.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>message</code></strong> :&ensp;<code>str</code></dt>
+<dd>Message containing information about available tools.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extra_help_index():
+    &#34;&#34;&#34;
+    Returns string containing some help information about available tools.
+
+    Returns
+    -------
+    message : str
+        Message containing information about available tools.
+
+    &#34;&#34;&#34;
+    message = &#39;\nAvailable tools:&#39;
+    for aligner in aligners:
+        message += f&#39;\n    {aligner}&#39;
+    for classifier in classifiers:
+        message += f&#39;\n    {classifier}&#39;
+    message += &#39;\n&#39;
+    return message</code></pre>
+</details>
+</dd>
+<dt id="hocort.interface.extra_help_map"><code class="name flex">
+<span>def <span class="ident">extra_help_map</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns string containing some help information about available pipelines.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>message</code></strong> :&ensp;<code>str</code></dt>
+<dd>Message containing information about available pipelines.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extra_help_map():
+    &#34;&#34;&#34;
+    Returns string containing some help information about available pipelines.
+
+    Returns
+    -------
+    message : str
+        Message containing information about available pipelines.
+
+    &#34;&#34;&#34;
+    message = &#39;\nAvailable pipelines:&#39;
+    for pipeline in pipelines:
+        message += f&#39;\n    {pipeline}&#39;
+    message += &#39;\n&#39;
+    return message</code></pre>
+</details>
+</dd>
+<dt id="hocort.interface.main"><code class="name flex">
+<span>def <span class="ident">main</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Main function for user interface. Parses arguments and starts a pipeline if one is selected.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>None</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main():
+    &#34;&#34;&#34;
+    Main function for user interface. Parses arguments and starts a pipeline if one is selected.
+
+    Returns
+    -------
+    None
+
+    &#34;&#34;&#34;
+    # main program
+    parser = ArgParser(
+        version_info=version_info,
+        prog=&#39;HoCoRT&#39;,
+        description=&#39;HoCoRT: A Host Contamination Removal Tool&#39;,
+        usage=&#39;hocort [subcommand] [options]&#39;
+    )
+    parser.add_argument(
+        &#39;-d&#39;,
+        &#39;--debug&#39;,
+        action=&#39;store_true&#39;,
+        help=&#39;flag: verbose output&#39;
+    )
+    parser.add_argument(
+        &#39;-q&#39;,
+        &#39;--quiet&#39;,
+        action=&#39;store_true&#39;,
+        help=&#39;flag: quiet output (overrides -d/--debug)&#39;
+    )
+    parser.add_argument(
+        &#39;-l&#39;,
+        &#39;--log-file&#39;,
+        type=str,
+        help=&#39;str: path to log file&#39;
+    )
+    subparsers = parser.add_subparsers(
+        dest=&#39;subcommand&#39;,
+        title=&#39;available subcommands&#39;,
+        metavar=&#39;subcommand&#39;,
+        required=True
+    )
+    # map subcommand
+    parser_map = subparsers.add_parser(
+        &#39;map&#39;,
+        prog=&#39;HoCoRT&#39;,
+        description=&#39;HoCoRT: A Host Contamination Removal Tool&#39;,
+        usage=&#39;hocort map [pipeline] [options]&#39;,
+        extra_help=extra_help_map,
+        help=&#39;Map reads to reference and remove contamination&#39;,
+        add_help=False
+    )
+    parser_map.add_argument(
+        &#39;pipeline&#39;,
+        type=str,
+        help=&#39;str: pipeline to run (required)&#39;
+    )
+    parser_map.add_argument(
+        &#39;-h&#39;,
+        &#39;--help&#39;,
+        action=HelpActionMap,
+        nargs=0,
+        help=&#39;flag: print help&#39;
+    )
+    # index subcommand
+    parser_index = subparsers.add_parser(
+        &#39;index&#39;,
+        prog=&#39;HoCoRT&#39;,
+        description=&#39;HoCoRT: A Host Contamination Removal Tool&#39;,
+        usage=&#39;hocort index [tool] [options]&#39;,
+        extra_help=extra_help_index,
+        help=&#39;Build index/-es for supported tools&#39;,
+        add_help=False
+    )
+    parser_index.add_argument(
+        &#39;tool&#39;,
+        type=str,
+        help=&#39;str: tool to generate index for (required)&#39;
+    )
+    parser_index.add_argument(
+        &#39;-h&#39;,
+        &#39;--help&#39;,
+        action=HelpActionIndex,
+        nargs=0,
+        help=&#39;flag: print help&#39;
+    )
+
+    args, unknown_args = parser.parse_known_args()
+    cmd = args.subcommand
+    debug = args.debug
+    quiet = args.quiet
+    log_file = args.log_file
+    logger = hocort.logging.configure_logger(__file__, debug=debug, quiet=quiet, filename=log_file)
+    logger.debug(str(args))
+
+
+    if cmd == &#39;map&#39; and args.pipeline:
+        if args.pipeline not in pipelines.keys():
+            logger.error(f&#39;Invalid pipeline: {args.pipeline}&#39;)
+            sys.exit(1)
+        pipeline_interface = pipelines[args.pipeline]().interface
+        returncode = pipeline_interface(unknown_args)
+        logger.warning(f&#39;Pipeline exited with returncode: {returncode}&#39;)
+        sys.exit(returncode)
+    if cmd == &#39;index&#39; and args.tool:
+        interface = None
+        if args.tool in aligners.keys():
+            interface = aligners[args.tool]().index_interface
+        elif tool in classifiers.keys():
+            interface = classifiers[args.tool]().index_interface
+        else:
+            logger.error(f&#39;Invalid tool: {args.tool}&#39;)
+            sys.exit(1)
+        returncode = interface(unknown_args)
+        logger.warning(f&#39;Process exited with returncode: {returncode}&#39;)
+        sys.exit(returncode)</code></pre>
+</details>
+</dd>
+<dt id="hocort.interface.version_info"><code class="name flex">
+<span>def <span class="ident">version_info</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns string containing version information.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>message</code></strong> :&ensp;<code>str</code></dt>
+<dd>Message containing version information.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def version_info():
+    &#34;&#34;&#34;
+    Returns string containing version information.
+
+    Returns
+    -------
+    message : str
+        Message containing version information.
+
+    &#34;&#34;&#34;
+    message = f&#39;Version: {version.__version__}&#39;
+    message += f&#39;\nLast modified: {version.__last_modified__}&#39;
+    return message</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="hocort.interface.HelpActionIndex"><code class="flex name class">
+<span>class <span class="ident">HelpActionIndex</span></span>
+<span>(</span><span>option_strings, dest, nargs=None, const=None, default=None, type=None, choices=None, required=False, help=None, metavar=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Called when '-h' or '&ndash;help' flags are given.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class HelpActionIndex(Action):
+    &#34;&#34;&#34;
+    Called when &#39;-h&#39; or &#39;--help&#39; flags are given.
+    &#34;&#34;&#34;
+    def __call__(self, parser, namespace, values, option_string=None):
+        &#34;&#34;&#34;
+        If a pipeline is selected, its interface is called with the &#39;-h&#39; flag.
+        Otherwise, the help message of this interface is printed together with the
+        names of pipelines available in hocort.pipelines module.
+        Parameters
+        ----------
+        parser : argparse.ArgumentParser
+            The object which contains this action.
+        namespace : argparse.Namespace
+            The argparse.Namespace object returned by parse_args().
+        values : list
+            The command-line arguments with any type conversion applied.
+        option_string : string
+            The option string which was used to invoke this action.
+        Returns
+        -------
+        None
+        &#34;&#34;&#34;
+        tool = namespace.tool
+        if tool != None:
+            if tool in aligners:
+                tool_interface = aligners[tool]().index_interface
+                tool_interface([&#39;-h&#39;])
+            if tool in classifiers:
+                tool_interface = classifiers[tool]().index_interface
+                tool_interface([&#39;-h&#39;])
+        else:
+            parser.print_help()
+        parser.exit()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>argparse.Action</li>
+<li>argparse._AttributeHolder</li>
+</ul>
+</dd>
+<dt id="hocort.interface.HelpActionMap"><code class="flex name class">
+<span>class <span class="ident">HelpActionMap</span></span>
+<span>(</span><span>option_strings, dest, nargs=None, const=None, default=None, type=None, choices=None, required=False, help=None, metavar=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Called when '-h' or '&ndash;help' flags are given.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class HelpActionMap(Action):
+    &#34;&#34;&#34;
+    Called when &#39;-h&#39; or &#39;--help&#39; flags are given.
+    &#34;&#34;&#34;
+    def __call__(self, parser, namespace, values, option_string=None):
+        &#34;&#34;&#34;
+        If a pipeline is selected, its interface is called with the &#39;-h&#39; flag.
+        Otherwise, the help message of this interface is printed together with the
+        names of pipelines available in hocort.pipelines module.
+        Parameters
+        ----------
+        parser : argparse.ArgumentParser
+            The object which contains this action.
+        namespace : argparse.Namespace
+            The argparse.Namespace object returned by parse_args().
+        values : list
+            The command-line arguments with any type conversion applied.
+        option_string : string
+            The option string which was used to invoke this action.
+        Returns
+        -------
+        None
+        &#34;&#34;&#34;
+        pipeline = namespace.pipeline
+        if pipeline != None:
+            pipeline_interface = pipelines[pipeline]().interface
+            pipeline_interface([&#39;-h&#39;])
+        else:
+            parser.print_help()
+        parser.exit()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>argparse.Action</li>
+<li>argparse._AttributeHolder</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="hocort" href="index.html">hocort</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hocort.interface.extra_help_index" href="#hocort.interface.extra_help_index">extra_help_index</a></code></li>
+<li><code><a title="hocort.interface.extra_help_map" href="#hocort.interface.extra_help_map">extra_help_map</a></code></li>
+<li><code><a title="hocort.interface.main" href="#hocort.interface.main">main</a></code></li>
+<li><code><a title="hocort.interface.version_info" href="#hocort.interface.version_info">version_info</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="hocort.interface.HelpActionIndex" href="#hocort.interface.HelpActionIndex">HelpActionIndex</a></code></h4>
+</li>
+<li>
+<h4><code><a title="hocort.interface.HelpActionMap" href="#hocort.interface.HelpActionMap">HelpActionMap</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

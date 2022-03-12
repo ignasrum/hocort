@@ -1,5 +1,8 @@
 hocort/__pycache__/
 tests/__pycache__/
-hocort/quality_control/__pycache__/
+hocort/aligners/__pycache__/
+hocort/classifiers/__pycache__/
+hocort/parse/__pycache__/
+hocort/pipelines/__pycache__/
 build
 hocort.egg-info
