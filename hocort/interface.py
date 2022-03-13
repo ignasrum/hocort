@@ -258,7 +258,7 @@ def main():
         interface = None
         if args.tool in aligners.keys():
             interface = aligners[args.tool]().index_interface
-        elif tool in classifiers.keys():
+        elif args.tool in classifiers.keys():
             interface = classifiers[args.tool]().index_interface
         else:
             logger.error(f'Invalid tool: {args.tool}')
