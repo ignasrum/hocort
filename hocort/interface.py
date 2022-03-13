@@ -161,7 +161,6 @@ def main():
     None
 
     """
-    # main program
     parser = ArgParser(
         version_info=version_info,
         prog='HoCoRT',
@@ -244,7 +243,6 @@ def main():
     log_file = args.log_file
     logger = hocort.logging.configure_logger(__file__, debug=debug, quiet=quiet, filename=log_file)
     logger.debug(str(args))
-
 
     if cmd == 'map' and args.pipeline:
         if args.pipeline not in pipelines.keys():
