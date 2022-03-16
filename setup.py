@@ -19,7 +19,6 @@ setup(
     install_requires=['argparse',
                       'pytest'],
     entry_points = {
-        'console_scripts': ['hocort=hocort.__main__:main',
-                            'hocort-index=hocort.index:main'],
+        'console_scripts': ['hocort=hocort.__main__:main'],
     }
 )
