@@ -1,6 +1,8 @@
 import tempfile
 import os
 
+import pytest
+
 from hocort.classifiers.kraken2 import Kraken2
 
 from helper import helper
@@ -18,20 +20,20 @@ seq2 = f'{path}/test_data/sequences/sequences2.fastq'
 no_path = ''
 
 def test_build_idx_no_input():
-    cmd = Kraken2().build_index(output, no_path)
-    assert cmd == None
+    with pytest.raises(ValueError):
+        cmd = Kraken2().build_index(output, no_path)
 
 def test_idx_no_path():
-    cmd = Kraken2().classify(no_path, seq1, class_out, unclass_out)
-    assert cmd == None
+    with pytest.raises(ValueError):
+        cmd = Kraken2().classify(no_path, seq1, class_out, unclass_out)
 
 def test_idx_path():
     cmd = Kraken2().classify(temp_dir.name, seq1, class_out, unclass_out)
     helper(cmd, 2)
 
 def test_seq1_no_path():
-    cmd = Kraken2().classify(idx, no_path, class_out, unclass_out)
-    assert cmd == None
+    with pytest.raises(ValueError):
+        cmd = Kraken2().classify(idx, no_path, class_out, unclass_out)
 
 def test_seq1_path():
     cmd = Kraken2().classify(idx, temp_dir.name, class_out, unclass_out)
@@ -58,8 +60,8 @@ def test_output_no_path():
     helper(cmd, 0)
 
 def test_seq1_seq2_no_path():
-    cmd = Kraken2().classify(idx, no_path, class_out, unclass_out, seq2=no_path)
-    assert cmd == None
+    with pytest.raises(ValueError):
+        cmd = Kraken2().classify(idx, no_path, class_out, unclass_out, seq2=no_path)
 
 def test_seq1_seq2_path():
     cmd = Kraken2().classify(idx, temp_dir.name, class_out, unclass_out, seq2=temp_dir.name)

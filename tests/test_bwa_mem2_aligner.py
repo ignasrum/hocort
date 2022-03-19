@@ -1,6 +1,8 @@
 import tempfile
 import os
 
+import pytest
+
 from hocort.aligners.bwa_mem2 import BWA_MEM2
 
 from helper import helper
@@ -20,16 +22,16 @@ def test_build_idx():
     helper(cmd, 0)
 
 def test_build_idx_no_input():
-    cmd = BWA_MEM2().build_index(output, no_path)
-    assert cmd == None
+    with pytest.raises(ValueError):
+        cmd = BWA_MEM2().build_index(output, no_path)
 
 def test_idx_no_path():
-    cmd = BWA_MEM2().align(no_path, seq1, output)
-    assert cmd == None
+    with pytest.raises(ValueError):
+        cmd = BWA_MEM2().align(no_path, seq1, output)
 
 def test_seq1_no_path():
-    cmd = BWA_MEM2().align(idx, no_path, output)
-    assert cmd == None
+    with pytest.raises(ValueError):
+        cmd = BWA_MEM2().align(idx, no_path, output)
 
 def test_seq1_path():
     cmd = BWA_MEM2().align(idx, temp_dir.name, output)
@@ -40,8 +42,8 @@ def test_output_no_path():
     helper(cmd, 0)
 
 def test_seq1_seq2_no_path():
-    cmd = BWA_MEM2().align(idx, no_path, output, seq2=no_path)
-    assert cmd == None
+    with pytest.raises(ValueError):
+        cmd = BWA_MEM2().align(idx, no_path, output, seq2=no_path)
 
 def test_seq1_seq2_path():
     cmd = BWA_MEM2().align(idx, temp_dir.name, output, seq2=temp_dir.name)

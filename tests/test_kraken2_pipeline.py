@@ -1,6 +1,8 @@
 import tempfile
 import os
 
+import pytest
+
 from hocort.pipelines.kraken2 import Kraken2
 
 temp_dir = tempfile.TemporaryDirectory()
@@ -13,20 +15,20 @@ seq2 = f'{path}/test_data/sequences/sequences2.fastq'
 no_path = ''
 
 def test_pipeline_idx_no_path():
-    returncode = Kraken2().run(no_path, seq1, out)
-    assert returncode == 1
+    with pytest.raises(ValueError):
+        returncode = Kraken2().run(no_path, seq1, out)
 
 def test_pipeline_seq1_no_path():
-    returncode = Kraken2().run(idx, no_path, out)
-    assert returncode == 1
+    with pytest.raises(ValueError):
+        returncode = Kraken2().run(idx, no_path, out)
 
 def test_pipeline_out1_no_path():
     returncode = Kraken2().run(idx, seq1, no_path)
     assert returncode == 0
 
 def test_pipeline_seq1_seq2_no_path():
-    returncode = Kraken2().run(idx, no_path, out, seq2=no_path)
-    assert returncode == 1
+    with pytest.raises(ValueError):
+        returncode = Kraken2().run(idx, no_path, out, seq2=no_path)
 
 def test_pipeline_seq2_no_path():
     returncode = Kraken2().run(idx, seq1, out, seq2=no_path)

@@ -1,6 +1,8 @@
 import tempfile
 import os
 
+import pytest
+
 from hocort.pipelines.bowtie2_bowtie2 import Bowtie2Bowtie2
 
 temp_dir = tempfile.TemporaryDirectory()
@@ -19,24 +21,24 @@ def test_pipeline_temp_dir():
     assert returncode == 0
 
 def test_pipeline_idx_no_path():
-    returncode = Bowtie2Bowtie2().run(no_path, seq1, out1)
-    assert returncode == 1
+    with pytest.raises(ValueError):
+        returncode = Bowtie2Bowtie2().run(no_path, seq1, out1)
 
 def test_pipeline_seq1_no_path():
-    returncode = Bowtie2Bowtie2().run(idx, no_path, out1)
-    assert returncode == 1
+    with pytest.raises(ValueError):
+        returncode = Bowtie2Bowtie2().run(idx, no_path, out1)
 
 def test_pipeline_out1_no_path():
     returncode = Bowtie2Bowtie2().run(idx, seq1, no_path)
     assert returncode == 0
 
 def test_pipeline_seq1_seq2_no_path():
-    returncode = Bowtie2Bowtie2().run(idx, no_path, out1, seq2=no_path)
-    assert returncode == 1
+    with pytest.raises(ValueError):
+        returncode = Bowtie2Bowtie2().run(idx, no_path, out1, seq2=no_path)
 
 def test_pipeline_seq2_no_path():
-    returncode = Bowtie2Bowtie2().run(idx, seq1, out1, seq2=no_path)
-    assert returncode == 1
+    with pytest.raises(ValueError):
+        returncode = Bowtie2Bowtie2().run(idx, seq1, out1, seq2=no_path)
 
 def test_pipeline_1():
     returncode = Bowtie2Bowtie2().run(idx, seq1, out1)
@@ -47,8 +49,8 @@ def test_pipeline_2():
     assert returncode == 0
 
 def test_pipeline_seq2_no_out2():
-    returncode = Bowtie2Bowtie2().run(idx, seq1, out1, seq2=seq2)
-    assert returncode == 1
+    with pytest.raises(ValueError):
+        returncode = Bowtie2Bowtie2().run(idx, seq1, out1, seq2=seq2)
 
 def test_pipeline_noseq2_out2():
     returncode = Bowtie2Bowtie2().run(idx, seq1, out1, out2=out2)

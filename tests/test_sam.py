@@ -33,7 +33,6 @@ def test_select_unpaired_hcfilter_false():
     cmd = SAM.select(input_path=sam_unpaired, paired=False, output_path=out_sam, hcfilter=False)
     helper(cmd, 0)
 
-
 def test_sam_to_fastq_paired_hcfilter_true():
     cmd = SAM.sam_to_fastq(input_path=sam_paired, out1=out_1_fastq, out2=out_2_fastq, hcfilter=True)
     helper(cmd, 0)
