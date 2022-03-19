@@ -60,8 +60,16 @@ class BWA_MEM2(Aligner):
         [cmd] : list
             List of commands to be executed.
 
+        Raises
+        ------
+        ValueError
+           Raised if no input FASTA file is given, or no output file is given.
+
         &#34;&#34;&#34;
-        if not path_out or not fasta_in: return None
+        if not fasta_in:
+            raise ValueError(f&#39;No input FASTA file was given.&#39;)
+        if not path_out:
+            raise ValueError(f&#39;No output path was given.&#39;)
         cmd = [&#39;bwa-mem2&#39;, &#39;index&#39;, &#39;-p&#39;, path_out, fasta_in]
 
         return [cmd]
@@ -90,8 +98,16 @@ class BWA_MEM2(Aligner):
         [cmd] : list
             List of commands to be executed.
 
+        Raises
+        ------
+        ValueError
+           Raised if no input index path is given, or no input FastQ file is given.
+
         &#34;&#34;&#34;
-        if not index or not seq1: return None
+        if not index:
+            raise ValueError(f&#39;No index path was given.&#39;)
+        if not seq1:
+            raise ValueError(f&#39;No input FastQ was given.&#39;)
         cmd = [&#39;bwa-mem2&#39;, &#39;mem&#39;, &#39;-t&#39;, str(threads)]
         if output:
             cmd += [&#39;-o&#39;, output]
@@ -198,8 +214,16 @@ class BWA_MEM2(Aligner):
         [cmd] : list
             List of commands to be executed.
 
+        Raises
+        ------
+        ValueError
+           Raised if no input FASTA file is given, or no output file is given.
+
         &#34;&#34;&#34;
-        if not path_out or not fasta_in: return None
+        if not fasta_in:
+            raise ValueError(f&#39;No input FASTA file was given.&#39;)
+        if not path_out:
+            raise ValueError(f&#39;No output path was given.&#39;)
         cmd = [&#39;bwa-mem2&#39;, &#39;index&#39;, &#39;-p&#39;, path_out, fasta_in]
 
         return [cmd]
@@ -228,8 +252,16 @@ class BWA_MEM2(Aligner):
         [cmd] : list
             List of commands to be executed.
 
+        Raises
+        ------
+        ValueError
+           Raised if no input index path is given, or no input FastQ file is given.
+
         &#34;&#34;&#34;
-        if not index or not seq1: return None
+        if not index:
+            raise ValueError(f&#39;No index path was given.&#39;)
+        if not seq1:
+            raise ValueError(f&#39;No input FastQ was given.&#39;)
         cmd = [&#39;bwa-mem2&#39;, &#39;mem&#39;, &#39;-t&#39;, str(threads)]
         if output:
             cmd += [&#39;-o&#39;, output]
@@ -323,7 +355,13 @@ class BWA_MEM2(Aligner):
 </dl>
 <h2 id="returns">Returns</h2>
 <p>[cmd] : list
-List of commands to be executed.</p></div>
+List of commands to be executed.</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<p>Raised if no input index path is given, or no input FastQ file is given.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -352,8 +390,16 @@ List of commands to be executed.</p></div>
     [cmd] : list
         List of commands to be executed.
 
+    Raises
+    ------
+    ValueError
+       Raised if no input index path is given, or no input FastQ file is given.
+
     &#34;&#34;&#34;
-    if not index or not seq1: return None
+    if not index:
+        raise ValueError(f&#39;No index path was given.&#39;)
+    if not seq1:
+        raise ValueError(f&#39;No input FastQ was given.&#39;)
     cmd = [&#39;bwa-mem2&#39;, &#39;mem&#39;, &#39;-t&#39;, str(threads)]
     if output:
         cmd += [&#39;-o&#39;, output]
@@ -365,12 +411,71 @@ List of commands to be executed.</p></div>
     return [cmd]</code></pre>
 </details>
 </dd>
+<dt id="hocort.aligners.bwa_mem2.BWA_MEM2.build_index"><code class="name flex">
+<span>def <span class="ident">build_index</span></span>(<span>self, path_out, fasta_in, options=[], **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Builds an index.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>path_out</code></strong> :&ensp;<code>string</code></dt>
+<dd>Path where the output index is written.</dd>
+<dt><strong><code>fasta_in</code></strong> :&ensp;<code>string</code></dt>
+<dd>Path where the input FASTA file is located.</dd>
+<dt><strong><code>options</code></strong> :&ensp;<code>list</code></dt>
+<dd>An options list where additional arguments may be specified.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>[cmd] : list
+List of commands to be executed.</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<p>Raised if no input FASTA file is given, or no output file is given.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build_index(self, path_out, fasta_in, options=[], **kwargs):
+    &#34;&#34;&#34;
+    Builds an index.
+
+    Parameters
+    ----------
+    path_out : string
+        Path where the output index is written.
+    fasta_in : string
+        Path where the input FASTA file is located.
+    options : list
+        An options list where additional arguments may be specified.
+
+    Returns
+    -------
+    [cmd] : list
+        List of commands to be executed.
+
+    Raises
+    ------
+    ValueError
+       Raised if no input FASTA file is given, or no output file is given.
+
+    &#34;&#34;&#34;
+    if not fasta_in:
+        raise ValueError(f&#39;No input FASTA file was given.&#39;)
+    if not path_out:
+        raise ValueError(f&#39;No output path was given.&#39;)
+    cmd = [&#39;bwa-mem2&#39;, &#39;index&#39;, &#39;-p&#39;, path_out, fasta_in]
+
+    return [cmd]</code></pre>
+</details>
+</dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="hocort.aligners.aligner.Aligner" href="aligner.html#hocort.aligners.aligner.Aligner">Aligner</a></b></code>:
 <ul class="hlist">
-<li><code><a title="hocort.aligners.aligner.Aligner.build_index" href="aligner.html#hocort.aligners.aligner.Aligner.build_index">build_index</a></code></li>
 <li><code><a title="hocort.aligners.aligner.Aligner.index_interface" href="aligner.html#hocort.aligners.aligner.Aligner.index_interface">index_interface</a></code></li>
 </ul>
 </li>
@@ -396,6 +501,7 @@ List of commands to be executed.</p></div>
 <h4><code><a title="hocort.aligners.bwa_mem2.BWA_MEM2" href="#hocort.aligners.bwa_mem2.BWA_MEM2">BWA_MEM2</a></code></h4>
 <ul class="">
 <li><code><a title="hocort.aligners.bwa_mem2.BWA_MEM2.align" href="#hocort.aligners.bwa_mem2.BWA_MEM2.align">align</a></code></li>
+<li><code><a title="hocort.aligners.bwa_mem2.BWA_MEM2.build_index" href="#hocort.aligners.bwa_mem2.BWA_MEM2.build_index">build_index</a></code></li>
 </ul>
 </li>
 </ul>

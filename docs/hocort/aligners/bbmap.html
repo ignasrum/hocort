@@ -62,8 +62,16 @@ class BBMap(Aligner):
         [cmd] : list
             List of commands to be executed.
 
+        Raises
+        ------
+        ValueError
+           Raised if no input FASTA file is given, or no output file is given.
+
         &#34;&#34;&#34;
-        if not path_out or not fasta_in: return None
+        if not fasta_in:
+            raise ValueError(f&#39;No input FASTA file was given.&#39;)
+        if not path_out:
+            raise ValueError(f&#39;No output path was given.&#39;)
         cmd = [&#39;bbmap.sh&#39;, f&#39;threads={str(threads)}&#39;, f&#39;ref={fasta_in}&#39;, f&#39;path={path_out}&#39;]
 
         return [cmd]
@@ -92,8 +100,16 @@ class BBMap(Aligner):
         [cmd] : list
             List of commands to be executed.
 
+        Raises
+        ------
+        ValueError
+           Raised if no input index path is given, or no input FastQ file is given.
+
         &#34;&#34;&#34;
-        if not index or not seq1: return None
+        if not index:
+            raise ValueError(f&#39;No index path was given.&#39;)
+        if not seq1:
+            raise ValueError(f&#39;No input FastQ was given.&#39;)
         cmd = [&#39;bbmap.sh&#39;, f&#39;threads={str(threads)}&#39;, f&#39;path={index}&#39;]
         if output:
             cmd += [f&#39;out={output}&#39;]
@@ -212,8 +228,16 @@ class BBMap(Aligner):
         [cmd] : list
             List of commands to be executed.
 
+        Raises
+        ------
+        ValueError
+           Raised if no input FASTA file is given, or no output file is given.
+
         &#34;&#34;&#34;
-        if not path_out or not fasta_in: return None
+        if not fasta_in:
+            raise ValueError(f&#39;No input FASTA file was given.&#39;)
+        if not path_out:
+            raise ValueError(f&#39;No output path was given.&#39;)
         cmd = [&#39;bbmap.sh&#39;, f&#39;threads={str(threads)}&#39;, f&#39;ref={fasta_in}&#39;, f&#39;path={path_out}&#39;]
 
         return [cmd]
@@ -242,8 +266,16 @@ class BBMap(Aligner):
         [cmd] : list
             List of commands to be executed.
 
+        Raises
+        ------
+        ValueError
+           Raised if no input index path is given, or no input FastQ file is given.
+
         &#34;&#34;&#34;
-        if not index or not seq1: return None
+        if not index:
+            raise ValueError(f&#39;No index path was given.&#39;)
+        if not seq1:
+            raise ValueError(f&#39;No input FastQ was given.&#39;)
         cmd = [&#39;bbmap.sh&#39;, f&#39;threads={str(threads)}&#39;, f&#39;path={index}&#39;]
         if output:
             cmd += [f&#39;out={output}&#39;]
@@ -347,7 +379,13 @@ class BBMap(Aligner):
 </dl>
 <h2 id="returns">Returns</h2>
 <p>[cmd] : list
-List of commands to be executed.</p></div>
+List of commands to be executed.</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<p>Raised if no input index path is given, or no input FastQ file is given.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -376,8 +414,16 @@ List of commands to be executed.</p></div>
     [cmd] : list
         List of commands to be executed.
 
+    Raises
+    ------
+    ValueError
+       Raised if no input index path is given, or no input FastQ file is given.
+
     &#34;&#34;&#34;
-    if not index or not seq1: return None
+    if not index:
+        raise ValueError(f&#39;No index path was given.&#39;)
+    if not seq1:
+        raise ValueError(f&#39;No input FastQ was given.&#39;)
     cmd = [&#39;bbmap.sh&#39;, f&#39;threads={str(threads)}&#39;, f&#39;path={index}&#39;]
     if output:
         cmd += [f&#39;out={output}&#39;]
@@ -407,7 +453,13 @@ List of commands to be executed.</p></div>
 </dl>
 <h2 id="returns">Returns</h2>
 <p>[cmd] : list
-List of commands to be executed.</p></div>
+List of commands to be executed.</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<p>Raised if no input FASTA file is given, or no output file is given.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -432,8 +484,16 @@ List of commands to be executed.</p></div>
     [cmd] : list
         List of commands to be executed.
 
+    Raises
+    ------
+    ValueError
+       Raised if no input FASTA file is given, or no output file is given.
+
     &#34;&#34;&#34;
-    if not path_out or not fasta_in: return None
+    if not fasta_in:
+        raise ValueError(f&#39;No input FASTA file was given.&#39;)
+    if not path_out:
+        raise ValueError(f&#39;No output path was given.&#39;)
     cmd = [&#39;bbmap.sh&#39;, f&#39;threads={str(threads)}&#39;, f&#39;ref={fasta_in}&#39;, f&#39;path={path_out}&#39;]
 
     return [cmd]</code></pre>

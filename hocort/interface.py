@@ -12,7 +12,12 @@ import hocort.pipelines
 import hocort.version as version
 import hocort.logging
 from hocort.parser import ArgParser
+import hocort.dependencies as dep
 
+
+# check external dependencies
+if not dep.check_external_dependencies():
+    sys.exit(1)
 
 # Gets available aligners from hocort.aligners
 aligners = {}
@@ -193,7 +198,7 @@ def main():
     )
     # map subcommand
     parser_map = subparsers.add_parser(
-        'map',
+        'clean',
         prog='HoCoRT',
         description='HoCoRT: A Host Contamination Removal Tool',
         usage='hocort map [pipeline] [options]',
@@ -244,7 +249,7 @@ def main():
     logger = hocort.logging.configure_logger(__file__, debug=debug, quiet=quiet, filename=log_file)
     logger.debug(str(args))
 
-    if cmd == 'map' and args.pipeline:
+    if cmd == 'clean' and args.pipeline:
         if args.pipeline not in pipelines.keys():
             logger.error(f'Invalid pipeline: {args.pipeline}')
             sys.exit(1)

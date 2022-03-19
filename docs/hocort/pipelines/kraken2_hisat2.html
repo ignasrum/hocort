@@ -87,9 +87,15 @@ class Kraken2HISAT2(Pipeline):
         returncode : int
             Resulting returncode after the process is finished.
 
+        Raises
+        ------
+            If input FastQ_2 file is given without output FastQ_2.
+
         &#34;&#34;&#34;
         self.debug_log_args(self.run.__name__, locals())
-        if seq2 and not out2: return 1
+        if seq2 and not out2:
+            raise ValueError(f&#39;Input FastQ_2 was given, but no output FastQ_2.&#39;)
+
         self.logger.warning(f&#39;Running pipeline: {self.__class__.__name__}&#39;)
         start_time = time.time()
 
@@ -277,9 +283,15 @@ class Kraken2HISAT2(Pipeline):
         returncode : int
             Resulting returncode after the process is finished.
 
+        Raises
+        ------
+            If input FastQ_2 file is given without output FastQ_2.
+
         &#34;&#34;&#34;
         self.debug_log_args(self.run.__name__, locals())
-        if seq2 and not out2: return 1
+        if seq2 and not out2:
+            raise ValueError(f&#39;Input FastQ_2 was given, but no output FastQ_2.&#39;)
+
         self.logger.warning(f&#39;Running pipeline: {self.__class__.__name__}&#39;)
         start_time = time.time()
 
@@ -420,7 +432,10 @@ class Kraken2HISAT2(Pipeline):
 <dl>
 <dt><strong><code>returncode</code></strong> :&ensp;<code>int</code></dt>
 <dd>Resulting returncode after the process is finished.</dd>
-</dl></div>
+</dl>
+<h2 id="raises">Raises</h2>
+<pre><code>If input FastQ_2 file is given without output FastQ_2.
+</code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -453,9 +468,15 @@ class Kraken2HISAT2(Pipeline):
     returncode : int
         Resulting returncode after the process is finished.
 
+    Raises
+    ------
+        If input FastQ_2 file is given without output FastQ_2.
+
     &#34;&#34;&#34;
     self.debug_log_args(self.run.__name__, locals())
-    if seq2 and not out2: return 1
+    if seq2 and not out2:
+        raise ValueError(f&#39;Input FastQ_2 was given, but no output FastQ_2.&#39;)
+
     self.logger.warning(f&#39;Running pipeline: {self.__class__.__name__}&#39;)
     start_time = time.time()
 

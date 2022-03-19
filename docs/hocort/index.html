@@ -22,6 +22,18 @@
 <h1 class="title">Package <code>hocort</code></h1>
 </header>
 <section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import os
+import sys
+
+
+if os.environ.get(&#34;SUDO_UID&#34;):
+    print(&#39;Attempting to run HoCoRT with root privileges. Exiting.&#39;)
+    sys.exit(1)</code></pre>
+</details>
 </section>
 <section>
 <h2 class="section-title" id="header-submodules">Sub-modules</h2>
@@ -31,6 +43,10 @@
 <div class="desc"></div>
 </dd>
 <dt><code class="name"><a title="hocort.classifiers" href="classifiers/index.html">hocort.classifiers</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="hocort.dependencies" href="dependencies.html">hocort.dependencies</a></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -81,6 +97,7 @@
 <ul>
 <li><code><a title="hocort.aligners" href="aligners/index.html">hocort.aligners</a></code></li>
 <li><code><a title="hocort.classifiers" href="classifiers/index.html">hocort.classifiers</a></code></li>
+<li><code><a title="hocort.dependencies" href="dependencies.html">hocort.dependencies</a></code></li>
 <li><code><a title="hocort.execute" href="execute.html">hocort.execute</a></code></li>
 <li><code><a title="hocort.interface" href="interface.html">hocort.interface</a></code></li>
 <li><code><a title="hocort.logging" href="logging.html">hocort.logging</a></code></li>

@@ -62,8 +62,16 @@ class HISAT2(Aligner):
         [cmd] : list
             List of commands to be executed.
 
+        Raises
+        ------
+        ValueError
+           Raised if no input FASTA file is given, or no output file is given.
+
         &#34;&#34;&#34;
-        if not path_out or not fasta_in: return None
+        if not fasta_in:
+            raise ValueError(f&#39;No input FASTA file was given.&#39;)
+        if not path_out:
+            raise ValueError(f&#39;No output path was given.&#39;)
         cmd = [&#39;hisat2-build&#39;] + options + [&#39;-p&#39;, str(threads), fasta_in, path_out]
 
         return [cmd]
@@ -92,8 +100,16 @@ class HISAT2(Aligner):
         [cmd] : list
             List of commands to be executed.
 
+        Raises
+        ------
+        ValueError
+           Raised if no input index path is given, or no input FastQ file is given.
+
         &#34;&#34;&#34;
-        if not index or not seq1: return None
+        if not index:
+            raise ValueError(f&#39;No index path was given.&#39;)
+        if not seq1:
+            raise ValueError(f&#39;No input FastQ was given.&#39;)
         cmd = [&#39;hisat2&#39;, &#39;-p&#39;, str(threads), &#39;-x&#39;, index]
         if output:
             cmd += [&#39;-S&#39;, output]
@@ -212,8 +228,16 @@ class HISAT2(Aligner):
         [cmd] : list
             List of commands to be executed.
 
+        Raises
+        ------
+        ValueError
+           Raised if no input FASTA file is given, or no output file is given.
+
         &#34;&#34;&#34;
-        if not path_out or not fasta_in: return None
+        if not fasta_in:
+            raise ValueError(f&#39;No input FASTA file was given.&#39;)
+        if not path_out:
+            raise ValueError(f&#39;No output path was given.&#39;)
         cmd = [&#39;hisat2-build&#39;] + options + [&#39;-p&#39;, str(threads), fasta_in, path_out]
 
         return [cmd]
@@ -242,8 +266,16 @@ class HISAT2(Aligner):
         [cmd] : list
             List of commands to be executed.
 
+        Raises
+        ------
+        ValueError
+           Raised if no input index path is given, or no input FastQ file is given.
+
         &#34;&#34;&#34;
-        if not index or not seq1: return None
+        if not index:
+            raise ValueError(f&#39;No index path was given.&#39;)
+        if not seq1:
+            raise ValueError(f&#39;No input FastQ was given.&#39;)
         cmd = [&#39;hisat2&#39;, &#39;-p&#39;, str(threads), &#39;-x&#39;, index]
         if output:
             cmd += [&#39;-S&#39;, output]
@@ -347,7 +379,13 @@ class HISAT2(Aligner):
 </dl>
 <h2 id="returns">Returns</h2>
 <p>[cmd] : list
-List of commands to be executed.</p></div>
+List of commands to be executed.</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<p>Raised if no input index path is given, or no input FastQ file is given.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -376,8 +414,16 @@ List of commands to be executed.</p></div>
     [cmd] : list
         List of commands to be executed.
 
+    Raises
+    ------
+    ValueError
+       Raised if no input index path is given, or no input FastQ file is given.
+
     &#34;&#34;&#34;
-    if not index or not seq1: return None
+    if not index:
+        raise ValueError(f&#39;No index path was given.&#39;)
+    if not seq1:
+        raise ValueError(f&#39;No input FastQ was given.&#39;)
     cmd = [&#39;hisat2&#39;, &#39;-p&#39;, str(threads), &#39;-x&#39;, index]
     if output:
         cmd += [&#39;-S&#39;, output]
@@ -407,7 +453,13 @@ List of commands to be executed.</p></div>
 </dl>
 <h2 id="returns">Returns</h2>
 <p>[cmd] : list
-List of commands to be executed.</p></div>
+List of commands to be executed.</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<p>Raised if no input FASTA file is given, or no output file is given.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -432,8 +484,16 @@ List of commands to be executed.</p></div>
     [cmd] : list
         List of commands to be executed.
 
+    Raises
+    ------
+    ValueError
+       Raised if no input FASTA file is given, or no output file is given.
+
     &#34;&#34;&#34;
-    if not path_out or not fasta_in: return None
+    if not fasta_in:
+        raise ValueError(f&#39;No input FASTA file was given.&#39;)
+    if not path_out:
+        raise ValueError(f&#39;No output path was given.&#39;)
     cmd = [&#39;hisat2-build&#39;] + options + [&#39;-p&#39;, str(threads), fasta_in, path_out]
 
     return [cmd]</code></pre>

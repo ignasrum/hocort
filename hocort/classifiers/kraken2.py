@@ -34,8 +34,16 @@ class Kraken2(Classifier):
         [cmd1, cmd2, cmd3, cmd4] : list
             List of commands to be executed.
 
+        Raises
+        ------
+        ValueError
+           Raised if no input FASTA file is given, or no output path is given.
+
         """
-        if not path_out or not fasta_in: return None
+        if not fasta_in:
+            raise ValueError(f'No input FASTA file was given.')
+        if not path_out:
+            raise ValueError(f'No output path was given.')
         # 1. download taxonomy
             # kraken2-build --threads n --download-taxonomy --db database
         cmd1 = ['kraken2-build', '--threads', str(threads), '--download-taxonomy', '--db', path_out]
@@ -80,8 +88,16 @@ class Kraken2(Classifier):
         [cmd] : list
             List of commands to be executed.
 
+        Raises
+        ------
+        ValueError
+           Raised if no input index path is given, or no input FastQ file is given.
+
         """
-        if not index or not seq1: return None
+        if not index:
+            raise ValueError(f'No index path was given.')
+        if not seq1:
+            raise ValueError(f'No input FastQ was given.')
         cmd = ['kraken2', '--threads', str(threads), '--db', index]
         if classified_out:
             cmd += ['--classified-out', classified_out]

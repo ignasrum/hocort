@@ -35,6 +35,9 @@ def execute(cmds, pipe=False, merge_stdout_stderr=False):
 
     stdin = None
 
+    if type(cmds) is not list:
+        logger.error(f'Commands supplied are not in a list: {cmds}')
+        raise TypeError(f'Commands supplied are not in a list: {cmds}')
     for cmd, i in zip(cmds, range(len(cmds))):
         if i == len(cmds) - 1:
             stderr = subprocess.STDOUT if merge_stdout_stderr else subprocess.PIPE

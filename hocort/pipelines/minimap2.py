@@ -55,9 +55,15 @@ class Minimap2(Pipeline):
         returncode : int
             Resulting returncode after the process is finished.
 
+        Raises
+        ------
+            If input FastQ_2 file is given without output FastQ_2.
+
         """
         self.debug_log_args(self.run.__name__, locals())
-        if seq2 and not out2: return 1
+        if seq2 and not out2:
+            raise ValueError(f'Input FastQ_2 was given, but no output FastQ_2.')
+
         if len(options) > 0:
             options = options
         else:
