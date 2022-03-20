@@ -1,4 +1,5 @@
 # HoCoRT
+[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/hocort/README.html) <br>
 <strong>Ho</strong>st <strong>Co</strong>ntamination <strong>R</strong>emoval <strong>T</strong>ool (<strong>HoCoRT</strong>)
 
 Host contamination removal from high-throughput sequencing reads for Linux and Mac OS.
@@ -17,7 +18,6 @@ External programs:
 * [samtools](https://github.com/samtools/samtools) (Tested with version 1.15)
 
 # Installation
-[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/hocort/README.html) <br>
 [User Guide](https://github.com/ignasrum/hocort/wiki/User-Guide)
 
 # Wiki
