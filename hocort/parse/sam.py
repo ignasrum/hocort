@@ -41,6 +41,8 @@ class SAM:
             cmd += ['-o', output_path]
         if input_path:
             cmd += [input_path]
+        else:
+            cmd += ['-']
 
         return [cmd]
 
