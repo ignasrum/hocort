@@ -203,7 +203,7 @@ def main():
         description='HoCoRT: A Host Contamination Removal Tool',
         usage='hocort map [pipeline] [options]',
         extra_help=extra_help_map,
-        help='Map reads to reference and remove contamination',
+        help='map reads to reference and remove contamination',
         add_help=False
     )
     parser_map.add_argument(
@@ -225,7 +225,7 @@ def main():
         description='HoCoRT: A Host Contamination Removal Tool',
         usage='hocort index [tool] [options]',
         extra_help=extra_help_index,
-        help='Build index/-es for supported tools',
+        help='build index/-es for supported tools',
         add_help=False
     )
     parser_index.add_argument(
