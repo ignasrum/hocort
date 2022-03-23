@@ -60,3 +60,19 @@ def test_pipeline_seq2_no_out2():
 def test_pipeline_noseq2_out2():
     returncode = Kraken2HISAT2().run(hs2_idx, kr2_idx, seq1, out1, out2=out2)
     assert returncode == 0
+
+def test_pipeline_mfilter_true_1():
+    returncode = Kraken2HISAT2().run(hs2_idx, kr2_idx, seq1, out1, mfilter='t')
+    assert returncode == 0
+
+def test_pipeline_mfilter_false_1():
+    returncode = Kraken2HISAT2().run(hs2_idx, kr2_idx, seq1, out1, mfilter='f')
+    assert returncode == 0
+
+def test_pipeline_mfilter_true_2():
+    returncode = Kraken2HISAT2().run(hs2_idx, kr2_idx, seq1, out1, seq2=seq2, out2=out2, mfilter='t')
+    assert returncode == 0
+
+def test_pipeline_mfilter_false_2():
+    returncode = Kraken2HISAT2().run(hs2_idx, kr2_idx, seq1, out1, seq2=seq2, out2=out2, mfilter='f')
+    assert returncode == 0

@@ -3,7 +3,7 @@ class SAM:
     SAM parsing and processing class.
 
     """
-    def select(input_path=None, output_path=None, paired=True, threads=1, hcfilter=False):
+    def select(input_path=None, output_path=None, paired=True, threads=1, mfilter=True):
         """
         Takes SAM input, selects mapped/unmapped reads, and outputs SAM.
 
@@ -17,8 +17,10 @@ class SAM:
             Process reads as paired or unpaired.
         threads : int
             Number of threads to use.
-        hcfilter : bool
-            Whether to exclude or include the mapped sequences from the output files.
+        mfilter : bool
+            Whether to output mapped/unmapped sequences.
+            True: output unmapped sequences
+            False: output mapped sequences
 
         Returns
         -------
@@ -28,15 +30,15 @@ class SAM:
         """
         cmd = ['samtools', 'view', '--threads', f'{threads}', '-h']
         if paired:
-            if hcfilter:
-                cmd += ['-F', '12', '-f', '1']
-            else:
+            if mfilter:
                 cmd += ['-f', '13']
-        else:
-            if hcfilter:
-                cmd += ['-F', '4']
             else:
+                cmd += ['-F', '12', '-f', '1']
+        else:
+            if mfilter:
                 cmd += ['-f', '4']
+            else:
+                cmd += ['-F', '4']
         if output_path:
             cmd += ['-o', output_path]
         if input_path:
@@ -46,7 +48,7 @@ class SAM:
 
         return [cmd]
 
-    def sam_to_fastq(input_path=None, out1=None, out2=None, threads=1, hcfilter=False):
+    def sam_to_fastq(input_path=None, out1=None, out2=None, threads=1, mfilter=False):
         """
         Takes SAM input, selects mapped/unmapped reads, and outputs FastQ.
 
@@ -60,8 +62,10 @@ class SAM:
             FastQ READ2 output path.
         threads : int
             Number of threads to use.
-        hcfilter : bool
-            Whether to exclude or include the mapped sequences from the output files.
+        mfilter : bool
+            Whether to output mapped/unmapped sequences.
+            True: output unmapped sequences
+            False: output mapped sequences
 
         Returns
         -------
@@ -71,16 +75,16 @@ class SAM:
         """
         cmd = ['samtools', 'fastq', '--threads', f'{threads}', '-N']
         if out1 and out2:
-            if hcfilter:
-                cmd += ['-F', '12', '-f', '1']
-            else:
+            if mfilter:
                 cmd += ['-f', '13']
+            else:
+                cmd += ['-F', '12', '-f', '1']
             cmd += ['-1', out1, '-2', out2]
         if out1 and not out2:
-            if hcfilter:
-                cmd += ['-F', '4']
-            else:
+            if mfilter:
                 cmd += ['-f', '4']
+            else:
+                cmd += ['-F', '4']
             cmd += ['-0', out1]
         if input_path:
             cmd += [input_path]

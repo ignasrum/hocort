@@ -51,3 +51,19 @@ def test_pipeline_custom_options_2():
     options = []
     returncode = Kraken2().run(idx, seq1, out, seq2=seq2, options=options)
     assert returncode == 0
+
+def test_pipeline_mfilter_true_1():
+    returncode = Kraken2().run(idx, seq1, out, mfilter='t')
+    assert returncode == 0
+
+def test_pipeline_mfilter_false_1():
+    returncode = Kraken2().run(idx, seq1, out, mfilter='f')
+    assert returncode == 0
+
+def test_pipeline_mfilter_true_2():
+    returncode = Kraken2().run(idx, seq1, out, seq2=seq2, mfilter='t')
+    assert returncode == 0
+
+def test_pipeline_mfilter_false_2():
+    returncode = Kraken2().run(idx, seq1, out, seq2=seq2, mfilter='f')
+    assert returncode == 0

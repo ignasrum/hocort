@@ -24,7 +24,7 @@ class Bowtie2(Pipeline):
         """
         super().__init__(__file__)
 
-    def run(self, idx, seq1, out1, seq2=None, out2=None, hcfilter=False, mode='local', threads=1, options=[]):
+    def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, mode='local', threads=1, options=[]):
         """
         Run function which starts the pipeline.
 
@@ -40,8 +40,10 @@ class Bowtie2(Pipeline):
             Path where the second input FastQ file is located.
         out2 : string
             Path where the second output FastQ file will be written.
-        hcfilter : bool
-            Whether to exclude or include the matching sequences from the output files.
+        mfilter : bool
+            Whether to output mapped/unmapped sequences.
+            True: output unmapped sequences
+            False: output mapped sequences
         mode : string
             Bowtie2 execution mode. Can either be 'local' or 'end-to-end'.
         threads : int
@@ -78,7 +80,7 @@ class Bowtie2(Pipeline):
 
         bowtie2_cmd = bt2().align(idx, seq1, seq2=seq2, threads=threads, options=options)
         if bowtie2_cmd == None: return 1
-        fastq_cmd = SAM.sam_to_fastq(out1=out1, out2=out2, threads=threads, hcfilter=hcfilter)
+        fastq_cmd = SAM.sam_to_fastq(out1=out1, out2=out2, threads=threads, mfilter=mfilter)
 
         returncodes = exe.execute(bowtie2_cmd + fastq_cmd, pipe=True)
 
@@ -106,7 +108,7 @@ class Bowtie2(Pipeline):
         """
         parser = ArgParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort map {self.__class__.__name__} [-h] [--threads <int>] [--mode <mode>] [--host-contam-filter <bool>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
+            usage=f'hocort map {self.__class__.__name__} [-h] [--threads <int>] [--mode <mode>] [--filter <bool>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
         )
         parser.add_argument(
             '-x',
@@ -152,10 +154,10 @@ class Bowtie2(Pipeline):
         )
         parser.add_argument(
             '-f',
-            '--host-contam-filter',
+            '--filter',
             choices=['True', 'False'],
-            default='False',
-            help='str: set to True to keep host sequences, False to keep everything besides host sequences (default: False)'
+            default='True',
+            help='str: set to False to output mapped sequences, True to output unmapped sequences (default: True)'
         )
         parsed = parser.parse_args(args=args)
 
@@ -164,11 +166,11 @@ class Bowtie2(Pipeline):
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
         mode = parsed.mode
-        hcfilter = True if parsed.host_contam_filter == 'True' else False
+        mfilter = True if parsed.filter == 'True' else False
 
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        return self.run(idx, seq1, out1, out2=out2, seq2=seq2, hcfilter=hcfilter, threads=threads, mode=mode)
+        return self.run(idx, seq1, out1, out2=out2, seq2=seq2, mfilter=mfilter, threads=threads, mode=mode)

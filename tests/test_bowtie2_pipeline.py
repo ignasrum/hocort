@@ -36,20 +36,20 @@ def test_pipeline_seq2_no_path():
     returncode = Bowtie2().run(idx, seq1, out1, seq2=no_path)
     assert returncode == 0
 
-def test_pipeline_hcfilter_true_1():
-    returncode = Bowtie2().run(idx, seq1, out1, hcfilter='t')
+def test_pipeline_mfilter_true_1():
+    returncode = Bowtie2().run(idx, seq1, out1, mfilter='t')
     assert returncode == 0
 
-def test_pipeline_hcfilter_false_1():
-    returncode = Bowtie2().run(idx, seq1, out1, hcfilter='f')
+def test_pipeline_mfilter_false_1():
+    returncode = Bowtie2().run(idx, seq1, out1, mfilter='f')
     assert returncode == 0
 
-def test_pipeline_hcfilter_true_2():
-    returncode = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, hcfilter='t')
+def test_pipeline_mfilter_true_2():
+    returncode = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, mfilter='t')
     assert returncode == 0
 
-def test_pipeline_hcfilter_false_2():
-    returncode = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, hcfilter='f')
+def test_pipeline_mfilter_false_2():
+    returncode = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, mfilter='f')
     assert returncode == 0
 
 def test_pipeline_end_to_end_1():
