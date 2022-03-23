@@ -69,6 +69,10 @@ Exactly as above, but with one input file and one output file.
 hocort map Bowtie2 -x dir/basename -i input1.fastq -o out1.fastq
 ```
 
+### Compressed input/output
+Most pipelines support .gz compressed input and output.
+No extra configuration is required aside from having ".gz" extension in the filename.
+
 ### Removing host contamination
 The filter "--filter True/False" argument may be used to switch between outputting mapped/unmapped sequences.
 For example, if the reads are contaminated with human sequences and the index was built with the human genome, use "--filter True" to output unmapped sequences (everything except the human reads).
