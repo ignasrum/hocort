@@ -114,7 +114,7 @@ class BWA_MEM2(Aligner):
             required=True,
             type=str,
             metavar=('<fasta>'),
-            help='str: path to sequence files, max 2 (required)'
+            help='str: path to sequence files (required)'
         )
         parser.add_argument(
             '-o',
@@ -122,7 +122,7 @@ class BWA_MEM2(Aligner):
             required=True,
             type=str,
             metavar=('<index>'),
-            help='str: path to output files, max 2 (required)'
+            help='str: path to output index (dir/basename) (required)'
         )
         parsed = parser.parse_args(args=args)
 
