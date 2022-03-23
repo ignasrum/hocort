@@ -24,7 +24,7 @@ class Bowtie2(Pipeline):
         """
         super().__init__(__file__)
 
-    def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, mode='local', threads=1, options=[]):
+    def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, mode='end-to-end', threads=1, options=[]):
         """
         Run function which starts the pipeline.
 
@@ -149,8 +149,8 @@ class Bowtie2(Pipeline):
             '-m',
             '--mode',
             choices=['local', 'end-to-end'],
-            default='local',
-            help='str: operation mode (default: local)'
+            default='end-to-end',
+            help='str: operation mode (default: end-to-end)'
         )
         parser.add_argument(
             '-f',
