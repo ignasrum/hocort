@@ -198,12 +198,12 @@ def main():
     )
     # map subcommand
     parser_map = subparsers.add_parser(
-        'clean',
+        'map',
         prog='HoCoRT',
-        description='HoCoRT: A Host Contamination Removal Tool',
+        description='hocort map: map reads to a reference genome and output mapped/unmapped reads',
         usage='hocort map [pipeline] [options]',
         extra_help=extra_help_map,
-        help='map reads to reference and remove contamination',
+        help='map reads to a reference genome and output mapped/unmapped reads',
         add_help=False
     )
     parser_map.add_argument(
@@ -222,7 +222,7 @@ def main():
     parser_index = subparsers.add_parser(
         'index',
         prog='HoCoRT',
-        description='HoCoRT: A Host Contamination Removal Tool',
+        description='hocort index: build index/-es for supported tools',
         usage='hocort index [tool] [options]',
         extra_help=extra_help_index,
         help='build index/-es for supported tools',
@@ -249,7 +249,7 @@ def main():
     logger = hocort.logging.configure_logger(__file__, debug=debug, quiet=quiet, filename=log_file)
     logger.debug(str(args))
 
-    if cmd == 'clean' and args.pipeline:
+    if cmd == 'map' and args.pipeline:
         if args.pipeline not in pipelines.keys():
             logger.error(f'Invalid pipeline: {args.pipeline}')
             sys.exit(1)
