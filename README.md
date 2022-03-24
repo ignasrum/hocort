@@ -33,7 +33,7 @@ wget https://raw.githubusercontent.com/ignasrum/hocort/main/install.sh && wget h
 
 After downloading the files, run the installation bash script to install HoCoRT:
 ```
-chmod +x install.sh && ./install.sh
+bash ./install.sh
 ```
 
 The installation is done. Activate the Conda environment:
