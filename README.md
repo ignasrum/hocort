@@ -2,7 +2,7 @@
 [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/hocort/README.html) <br>
 <strong>Ho</strong>st <strong>Co</strong>ntamination <strong>R</strong>emoval <strong>T</strong>ool (<strong>HoCoRT</strong>)
 
-Host contamination removal from high-throughput sequencing reads for Linux and Mac OS.
+Removes specific organisms from sequencing reads on Linux and Mac OS.
 
 Supports un-/paired FastQ input. Outputs in FastQ format.
 
