@@ -1,5 +1,6 @@
 import time
 import os
+import logging
 
 from hocort.pipelines.pipeline import Pipeline
 from hocort.aligners.bowtie2 import Bowtie2 as bt2
@@ -7,23 +8,14 @@ from hocort.parse.sam import SAM
 from hocort.parser import ArgParser
 import hocort.execute as exe
 
+logger = logging.getLogger(__file__)
+
 
 class Bowtie2(Pipeline):
     """
     Bowtie2 pipeline which maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
 
     """
-    def __init__(self):
-        """
-        Sets the logger file source filename.
-
-        Returns
-        -------
-        None
-
-        """
-        super().__init__(__file__)
-
     def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, mode='end-to-end', threads=1, options=[]):
         """
         Run function which starts the pipeline.
@@ -61,7 +53,7 @@ class Bowtie2(Pipeline):
             If input FastQ_2 file is given without output FastQ_2.
 
         """
-        self.debug_log_args(self.run.__name__, locals())
+        self.debug_log_args(logger, self.run.__name__, locals())
         if seq2 and not out2:
             raise ValueError(f'Input FastQ_2 was given, but no output FastQ_2.')
 
@@ -72,10 +64,10 @@ class Bowtie2(Pipeline):
         elif mode == 'end-to-end':
             options = ['--end-to-end', '--sensitive', '--score-min L,-0.4,-0.4']
         else:
-            self.logger.error(f'Invalid mode: {mode}')
+            logger.error(f'Invalid mode: {mode}')
             return 1
 
-        self.logger.warning(f'Running pipeline: {self.__class__.__name__}')
+        logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
         bowtie2_cmd = bt2().align(idx, seq1, seq2=seq2, threads=threads, options=options)
@@ -84,12 +76,12 @@ class Bowtie2(Pipeline):
 
         returncodes = exe.execute(bowtie2_cmd + fastq_cmd, pipe=True)
 
-        self.logger.debug(returncodes)
+        logger.debug(returncodes)
         for returncode in returncodes:
             if returncode != 0: return 1
 
         end_time = time.time()
-        self.logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
+        logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return 0
 
     def interface(self, args):

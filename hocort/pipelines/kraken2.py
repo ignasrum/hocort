@@ -1,5 +1,6 @@
 import time
 import os
+import logging
 
 from hocort.pipelines.pipeline import Pipeline
 from hocort.classifiers.kraken2 import Kraken2 as kr2
@@ -7,23 +8,14 @@ from hocort.parse.sam import SAM
 from hocort.parser import ArgParser
 import hocort.execute as exe
 
+logger = logging.getLogger(__file__)
+
 
 class Kraken2(Pipeline):
     """
     Kraken2 pipeline which maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
 
     """
-    def __init__(self):
-        """
-        Sets the logger file source filename.
-
-        Returns
-        -------
-        None
-
-        """
-        super().__init__(__file__)
-
     def run(self, idx, seq1, out, seq2=None, mfilter=True, threads=1, options=[]):
         """
         Run function which starts the pipeline.
@@ -53,7 +45,7 @@ class Kraken2(Pipeline):
             Resulting returncode after the process is finished.
 
         """
-        self.debug_log_args(self.run.__name__, locals())
+        self.debug_log_args(logger, self.run.__name__, locals())
 
         if len(options) > 0:
             options = options
@@ -61,7 +53,7 @@ class Kraken2(Pipeline):
             options = []
         options += ['--output', '-']
 
-        self.logger.warning(f'Running pipeline: {self.__class__.__name__}')
+        logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
         class_out = None
@@ -75,12 +67,12 @@ class Kraken2(Pipeline):
         if kr2_cmd == None: return 1
         returncodes = exe.execute(kr2_cmd, pipe=False)
 
-        self.logger.debug(returncodes)
+        logger.debug(returncodes)
         for returncode in returncodes:
             if returncode != 0: return 1
 
         end_time = time.time()
-        self.logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
+        logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return 0
 
     def interface(self, args):

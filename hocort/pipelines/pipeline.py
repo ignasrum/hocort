@@ -1,4 +1,3 @@
-import logging
 from abc import ABC, abstractmethod
 
 
@@ -7,28 +6,14 @@ class Pipeline(ABC):
     Pipeline abstract base class. Meant to provide a consistent interface between different pipelines.
 
     """
-    def __init__(self, logger_filename):
-        """
-        Constructor which setups the logger.
-
-        Parameters
-        ----------
-        logger_filename : string
-            Logger name.
-
-        Returns
-        -------
-        None
-
-        """
-        self.logger = logging.getLogger(logger_filename)
-
-    def debug_log_args(self, function_name, locals_vars):
+    def debug_log_args(self, logger, function_name, locals_vars):
         """
         Logs the arguments of a function.
 
         Parameters
         ----------
+        logger : logging.Logger
+            Logger instance which is used to log the arguments
         function_name : string
             Function name.
         locals_vars : dict
@@ -43,7 +28,7 @@ class Pipeline(ABC):
         for var in locals_vars:
             if var != 'self':
                 string += f'\n{var}: {locals_vars[var]}'
-        self.logger.debug(string + '\n')
+        logger.debug(string + '\n')
 
     @abstractmethod
     def run(self, seq1, seq2=None):

@@ -1,5 +1,6 @@
 import time
 import os
+import logging
 
 from hocort.pipelines.pipeline import Pipeline
 from hocort.aligners.bbmap import BBMap as bb
@@ -7,23 +8,14 @@ from hocort.parse.sam import SAM
 from hocort.parser import ArgParser
 import hocort.execute as exe
 
+logger = logging.getLogger(__file__)
+
 
 class BBMap(Pipeline):
     """
     BBMap pipeline which maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
 
     """
-    def __init__(self):
-        """
-        Sets the logger file source filename.
-
-        Returns
-        -------
-        None
-
-        """
-        super().__init__(__file__)
-
     def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, threads=1, options=[]):
         """
         Run function which starts the pipeline.
@@ -59,11 +51,11 @@ class BBMap(Pipeline):
             If input FastQ_2 file is given without output FastQ_2.
 
         """
-        self.debug_log_args(self.run.__name__, locals())
+        self.debug_log_args(logger, self.run.__name__, locals())
         if seq2 and not out2:
             raise ValueError(f'Input FastQ_2 was given, but no output FastQ_2.')
 
-        self.logger.warning(f'Running pipeline: {self.__class__.__name__}')
+        logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
         if len(options) > 0:
@@ -77,12 +69,12 @@ class BBMap(Pipeline):
 
         returncodes = exe.execute(bbmap_cmd + fastq_cmd, pipe=True)
 
-        self.logger.debug(returncodes)
+        logger.debug(returncodes)
         for returncode in returncodes:
             if returncode != 0: return 1
 
         end_time = time.time()
-        self.logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
+        logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return 0
 
     def interface(self, args):

@@ -1,10 +1,13 @@
 import time
 import os
 import tempfile
+import logging
 
 from hocort.pipelines.pipeline import Pipeline
 from hocort.pipelines.bowtie2 import Bowtie2
 from hocort.parser import ArgParser
+
+logger = logging.getLogger(__file__)
 
 
 class Bowtie2Bowtie2(Pipeline):
@@ -26,9 +29,8 @@ class Bowtie2Bowtie2(Pipeline):
         None
 
         """
-        super().__init__(__file__)
         self.temp_dir = tempfile.TemporaryDirectory(dir=dir)
-        self.logger.debug(self.temp_dir.name)
+        logger.debug(self.temp_dir.name)
 
     def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, threads=1):
         """
@@ -63,24 +65,24 @@ class Bowtie2Bowtie2(Pipeline):
             If input FastQ_2 file is given without output FastQ_2.
 
         """
-        self.debug_log_args(self.run.__name__, locals())
+        self.debug_log_args(logger, self.run.__name__, locals())
         if seq2 and not out2:
             raise ValueError(f'Input FastQ_2 was given, but no output FastQ_2.')
 
-        self.logger.warning(f'Running pipeline: {self.__class__.__name__}')
+        logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
         temp1 = f'{self.temp_dir.name}/temp1.fastq.gz'
         temp2 = None if seq2 == None else f'{self.temp_dir.name}/temp2.fastq.gz'
         returncode = Bowtie2().run(idx, seq1, temp1, seq2=seq2, out2=temp2, mode='end-to-end', mfilter=mfilter)
         if returncode != 0:
-            self.logger.error('Pipeline was terminated')
+            logger.error('Pipeline was terminated')
             return 1
         returncode = Bowtie2().run(idx, temp1, out1, seq2=temp2, out2=out2, mode='local', mfilter=mfilter)
         if returncode != 0:
-            self.logger.error('Pipeline was terminated')
+            logger.error('Pipeline was terminated')
             return 1
         end_time = time.time()
-        self.logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
+        logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return 0
 
     def interface(self, args):

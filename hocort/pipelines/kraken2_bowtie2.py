@@ -1,11 +1,14 @@
 import time
 import os
 import tempfile
+import logging
 
 from hocort.pipelines.pipeline import Pipeline
 from hocort.pipelines.bowtie2 import Bowtie2
 from hocort.pipelines.kraken2 import Kraken2
 from hocort.parser import ArgParser
+
+logger = logging.getLogger(__file__)
 
 
 class Kraken2Bowtie2(Pipeline):
@@ -27,9 +30,8 @@ class Kraken2Bowtie2(Pipeline):
         None
 
         """
-        super().__init__(__file__)
         self.temp_dir = tempfile.TemporaryDirectory(dir=dir)
-        self.logger.debug(self.temp_dir.name)
+        logger.debug(self.temp_dir.name)
 
     def run(self, bt2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, mfilter=True, threads=1):
         """
@@ -66,17 +68,17 @@ class Kraken2Bowtie2(Pipeline):
             If input FastQ_2 file is given without output FastQ_2.
 
         """
-        self.debug_log_args(self.run.__name__, locals())
+        self.debug_log_args(logger, self.run.__name__, locals())
         if seq2 and not out2:
             raise ValueError(f'Input FastQ_2 was given, but no output FastQ_2.')
 
-        self.logger.warning(f'Running pipeline: {self.__class__.__name__}')
+        logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
         kr2_out = self.temp_dir.name + '/out#.fastq' if seq2 and out2 else self.temp_dir.name + '/out_1.fastq'
         returncode = Kraken2().run(kr2_idx, seq1, kr2_out, seq2=seq2, mfilter=mfilter, threads=threads)
         if returncode != 0:
-            self.logger.error('Pipeline was terminated')
+            logger.error('Pipeline was terminated')
             return 1
 
         temp1 = f'{self.temp_dir.name}/out_1.fastq'
@@ -84,11 +86,11 @@ class Kraken2Bowtie2(Pipeline):
 
         returncode = Bowtie2().run(bt2_idx, temp1, out1, seq2=temp2, out2=out2, mode='end-to-end', threads=threads, mfilter=mfilter)
         if returncode != 0:
-            self.logger.error('Pipeline was terminated')
+            logger.error('Pipeline was terminated')
             return 1
 
         end_time = time.time()
-        self.logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
+        logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return 0
 
     def interface(self, args):
