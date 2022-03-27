@@ -12,12 +12,7 @@ import hocort.pipelines
 import hocort.version as version
 import hocort.logging
 from hocort.parser import ArgParser
-import hocort.dependencies as dep
 
-
-# check external dependencies
-if not dep.check_external_dependencies():
-    sys.exit(1)
 
 # Gets available aligners from hocort.aligners
 aligners = {}
