@@ -48,10 +48,13 @@ class HISAT2(Pipeline):
 
         Raises
         ------
+        ValueError
             If input FastQ_2 file is given without output FastQ_2.
 
         """
-        self.debug_log_args(logger, self.run.__name__, locals())
+        self.debug_log_args(logger,
+                            self.run.__name__,
+                            locals())
         if seq2 and not out2:
             raise ValueError(f'Input FastQ_2 was given, but no output FastQ_2.')
 
@@ -63,11 +66,19 @@ class HISAT2(Pipeline):
         else:
             options = ['--sensitive', '--sp 3,2', '--mp 5,1']
 
-        hs2_cmd = hs2().align(idx, seq1, seq2=seq2, threads=threads, options=options)
+        hs2_cmd = hs2().align(idx,
+                              seq1,
+                              seq2=seq2,
+                              threads=threads,
+                              options=options)
         if hs2_cmd == None: return 1
-        fastq_cmd = SAM.sam_to_fastq(out1=out1, out2=out2, threads=threads, mfilter=mfilter)
+        fastq_cmd = SAM.sam_to_fastq(out1=out1,
+                                     out2=out2,
+                                     threads=threads,
+                                     mfilter=mfilter)
 
-        returncodes = exe.execute(hs2_cmd + fastq_cmd, pipe=True)
+        returncodes = exe.execute(hs2_cmd + fastq_cmd,
+                                  pipe=True)
 
         logger.debug(returncodes)
         for returncode in returncodes:
@@ -150,4 +161,10 @@ class HISAT2(Pipeline):
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        return self.run(idx, seq1, out1, out2=out2, seq2=seq2, mfilter=mfilter, threads=threads)
+        return self.run(idx,
+                        seq1,
+                        out1,
+                        out2=out2,
+                        seq2=seq2,
+                        mfilter=mfilter,
+                        threads=threads)

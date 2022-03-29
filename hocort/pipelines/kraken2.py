@@ -45,7 +45,9 @@ class Kraken2(Pipeline):
             Resulting returncode after the process is finished.
 
         """
-        self.debug_log_args(logger, self.run.__name__, locals())
+        self.debug_log_args(logger,
+                            self.run.__name__,
+                            locals())
 
         if len(options) > 0:
             options = options
@@ -63,9 +65,16 @@ class Kraken2(Pipeline):
         else:
             unclass_out = out
 
-        kr2_cmd = kr2().classify(idx, seq1, classified_out=class_out, unclassified_out=unclass_out, seq2=seq2, threads=threads, options=options)
+        kr2_cmd = kr2().classify(idx,
+                                 seq1,
+                                 classified_out=class_out,
+                                 unclassified_out=unclass_out,
+                                 seq2=seq2,
+                                 threads=threads,
+                                 options=options)
         if kr2_cmd == None: return 1
-        returncodes = exe.execute(kr2_cmd, pipe=False)
+        returncodes = exe.execute(kr2_cmd,
+                                  pipe=False)
 
         logger.debug(returncodes)
         for returncode in returncodes:
@@ -145,4 +154,9 @@ class Kraken2(Pipeline):
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]
 
-        return self.run(idx, seq1, out, seq2=seq2, mfilter=mfilter, threads=threads)
+        return self.run(idx,
+                        seq1,
+                        out,
+                        seq2=seq2,
+                        mfilter=mfilter,
+                        threads=threads)

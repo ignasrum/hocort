@@ -68,10 +68,13 @@ class Kraken2Minimap2(Pipeline):
 
         Raises
         ------
+        ValueError
             If input FastQ_2 file is given without output FastQ_2.
 
         """
-        self.debug_log_args(logger, self.run.__name__, locals())
+        self.debug_log_args(logger,
+                            self.run.__name__,
+                            locals())
         if seq2 and not out2:
             raise ValueError(f'Input FastQ_2 was given, but no output FastQ_2.')
 
@@ -79,7 +82,12 @@ class Kraken2Minimap2(Pipeline):
         start_time = time.time()
 
         kr2_out = self.temp_dir.name + '/out#.fastq' if seq2 and out2 else self.temp_dir.name + '/out_1.fastq'
-        returncode = Kraken2().run(kr2_idx, seq1, kr2_out, seq2=seq2, mfilter=mfilter, threads=threads)
+        returncode = Kraken2().run(kr2_idx,
+                                   seq1,
+                                   kr2_out,
+                                   seq2=seq2,
+                                   mfilter=mfilter,
+                                   threads=threads)
         if returncode != 0:
             logger.error('Pipeline was terminated')
             return 1
@@ -87,7 +95,14 @@ class Kraken2Minimap2(Pipeline):
         temp1 = f'{self.temp_dir.name}/out_1.fastq'
         temp2 = None if seq2 == None else f'{self.temp_dir.name}/out_2.fastq'
 
-        returncode = Minimap2().run(mn2_idx, temp1, out1, seq2=temp2, out2=out2, threads=threads, mfilter=mfilter, preset=preset)
+        returncode = Minimap2().run(mn2_idx,
+                                    temp1,
+                                    out1,
+                                    seq2=temp2,
+                                    out2=out2,
+                                    threads=threads,
+                                    mfilter=mfilter,
+                                    preset=preset)
         if returncode != 0:
             logger.error('Pipeline was terminated')
             return 1
@@ -188,4 +203,12 @@ class Kraken2Minimap2(Pipeline):
         out1 = out[0]
         out2 = None if len(out) < 2 else out[1]
 
-        return self.run(mn2_idx, kr2_idx, seq1, out1, seq2=seq2, out2=out2, threads=threads, mfilter=mfilter, preset=preset)
+        return self.run(mn2_idx,
+                        kr2_idx,
+                        seq1,
+                        out1,
+                        seq2=seq2,
+                        out2=out2,
+                        threads=threads,
+                        mfilter=mfilter,
+                        preset=preset)
