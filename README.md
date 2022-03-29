@@ -97,7 +97,6 @@ options = ["--local", "--very-fast-local"] # options is passed to the aligner/ma
 
 returncode = bowtie2.run(idx, seq1, out1, seq2=seq2, out2=out2, options=options)
 ```
-Note that the combination pipelines, such as Kraken2Bowtie2, do not take an "options" argument.
 
 # Wiki
 [Wiki Homepage](https://github.com/ignasrum/hocort/wiki)
