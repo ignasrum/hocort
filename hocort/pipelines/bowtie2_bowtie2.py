@@ -32,7 +32,7 @@ class Bowtie2Bowtie2(Pipeline):
         self.temp_dir = tempfile.TemporaryDirectory(dir=dir)
         logger.debug(self.temp_dir.name)
 
-    def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, threads=1):
+    def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, threads=1, options1=[], options2=[]):
         """
         Run function which starts the pipeline.
 
@@ -54,6 +54,10 @@ class Bowtie2Bowtie2(Pipeline):
             False: output mapped sequences
         threads : int
             Number of threads to use.
+        options1 : list
+            An options list, for first run of Bowtie2, where arguments passed to the tool may be configured.
+        options2 : list
+            An options list, for second run of Bowtie2, where arguments passed to the tool may be configured.
 
         Returns
         -------
@@ -82,7 +86,8 @@ class Bowtie2Bowtie2(Pipeline):
                                    seq2=seq2,
                                    out2=temp2,
                                    mode='end-to-end',
-                                   mfilter=mfilter)
+                                   mfilter=mfilter,
+                                   options=options1)
         if returncode != 0:
             logger.error('Pipeline was terminated')
             return 1
@@ -92,7 +97,8 @@ class Bowtie2Bowtie2(Pipeline):
                                    seq2=temp2,
                                    out2=out2,
                                    mode='local',
-                                   mfilter=mfilter)
+                                   mfilter=mfilter,
+                                   options=options2)
         if returncode != 0:
             logger.error('Pipeline was terminated')
             return 1

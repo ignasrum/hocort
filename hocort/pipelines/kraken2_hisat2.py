@@ -33,7 +33,7 @@ class Kraken2HISAT2(Pipeline):
         self.temp_dir = tempfile.TemporaryDirectory(dir=dir)
         logger.debug(self.temp_dir.name)
 
-    def run(self, hs2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, mfilter=True, threads=1):
+    def run(self, hs2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, mfilter=True, threads=1, hs2_options=[], kr2_options=[]):
         """
         Run function which starts the pipeline.
 
@@ -57,6 +57,10 @@ class Kraken2HISAT2(Pipeline):
             False: output mapped sequences
         threads : int
             Number of threads to use.
+        hs2_options : list
+            An options list, for HISAT2, where arguments passed to the tool may be configured.
+        kr2_options : list
+            An options list, for Kraken2, where arguments passed to the tool may be configured.
 
         Returns
         -------
@@ -84,7 +88,8 @@ class Kraken2HISAT2(Pipeline):
                                    kr2_out,
                                    seq2=seq2,
                                    mfilter=mfilter,
-                                   threads=threads)
+                                   threads=threads,
+                                   options=kr2_options)
         if returncode != 0:
             logger.error('Pipeline was terminated')
             return 1
@@ -98,7 +103,8 @@ class Kraken2HISAT2(Pipeline):
                                   seq2=temp2,
                                   out2=out2,
                                   threads=threads,
-                                  mfilter=mfilter)
+                                  mfilter=mfilter,
+                                  options=hs2_options)
         if returncode != 0:
             logger.error('Pipeline was terminated')
             return 1
