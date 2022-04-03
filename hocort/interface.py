@@ -167,24 +167,6 @@ def main():
         description='HoCoRT: A Host Contamination Removal Tool',
         usage='hocort [subcommand] [options]'
     )
-    parser.add_argument(
-        '-d',
-        '--debug',
-        action='store_true',
-        help='flag: verbose output'
-    )
-    parser.add_argument(
-        '-q',
-        '--quiet',
-        action='store_true',
-        help='flag: quiet output (overrides -d/--debug)'
-    )
-    parser.add_argument(
-        '-l',
-        '--log-file',
-        type=str,
-        help='str: path to log file'
-    )
     subparsers = parser.add_subparsers(
         dest='subcommand',
         title='available subcommands',
@@ -213,6 +195,24 @@ def main():
         nargs=0,
         help='flag: print help'
     )
+    parser_map.add_argument(
+        '-d',
+        '--debug',
+        action='store_true',
+        help='flag: verbose output'
+    )
+    parser_map.add_argument(
+        '-q',
+        '--quiet',
+        action='store_true',
+        help='flag: quiet output (overrides -d/--debug)'
+    )
+    parser_map.add_argument(
+        '-l',
+        '--log-file',
+        type=str,
+        help='str: path to log file'
+    )
     # index subcommand
     parser_index = subparsers.add_parser(
         'index',
@@ -235,8 +235,28 @@ def main():
         nargs=0,
         help='flag: print help'
     )
+    parser_index.add_argument(
+        '-d',
+        '--debug',
+        action='store_true',
+        help='flag: verbose output'
+    )
+    parser_index.add_argument(
+        '-q',
+        '--quiet',
+        action='store_true',
+        help='flag: quiet output (overrides -d/--debug)'
+    )
+    parser_index.add_argument(
+        '-l',
+        '--log-file',
+        type=str,
+        help='str: path to log file'
+    )
 
     args, unknown_args = parser.parse_known_args()
+    print(args)
+    print(unknown_args)
     cmd = args.subcommand
     debug = args.debug
     quiet = args.quiet
