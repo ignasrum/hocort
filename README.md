@@ -83,6 +83,7 @@ First, the index should be built with the genomes of the organisms to extract.
 Second, the sequencing reads should be mapped with the "--filter False" argument to output only the mapped sequences (sequences which map to the index containing genomes of the specific organisms).
 
 # Advanced usage
+### Importing and using HoCoRT in Python
 HoCoRT can be imported in Python scripts and programs with "import hocort".
 This allows precise configuration of the tools being run.
 ```
@@ -96,6 +97,11 @@ out2 = "out2.fastq"
 options = ["--local", "--very-fast-local"] # options is passed to the aligner/mapper, this allows precise configuration
 
 returncode = bowtie2.run(idx, seq1, out1, seq2=seq2, out2=out2, options=options)
+```
+### Passing arguments to the underlying tools
+It is possible to pass arguments to the underlying tools by specifying them in the -c/--config argument like this:
+```
+hocort map Bowtie2 -c="--local --very-fast-local --score-min G,21,9"
 ```
 
 # Wiki
