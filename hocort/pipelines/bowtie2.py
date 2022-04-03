@@ -111,7 +111,7 @@ class Bowtie2(Pipeline):
         """
         parser = ArgParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort map {self.__class__.__name__} [-h] [--threads <int>] [--mode <mode>] [--filter <bool>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
+            usage=f'hocort map {self.__class__.__name__} [-h] [--threads <int>] [--mode <mode>] [--filter <bool>] [-c=<str>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
         )
         parser.add_argument(
             '-x',
@@ -162,6 +162,13 @@ class Bowtie2(Pipeline):
             default='True',
             help='str: set to False to output mapped sequences, True to output unmapped sequences (default: True)'
         )
+        parser.add_argument(
+            '-c',
+            '--config',
+            type=str,
+            metavar=('<str>'),
+            help='str: used to pass along arguments to the aligner, use with caution, usage: -c="list arguments here"'
+        )
         parsed = parser.parse_args(args=args)
 
         idx = parsed.index
@@ -170,6 +177,7 @@ class Bowtie2(Pipeline):
         threads = parsed.threads if parsed.threads else 1
         mode = parsed.mode
         mfilter = True if parsed.filter == 'True' else False
+        config = parsed.config if parsed.config else []
 
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]
@@ -183,4 +191,5 @@ class Bowtie2(Pipeline):
                         seq2=seq2,
                         mfilter=mfilter,
                         threads=threads,
-                        mode=mode)
+                        mode=mode,
+                        options=config)
