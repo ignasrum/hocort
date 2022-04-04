@@ -255,8 +255,6 @@ def main():
     )
 
     args, unknown_args = parser.parse_known_args()
-    print(args)
-    print(unknown_args)
     cmd = args.subcommand
     debug = args.debug
     quiet = args.quiet
