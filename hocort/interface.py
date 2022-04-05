@@ -114,7 +114,7 @@ def extra_help_map():
         Message containing information about available pipelines.
 
     """
-    message = '\nAvailable pipelines:'
+    message = '\navailable pipelines:'
     for pipeline in pipelines:
         message += f'\n    {pipeline}'
     message += '\n'
@@ -130,7 +130,7 @@ def extra_help_index():
         Message containing information about available tools.
 
     """
-    message = '\nAvailable tools:'
+    message = '\navailable tools:'
     for aligner in aligners:
         message += f'\n    {aligner}'
     for classifier in classifiers:
@@ -163,8 +163,8 @@ def main():
     """
     parser = ArgParser(
         version_info=version_info,
-        prog='HoCoRT',
-        description='HoCoRT: A Host Contamination Removal Tool',
+        prog='hocort',
+        description='hocort: remove specific organisms from sequencing reads',
         usage='hocort [subcommand] [options]'
     )
     subparsers = parser.add_subparsers(
@@ -176,7 +176,7 @@ def main():
     # map subcommand
     parser_map = subparsers.add_parser(
         'map',
-        prog='HoCoRT',
+        prog='hocort',
         description='hocort map: map reads to a reference genome and output mapped/unmapped reads',
         usage='hocort map [pipeline] [options]',
         extra_help=extra_help_map,
@@ -216,7 +216,7 @@ def main():
     # index subcommand
     parser_index = subparsers.add_parser(
         'index',
-        prog='HoCoRT',
+        prog='hocort',
         description='hocort index: build index/-es for supported tools',
         usage='hocort index [tool] [options]',
         extra_help=extra_help_index,
