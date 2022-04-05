@@ -88,7 +88,7 @@ class Bowtie2HISAT2(Pipeline):
                                    temp1,
                                    seq2=seq2,
                                    out2=temp2,
-                                   mode='end-to-end',
+                                   preset='end-to-end',
                                    threads=threads,
                                    mfilter=mfilter,
                                    options=bt2_options)

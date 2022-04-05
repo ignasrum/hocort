@@ -38,11 +38,12 @@ class Minimap2(Pipeline):
             False: output mapped sequences
         preset : str
             Type of reads to align to reference.
-            Types: 'illumina', 'nanopore' or 'pacbio'
+            Types: 'illumina', 'nanopore' or 'pacbio'.
         threads : int
             Number of threads to use.
         options : list
-            An options list where additional arguments may be specified.
+            An options list where arguments may be defined.
+            Overrides "preset" argument.
 
         Returns
         -------
@@ -61,18 +62,17 @@ class Minimap2(Pipeline):
         if seq2 and not out2:
             raise ValueError(f'Input FastQ_2 was given, but no output FastQ_2.')
 
-        if len(options) > 0:
-            options = options
-        else:
-            #options = ['-A1', '-B4', '-O1,10', '-s100', '--end-bonus', '200']
-            options = []
-
         if preset == 'illumina':
             options += ['-xsr']
         elif preset == 'nanopore':
             options += ['-xmap-ont']
         elif preset == 'pacbio':
             options += ['-xmap-pb']
+        else:
+            logger.warning(f'Invalid preset: {preset}')
+
+        if len(options) > 0:
+            options = options
 
         logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
@@ -115,7 +115,7 @@ class Minimap2(Pipeline):
         """
         parser = ArgParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort map {self.__class__.__name__} [-h] [--threads <int>] [--filter <bool>] [--preset <type>] [-c=<str>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
+            usage=f'hocort map {self.__class__.__name__} [-h] [--threads <int>] [--filter <bool>] [--preset <str>] [-c=<str>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
         )
         parser.add_argument(
             '-x',

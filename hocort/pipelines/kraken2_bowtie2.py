@@ -102,7 +102,7 @@ class Kraken2Bowtie2(Pipeline):
                                    out1,
                                    seq2=temp2,
                                    out2=out2,
-                                   mode='end-to-end',
+                                   preset='end-to-end',
                                    threads=threads,
                                    mfilter=mfilter,
                                    options=bt2_options)

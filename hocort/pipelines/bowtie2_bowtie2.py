@@ -85,7 +85,7 @@ class Bowtie2Bowtie2(Pipeline):
                                    temp1,
                                    seq2=seq2,
                                    out2=temp2,
-                                   mode='end-to-end',
+                                   preset='end-to-end',
                                    mfilter=mfilter,
                                    options=options1)
         if returncode != 0:
@@ -96,7 +96,7 @@ class Bowtie2Bowtie2(Pipeline):
                                    out1,
                                    seq2=temp2,
                                    out2=out2,
-                                   mode='local',
+                                   preset='local',
                                    mfilter=mfilter,
                                    options=options2)
         if returncode != 0:

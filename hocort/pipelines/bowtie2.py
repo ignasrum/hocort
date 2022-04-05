@@ -16,7 +16,7 @@ class Bowtie2(Pipeline):
     Bowtie2 pipeline which maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
 
     """
-    def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, mode='end-to-end', threads=1, options=[]):
+    def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, preset='end-to-end', threads=1, options=[]):
         """
         Run function which starts the pipeline.
 
@@ -36,12 +36,13 @@ class Bowtie2(Pipeline):
             Whether to output mapped/unmapped sequences.
             True: output unmapped sequences
             False: output mapped sequences
-        mode : string
+        preset : string
             Bowtie2 execution mode. Can either be 'local' or 'end-to-end'.
         threads : int
             Number of threads to use.
         options : list
-            An options list where additional arguments may be specified.
+            An options list where arguments may be defined.
+            Overrides "preset" argument.
 
         Returns
         -------
@@ -60,15 +61,15 @@ class Bowtie2(Pipeline):
         if seq2 and not out2:
             raise ValueError(f'Input FastQ_2 was given, but no output FastQ_2.')
 
-        if len(options) > 0:
-            options = options
-        elif mode == 'local':
+        if preset == 'local':
             options = ['--local', '--very-fast-local', '--score-min G,21,9']
-        elif mode == 'end-to-end':
+        elif preset == 'end-to-end':
             options = ['--end-to-end', '--sensitive', '--score-min L,-0.4,-0.4']
         else:
-            logger.error(f'Invalid mode: {mode}')
-            return 1
+            logger.warning(f'Invalid preset: {preset}')
+
+        if len(options) > 0:
+            options = options
 
         logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
@@ -111,7 +112,7 @@ class Bowtie2(Pipeline):
         """
         parser = ArgParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort map {self.__class__.__name__} [-h] [--threads <int>] [--mode <mode>] [--filter <bool>] [-c=<str>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
+            usage=f'hocort map {self.__class__.__name__} [-h] [--threads <int>] [--filter <bool>] [--preset <str>] [-c=<str>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
         )
         parser.add_argument(
             '-x',
@@ -149,8 +150,8 @@ class Bowtie2(Pipeline):
             help='int: number of threads (default: max available on machine)'
         )
         parser.add_argument(
-            '-m',
-            '--mode',
+            '-p',
+            '--preset',
             choices=['local', 'end-to-end'],
             default='end-to-end',
             help='str: operation mode (default: end-to-end)'
@@ -175,7 +176,7 @@ class Bowtie2(Pipeline):
         seq = parsed.input
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
-        mode = parsed.mode
+        preset = parsed.preset
         mfilter = True if parsed.filter == 'True' else False
         config = [parsed.config] if parsed.config else []
 
@@ -191,5 +192,5 @@ class Bowtie2(Pipeline):
                         seq2=seq2,
                         mfilter=mfilter,
                         threads=threads,
-                        mode=mode,
+                        preset=preset,
                         options=config)

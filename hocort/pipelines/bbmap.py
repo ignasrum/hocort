@@ -16,7 +16,7 @@ class BBMap(Pipeline):
     BBMap pipeline which maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
 
     """
-    def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, threads=1, options=[]):
+    def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, preset='illumina', threads=1, options=[]):
         """
         Run function which starts the pipeline.
 
@@ -36,10 +36,14 @@ class BBMap(Pipeline):
             Whether to output mapped/unmapped sequences.
             True: output unmapped sequences
             False: output mapped sequences
+        preset : str
+            Type of reads to align to reference.
+            Types: 'illumina' and 'nanopore'.
         threads : int
             Number of threads to use.
         options : list
-            An options list where additional arguments may be specified.
+            An options list where arguments may be defined.
+            Overrides "preset" argument.
 
         Returns
         -------
@@ -61,10 +65,13 @@ class BBMap(Pipeline):
         logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
+        if preset == 'illumina':
+            options += ['fast=t', 'local=t']
+        elif preset == 'nanopore':
+            options += ['fast=t', 'local=t', 'maxlen=600']
+
         if len(options) > 0:
             options = options
-        else:
-            options = ['fast=t', 'local=t']
 
         bbmap_cmd = bb().align(idx,
                                seq1,
@@ -105,7 +112,7 @@ class BBMap(Pipeline):
         """
         parser = ArgParser(
             description=f'{self.__class__.__name__} pipeline',
-            usage=f'hocort map {self.__class__.__name__} [-h] [--threads <int>] [--filter <bool>] [-c=<str>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
+            usage=f'hocort map {self.__class__.__name__} [-h] [--threads <int>] [--filter <bool>] [--preset <type>] [-c=<str>] -x <idx> -i <fastq_1> [<fastq_2>] -o <fastq_1> [<fastq_2>]'
         )
         parser.add_argument(
             '-x',
@@ -150,6 +157,14 @@ class BBMap(Pipeline):
             help='str: set to False to output mapped sequences, True to output unmapped sequences (default: True)'
         )
         parser.add_argument(
+            '-p',
+            '--preset',
+            required=False,
+            choices=['illumina', 'nanopore'],
+            default='illumina',
+            help='str: type of reads (default: illumina)'
+        )
+        parser.add_argument(
             '-c',
             '--config',
             type=str,
@@ -163,6 +178,7 @@ class BBMap(Pipeline):
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
         mfilter = True if parsed.filter == 'True' else False
+        preset = parsed.preset
         config = [parsed.config] if parsed.config else []
 
         seq1 = seq[0]
@@ -176,5 +192,6 @@ class BBMap(Pipeline):
                         out2=out2,
                         seq2=seq2,
                         mfilter=mfilter,
+                        preset=preset,
                         threads=threads,
                         options=config)

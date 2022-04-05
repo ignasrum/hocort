@@ -53,23 +53,23 @@ def test_pipeline_mfilter_false_2():
     assert returncode == 0
 
 def test_pipeline_end_to_end_1():
-    mode = 'end-to-end'
-    returncode = Bowtie2().run(idx, seq1, out1, mode=mode)
+    preset = 'end-to-end'
+    returncode = Bowtie2().run(idx, seq1, out1, preset=preset)
     assert returncode == 0
 
 def test_pipeline_end_to_end_2():
-    mode = 'end-to-end'
-    returncode = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, mode=mode)
+    preset = 'end-to-end'
+    returncode = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, preset=preset)
     assert returncode == 0
 
 def test_pipeline_local_1():
-    mode = 'local'
-    returncode = Bowtie2().run(idx, seq1, out1, mode=mode)
+    preset = 'local'
+    returncode = Bowtie2().run(idx, seq1, out1, preset=preset)
     assert returncode == 0
 
 def test_pipeline_local_2():
-    mode = 'local'
-    returncode = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, mode=mode)
+    preset = 'local'
+    returncode = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, preset=preset)
     assert returncode == 0
 
 def test_pipeline_custom_options_1():
