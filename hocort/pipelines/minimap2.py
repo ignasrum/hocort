@@ -183,7 +183,7 @@ class Minimap2(Pipeline):
         threads = parsed.threads if parsed.threads else 1
         mfilter = True if parsed.filter == 'True' else False
         preset = parsed.preset
-        config = parsed.config if parsed.config else []
+        config = [parsed.config] if parsed.config else []
 
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]
