@@ -87,6 +87,7 @@ class Bowtie2Bowtie2(Pipeline):
                                    out2=temp2,
                                    preset='end-to-end',
                                    mfilter=mfilter,
+                                   threads=threads,
                                    options=options1)
         if returncode != 0:
             logger.error('Pipeline was terminated')
@@ -98,6 +99,7 @@ class Bowtie2Bowtie2(Pipeline):
                                    out2=out2,
                                    preset='local',
                                    mfilter=mfilter,
+                                   threads=threads,
                                    options=options2)
         if returncode != 0:
             logger.error('Pipeline was terminated')
