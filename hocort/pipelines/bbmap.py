@@ -66,9 +66,9 @@ class BBMap(Pipeline):
         start_time = time.time()
 
         if preset == 'illumina':
-            options += ['fast=t', 'local=t']
+            options += []
         elif preset == 'nanopore':
-            options += ['fast=t', 'local=t', 'maxlen=600']
+            options += ['maxlen=600']
 
         if len(options) > 0:
             options = options

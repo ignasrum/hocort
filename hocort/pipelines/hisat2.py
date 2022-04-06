@@ -61,10 +61,10 @@ class HISAT2(Pipeline):
         logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
+        #options = []
+
         if len(options) > 0:
             options = options
-        else:
-            options = ['--sensitive', '--sp 3,2', '--mp 5,1']
 
         hs2_cmd = hs2().align(idx,
                               seq1,

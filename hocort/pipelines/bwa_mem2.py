@@ -60,10 +60,11 @@ class BWA_MEM2(Pipeline):
 
         logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
+
+        #options = []
+
         if len(options) > 0:
             options = options
-        else:
-            options = ['-O 20,20', '-E 6,6', '-L 2,2']
 
         bwa_mem2_cmd = bwa_mem2().align(idx,
                                         seq1,

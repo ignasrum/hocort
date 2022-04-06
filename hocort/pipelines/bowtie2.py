@@ -62,9 +62,9 @@ class Bowtie2(Pipeline):
             raise ValueError(f'Input FastQ_2 was given, but no output FastQ_2.')
 
         if preset == 'local':
-            options = ['--local', '--very-fast-local', '--score-min G,21,9']
+            options = ['--local']
         elif preset == 'end-to-end':
-            options = ['--end-to-end', '--sensitive', '--score-min L,-0.4,-0.4']
+            options = ['--end-to-end']
         else:
             logger.warning(f'Invalid preset: {preset}')
 

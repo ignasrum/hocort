@@ -49,10 +49,10 @@ class Kraken2(Pipeline):
                             self.run.__name__,
                             locals())
 
+        #options = []
+
         if len(options) > 0:
             options = options
-        else:
-            options = []
         options += ['--output', '-']
 
         logger.warning(f'Running pipeline: {self.__class__.__name__}')
