@@ -182,9 +182,9 @@ class Kraken2Minimap2(Pipeline):
             '-f',
             '--filter',
             required=False,
-            choices=['True', 'False'],
-            default='True',
-            help='str: set to False to output mapped sequences, True to output unmapped sequences (default: True)'
+            choices=['true', 'false'],
+            default='true',
+            help='str: set to false to output mapped sequences, true to output unmapped sequences (default: true)'
         )
         parser.add_argument(
             '-p',
@@ -201,7 +201,7 @@ class Kraken2Minimap2(Pipeline):
         seq = parsed.input
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
-        mfilter = True if parsed.filter == 'True' else False
+        mfilter = True if parsed.filter == 'true' else False
         preset = parsed.preset
 
         seq1 = seq[0]

@@ -152,9 +152,10 @@ class BBMap(Pipeline):
         parser.add_argument(
             '-f',
             '--filter',
-            choices=['True', 'False'],
-            default='True',
-            help='str: set to False to output mapped sequences, True to output unmapped sequences (default: True)'
+            required=False,
+            choices=['true', 'false'],
+            default='true',
+            help='str: set to false to output mapped sequences, true to output unmapped sequences (default: true)'
         )
         parser.add_argument(
             '-p',
@@ -167,6 +168,7 @@ class BBMap(Pipeline):
         parser.add_argument(
             '-c',
             '--config',
+            required=False,
             type=str,
             metavar=('<str>'),
             help='str: used to pass along arguments to the aligner, use with caution, usage: -c="list arguments here"'
@@ -177,7 +179,7 @@ class BBMap(Pipeline):
         seq = parsed.input
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
-        mfilter = True if parsed.filter == 'True' else False
+        mfilter = True if parsed.filter == 'true' else False
         preset = parsed.preset
         config = [parsed.config] if parsed.config else []
 

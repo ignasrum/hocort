@@ -174,9 +174,10 @@ class Bowtie2HISAT2(Pipeline):
         parser.add_argument(
             '-f',
             '--filter',
-            choices=['True', 'False'],
-            default='True',
-            help='str: set to False to output mapped sequences, True to output unmapped sequences (default: True)'
+            required=False,
+            choices=['true', 'false'],
+            default='true',
+            help='str: set to false to output mapped sequences, true to output unmapped sequences (default: true)'
         )
         parsed = parser.parse_args(args=args)
 
@@ -185,7 +186,7 @@ class Bowtie2HISAT2(Pipeline):
         seq = parsed.input
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
-        mfilter = True if parsed.filter == 'True' else False
+        mfilter = True if parsed.filter == 'true' else False
 
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]
