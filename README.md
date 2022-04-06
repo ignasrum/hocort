@@ -44,13 +44,13 @@ conda activate hocort
 # Using HoCoRT
 ### Pipeline naming
 Pipelines are named after the tools they utilize.
-For example, the pipeline Bowtie2 uses Bowtie2 to map the reads, and Kraken2Bowtie2 first classifies using Kraken2, then maps using Bowtie2.
+For example, the pipeline bowtie2 uses Bowtie2 to map the reads, and kraken2bowtie2 first classifies using Kraken2, then maps using Bowtie2.
 
 ### Building indexes
 Indexes are required to map sequences, and may be built either manually or with "hocort index" which simplifies the process.
 A Bowtie2 index may built using "hocort index" with the following command:
 ```
-hocort index Bowtie2 --input genome.fasta --output dir/basename
+hocort index bowtie2 --input genome.fasta --output dir/basename
 ```
 If one wishes to remove multiple organisms from sequencing reads, the input fasta should contain multiple genomes.
 ```
@@ -60,13 +60,13 @@ cat genome1.fasta genome2.fasta > combined.fasta
 ### Paired end run
 To map reads and output mapped/unmapped reads use the following command:
 ```
-hocort map Bowtie2 -x dir/basename -i input1.fastq input2.fastq -o out1.fastq out2.fastq
+hocort map bowtie2 -x dir/basename -i input1.fastq input2.fastq -o out1.fastq out2.fastq
 ```
 
 ### Single end run
 Exactly as above, but with one input file and one output file.
 ```
-hocort map Bowtie2 -x dir/basename -i input1.fastq -o out1.fastq
+hocort map bowtie2 -x dir/basename -i input1.fastq -o out1.fastq
 ```
 
 ### Compressed input/output
@@ -74,13 +74,13 @@ Most pipelines support .gz compressed input and output.
 No extra configuration is required aside from having ".gz" extension in the filename.
 
 ### Removing host contamination
-The filter "--filter True/False" argument may be used to switch between outputting mapped/unmapped sequences.
-For example, if the reads are contaminated with human sequences and the index was built with the human genome, use "--filter True" to output unmapped sequences (everything except the human reads).
+The filter "--filter true/false" argument may be used to switch between outputting mapped/unmapped sequences.
+For example, if the reads are contaminated with human sequences and the index was built with the human genome, use "--filter true" to output unmapped sequences (everything except the human reads).
 
 ### Extracting specific sequences
-The filter "--filter True/False" argument may also be used to extract specific sequences.
+The filter "--filter true/false" argument may also be used to extract specific sequences.
 First, the index should be built with the genomes of the organisms to extract.
-Second, the sequencing reads should be mapped with the "--filter False" argument to output only the mapped sequences (sequences which map to the index containing genomes of the specific organisms).
+Second, the sequencing reads should be mapped with the "--filter false" argument to output only the mapped sequences (sequences which map to the index containing genomes of the specific organisms).
 
 # Advanced usage
 ### Importing and using HoCoRT in Python
@@ -101,7 +101,7 @@ returncode = bowtie2.run(idx, seq1, out1, seq2=seq2, out2=out2, options=options)
 ### Passing arguments to the underlying tools
 It is possible to pass arguments to the underlying tools by specifying them in the -c/--config argument like this:
 ```
-hocort map Bowtie2 -c="--local --very-fast-local --score-min G,21,9"
+hocort map bowtie2 -c="--local --very-fast-local --score-min G,21,9"
 ```
 
 # Wiki
