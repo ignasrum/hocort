@@ -61,9 +61,9 @@ class Kraken2(Pipeline):
         class_out = None
         unclass_out = None
         if mfilter:
-            class_out = out
-        else:
             unclass_out = out
+        else:
+            class_out = out
 
         kr2_cmd = kr2().classify(idx,
                                  seq1,
