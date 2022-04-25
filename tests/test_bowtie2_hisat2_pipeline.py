@@ -62,17 +62,17 @@ def test_pipeline_noseq2_out2():
     assert returncode == 0
 
 def test_pipeline_mfilter_true_1():
-    returncode = Bowtie2HISAT2().run(bt2_idx, hs2_idx, seq1, out1, mfilter='t')
+    returncode = Bowtie2HISAT2().run(bt2_idx, hs2_idx, seq1, out1, mfilter=True)
     assert returncode == 0
 
 def test_pipeline_mfilter_false_1():
-    returncode = Bowtie2HISAT2().run(bt2_idx, hs2_idx, seq1, out1, mfilter='f')
+    returncode = Bowtie2HISAT2().run(bt2_idx, hs2_idx, seq1, out1, mfilter=False)
     assert returncode == 0
 
 def test_pipeline_mfilter_true_2():
-    returncode = Bowtie2HISAT2().run(bt2_idx, hs2_idx, seq1, out1, seq2=seq2, out2=out2, mfilter='t')
+    returncode = Bowtie2HISAT2().run(bt2_idx, hs2_idx, seq1, out1, seq2=seq2, out2=out2, mfilter=True)
     assert returncode == 0
 
 def test_pipeline_mfilter_false_2():
-    returncode = Bowtie2HISAT2().run(bt2_idx, hs2_idx, seq1, out1, seq2=seq2, out2=out2, mfilter='f')
+    returncode = Bowtie2HISAT2().run(bt2_idx, hs2_idx, seq1, out1, seq2=seq2, out2=out2, mfilter=False)
     assert returncode == 0

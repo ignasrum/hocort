@@ -33,7 +33,7 @@ class Kraken2Minimap2(Pipeline):
         self.temp_dir = tempfile.TemporaryDirectory(dir=dir)
         logger.debug(self.temp_dir.name)
 
-    def run(self, mn2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, mfilter=True, preset='illumina', threads=1, mn2_options=[], kr2_options=[]):
+    def run(self, mn2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, mfilter=True, preset='illumina', threads=1, mn2_options='', kr2_options=''):
         """
         Run function which starts the pipeline.
 
@@ -60,10 +60,10 @@ class Kraken2Minimap2(Pipeline):
             Types: 'illumina', 'nanopore' or 'pacbio'
         threads : int
             Number of threads to use.
-        mn2_options : list
-            An options list, for Bowtie2, where arguments passed to the tool may be configured.
-        kr2_options : list
-            An options list, for Kraken2, where arguments passed to the tool may be configured.
+        mn2_options : string
+            An options string, for Bowtie2, where arguments passed to the tool may be configured.
+        kr2_options : string
+            An options string, for Kraken2, where arguments passed to the tool may be configured.
 
         Returns
         -------
@@ -74,6 +74,7 @@ class Kraken2Minimap2(Pipeline):
         ------
         ValueError
             If input FastQ_2 file is given without output FastQ_2.
+            If disallowed characters are found in input.
 
         """
         self.debug_log_args(logger,
@@ -81,6 +82,11 @@ class Kraken2Minimap2(Pipeline):
                             locals())
         if seq2 and not out2:
             raise ValueError(f'Input FastQ_2 was given, but no output FastQ_2.')
+
+        # validate input
+        valid, var, chars = self.validate(locals())
+        if not valid:
+            raise ValueError(f'Input with disallowed characters detected: "{var}" - {chars}')
 
         logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()

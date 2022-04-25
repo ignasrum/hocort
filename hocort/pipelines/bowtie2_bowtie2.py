@@ -32,7 +32,7 @@ class Bowtie2Bowtie2(Pipeline):
         self.temp_dir = tempfile.TemporaryDirectory(dir=dir)
         logger.debug(self.temp_dir.name)
 
-    def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, threads=1, options1=[], options2=[]):
+    def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, threads=1, options1='', options2=''):
         """
         Run function which starts the pipeline.
 
@@ -54,10 +54,10 @@ class Bowtie2Bowtie2(Pipeline):
             False: output mapped sequences
         threads : int
             Number of threads to use.
-        options1 : list
-            An options list, for first run of Bowtie2, where arguments passed to the tool may be configured.
-        options2 : list
-            An options list, for second run of Bowtie2, where arguments passed to the tool may be configured.
+        options1 : string
+            An options string, for first run of Bowtie2, where arguments passed to the tool may be configured.
+        options2 : string
+            An options string, for second run of Bowtie2, where arguments passed to the tool may be configured.
 
         Returns
         -------
@@ -68,6 +68,7 @@ class Bowtie2Bowtie2(Pipeline):
         ------
         ValueError
             If input FastQ_2 file is given without output FastQ_2.
+            If disallowed characters are found in input.
 
         """
         self.debug_log_args(logger,
@@ -75,6 +76,11 @@ class Bowtie2Bowtie2(Pipeline):
                             locals())
         if seq2 and not out2:
             raise ValueError(f'Input FastQ_2 was given, but no output FastQ_2.')
+
+        # validate input
+        valid, var, chars = self.validate(locals())
+        if not valid:
+            raise ValueError(f'Input with disallowed characters detected: "{var}" - {chars}')
 
         logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()

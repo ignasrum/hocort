@@ -36,19 +36,19 @@ def test_pipeline_seq2_no_path():
     assert returncode == 0
 
 def test_pipeline_mfilter_true_1():
-    returncode = HISAT2().run(idx, seq1, out1, mfilter='t')
+    returncode = HISAT2().run(idx, seq1, out1, mfilter=True)
     assert returncode == 0
 
 def test_pipeline_mfilter_false_1():
-    returncode = HISAT2().run(idx, seq1, out1, mfilter='f')
+    returncode = HISAT2().run(idx, seq1, out1, mfilter=False)
     assert returncode == 0
 
 def test_pipeline_mfilter_true_2():
-    returncode = HISAT2().run(idx, seq1, out1, seq2=seq2, out2=out2, mfilter='t')
+    returncode = HISAT2().run(idx, seq1, out1, seq2=seq2, out2=out2, mfilter=True)
     assert returncode == 0
 
 def test_pipeline_mfilter_false_2():
-    returncode = HISAT2().run(idx, seq1, out1, seq2=seq2, out2=out2, mfilter='f')
+    returncode = HISAT2().run(idx, seq1, out1, seq2=seq2, out2=out2, mfilter=False)
     assert returncode == 0
 
 def test_pipeline_1():
@@ -60,12 +60,12 @@ def test_pipeline_2():
     assert returncode == 0
 
 def test_pipeline_custom_options_1():
-    options = []
+    options = ''
     returncode = HISAT2().run(idx, seq1, out1, options=options)
     assert returncode == 0
 
 def test_pipeline_custom_options_2():
-    options = []
+    options = ''
     returncode = HISAT2().run(idx, seq1, out1, seq2=seq2, out2=out2, options=options)
     assert returncode == 0
 

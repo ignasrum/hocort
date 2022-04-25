@@ -36,19 +36,19 @@ def test_pipeline_seq2_no_path():
     assert returncode == 0
 
 def test_pipeline_mfilter_true_1():
-    returncode = BBMap().run(idx, seq1, out1, mfilter='t')
+    returncode = BBMap().run(idx, seq1, out1, mfilter=True)
     assert returncode == 0
 
 def test_pipeline_mfilter_false_1():
-    returncode = BBMap().run(idx, seq1, out1, mfilter='f')
+    returncode = BBMap().run(idx, seq1, out1, mfilter=False)
     assert returncode == 0
 
 def test_pipeline_mfilter_true_2():
-    returncode = BBMap().run(idx, seq1, out1, seq2=seq2, out2=out2, mfilter='t')
+    returncode = BBMap().run(idx, seq1, out1, seq2=seq2, out2=out2, mfilter=True)
     assert returncode == 0
 
 def test_pipeline_mfilter_false_2():
-    returncode = BBMap().run(idx, seq1, out1, seq2=seq2, out2=out2, mfilter='f')
+    returncode = BBMap().run(idx, seq1, out1, seq2=seq2, out2=out2, mfilter=False)
     assert returncode == 0
 
 def test_pipeline_1():

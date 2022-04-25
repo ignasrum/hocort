@@ -1,7 +1,31 @@
 from argparse import ArgumentParser
 from argparse import Action
 import sys
+import re
 
+
+def validate(arg):
+    """
+    Implements positive security model by checking for
+    valid characters instead of invalid ones.
+
+    Parameters
+    ----------
+    arg : string
+        String to validate.
+
+    Returns
+    -------
+    (bool, []) : tuple with a boolean and a list
+        A tuple containing a boolean and a list is returned.
+        The boolean is True if the string "arg" is valid, False if
+        it is invalid.
+        The list contains the invalid characters, if any.
+    """
+    chars = re.findall(r'[^a-zA-Z0-9\. !#=/_-]', arg)
+    if re.match(r'^[a-zA-Z0-9\. !#=/_-]+$|^(?![\s\S])', arg):
+        return True, chars
+    return False, chars
 
 def create_version_action(version_info):
     """

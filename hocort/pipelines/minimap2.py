@@ -16,7 +16,7 @@ class Minimap2(Pipeline):
     Minimap2 pipeline which maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
 
     """
-    def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, preset='illumina', threads=1, options=[]):
+    def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, preset='illumina', threads=1, options=''):
         """
         Run function which starts the pipeline.
 
@@ -41,8 +41,8 @@ class Minimap2(Pipeline):
             Types: 'illumina', 'nanopore' or 'pacbio'.
         threads : int
             Number of threads to use.
-        options : list
-            An options list where arguments may be defined.
+        options : string
+            An options string where arguments may be defined.
             Overrides "preset" argument.
 
         Returns
@@ -54,6 +54,7 @@ class Minimap2(Pipeline):
         ------
         ValueError
             If input FastQ_2 file is given without output FastQ_2.
+            If disallowed characters are found in input.
 
         """
         self.debug_log_args(logger,
@@ -62,17 +63,23 @@ class Minimap2(Pipeline):
         if seq2 and not out2:
             raise ValueError(f'Input FastQ_2 was given, but no output FastQ_2.')
 
+        # validate input
+        valid, var, chars = self.validate(locals())
+        if not valid:
+            raise ValueError(f'Input with disallowed characters detected: "{var}" - {chars}')
+
+        final_options = []
         if preset == 'illumina':
-            options += ['-xsr']
+            final_options += ['-xsr']
         elif preset == 'nanopore':
-            options += ['-xmap-ont']
+            final_options += ['-xmap-ont']
         elif preset == 'pacbio':
-            options += ['-xmap-pb']
+            final_options += ['-xmap-pb']
         else:
             logger.warning(f'Invalid preset: {preset}')
 
         if len(options) > 0:
-            options = options
+            final_options = [options]
 
         logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
@@ -81,7 +88,7 @@ class Minimap2(Pipeline):
                               seq1,
                               seq2=seq2,
                               threads=threads,
-                              options=options)
+                              options=final_options)
         if mn2_cmd == None: return 1
         fastq_cmd = SAM.sam_to_fastq(out1=out1,
                                      out2=out2,
@@ -184,7 +191,7 @@ class Minimap2(Pipeline):
         threads = parsed.threads if parsed.threads else 1
         mfilter = True if parsed.filter == 'True' else False
         preset = parsed.preset
-        config = [parsed.config] if parsed.config else []
+        config = parsed.config if parsed.config else ''
 
         seq1 = seq[0]
         seq2 = None if len(seq) < 2 else seq[1]
