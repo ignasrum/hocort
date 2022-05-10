@@ -41,12 +41,7 @@ import hocort.pipelines
 import hocort.version as version
 import hocort.logging
 from hocort.parser import ArgParser
-import hocort.dependencies as dep
 
-
-# check external dependencies
-if not dep.check_external_dependencies():
-    sys.exit(1)
 
 # Gets available aligners from hocort.aligners
 aligners = {}
@@ -148,7 +143,7 @@ def extra_help_map():
         Message containing information about available pipelines.
 
     &#34;&#34;&#34;
-    message = &#39;\nAvailable pipelines:&#39;
+    message = &#39;\navailable pipelines:&#39;
     for pipeline in pipelines:
         message += f&#39;\n    {pipeline}&#39;
     message += &#39;\n&#39;
@@ -164,7 +159,7 @@ def extra_help_index():
         Message containing information about available tools.
 
     &#34;&#34;&#34;
-    message = &#39;\nAvailable tools:&#39;
+    message = &#39;\navailable tools:&#39;
     for aligner in aligners:
         message += f&#39;\n    {aligner}&#39;
     for classifier in classifiers:
@@ -197,27 +192,9 @@ def main():
     &#34;&#34;&#34;
     parser = ArgParser(
         version_info=version_info,
-        prog=&#39;HoCoRT&#39;,
-        description=&#39;HoCoRT: A Host Contamination Removal Tool&#39;,
+        prog=&#39;hocort&#39;,
+        description=&#39;hocort: remove specific organisms from sequencing reads&#39;,
         usage=&#39;hocort [subcommand] [options]&#39;
-    )
-    parser.add_argument(
-        &#39;-d&#39;,
-        &#39;--debug&#39;,
-        action=&#39;store_true&#39;,
-        help=&#39;flag: verbose output&#39;
-    )
-    parser.add_argument(
-        &#39;-q&#39;,
-        &#39;--quiet&#39;,
-        action=&#39;store_true&#39;,
-        help=&#39;flag: quiet output (overrides -d/--debug)&#39;
-    )
-    parser.add_argument(
-        &#39;-l&#39;,
-        &#39;--log-file&#39;,
-        type=str,
-        help=&#39;str: path to log file&#39;
     )
     subparsers = parser.add_subparsers(
         dest=&#39;subcommand&#39;,
@@ -227,12 +204,12 @@ def main():
     )
     # map subcommand
     parser_map = subparsers.add_parser(
-        &#39;clean&#39;,
-        prog=&#39;HoCoRT&#39;,
-        description=&#39;HoCoRT: A Host Contamination Removal Tool&#39;,
+        &#39;map&#39;,
+        prog=&#39;hocort&#39;,
+        description=&#39;hocort map: map reads to a reference genome and output mapped/unmapped reads&#39;,
         usage=&#39;hocort map [pipeline] [options]&#39;,
         extra_help=extra_help_map,
-        help=&#39;Map reads to reference and remove contamination&#39;,
+        help=&#39;map reads to a reference genome and output mapped/unmapped reads&#39;,
         add_help=False
     )
     parser_map.add_argument(
@@ -247,14 +224,32 @@ def main():
         nargs=0,
         help=&#39;flag: print help&#39;
     )
+    parser_map.add_argument(
+        &#39;-d&#39;,
+        &#39;--debug&#39;,
+        action=&#39;store_true&#39;,
+        help=&#39;flag: verbose output&#39;
+    )
+    parser_map.add_argument(
+        &#39;-q&#39;,
+        &#39;--quiet&#39;,
+        action=&#39;store_true&#39;,
+        help=&#39;flag: quiet output (overrides -d/--debug)&#39;
+    )
+    parser_map.add_argument(
+        &#39;-l&#39;,
+        &#39;--log-file&#39;,
+        type=str,
+        help=&#39;str: path to log file&#39;
+    )
     # index subcommand
     parser_index = subparsers.add_parser(
         &#39;index&#39;,
-        prog=&#39;HoCoRT&#39;,
-        description=&#39;HoCoRT: A Host Contamination Removal Tool&#39;,
+        prog=&#39;hocort&#39;,
+        description=&#39;hocort index: build index/-es for supported tools&#39;,
         usage=&#39;hocort index [tool] [options]&#39;,
         extra_help=extra_help_index,
-        help=&#39;Build index/-es for supported tools&#39;,
+        help=&#39;build index/-es for supported tools&#39;,
         add_help=False
     )
     parser_index.add_argument(
@@ -269,6 +264,24 @@ def main():
         nargs=0,
         help=&#39;flag: print help&#39;
     )
+    parser_index.add_argument(
+        &#39;-d&#39;,
+        &#39;--debug&#39;,
+        action=&#39;store_true&#39;,
+        help=&#39;flag: verbose output&#39;
+    )
+    parser_index.add_argument(
+        &#39;-q&#39;,
+        &#39;--quiet&#39;,
+        action=&#39;store_true&#39;,
+        help=&#39;flag: quiet output (overrides -d/--debug)&#39;
+    )
+    parser_index.add_argument(
+        &#39;-l&#39;,
+        &#39;--log-file&#39;,
+        type=str,
+        help=&#39;str: path to log file&#39;
+    )
 
     args, unknown_args = parser.parse_known_args()
     cmd = args.subcommand
@@ -278,7 +291,7 @@ def main():
     logger = hocort.logging.configure_logger(__file__, debug=debug, quiet=quiet, filename=log_file)
     logger.debug(str(args))
 
-    if cmd == &#39;clean&#39; and args.pipeline:
+    if cmd == &#39;map&#39; and args.pipeline:
         if args.pipeline not in pipelines.keys():
             logger.error(f&#39;Invalid pipeline: {args.pipeline}&#39;)
             sys.exit(1)
@@ -331,7 +344,7 @@ def main():
         Message containing information about available tools.
 
     &#34;&#34;&#34;
-    message = &#39;\nAvailable tools:&#39;
+    message = &#39;\navailable tools:&#39;
     for aligner in aligners:
         message += f&#39;\n    {aligner}&#39;
     for classifier in classifiers:
@@ -364,7 +377,7 @@ def main():
         Message containing information about available pipelines.
 
     &#34;&#34;&#34;
-    message = &#39;\nAvailable pipelines:&#39;
+    message = &#39;\navailable pipelines:&#39;
     for pipeline in pipelines:
         message += f&#39;\n    {pipeline}&#39;
     message += &#39;\n&#39;
@@ -396,27 +409,9 @@ def main():
     &#34;&#34;&#34;
     parser = ArgParser(
         version_info=version_info,
-        prog=&#39;HoCoRT&#39;,
-        description=&#39;HoCoRT: A Host Contamination Removal Tool&#39;,
+        prog=&#39;hocort&#39;,
+        description=&#39;hocort: remove specific organisms from sequencing reads&#39;,
         usage=&#39;hocort [subcommand] [options]&#39;
-    )
-    parser.add_argument(
-        &#39;-d&#39;,
-        &#39;--debug&#39;,
-        action=&#39;store_true&#39;,
-        help=&#39;flag: verbose output&#39;
-    )
-    parser.add_argument(
-        &#39;-q&#39;,
-        &#39;--quiet&#39;,
-        action=&#39;store_true&#39;,
-        help=&#39;flag: quiet output (overrides -d/--debug)&#39;
-    )
-    parser.add_argument(
-        &#39;-l&#39;,
-        &#39;--log-file&#39;,
-        type=str,
-        help=&#39;str: path to log file&#39;
     )
     subparsers = parser.add_subparsers(
         dest=&#39;subcommand&#39;,
@@ -426,12 +421,12 @@ def main():
     )
     # map subcommand
     parser_map = subparsers.add_parser(
-        &#39;clean&#39;,
-        prog=&#39;HoCoRT&#39;,
-        description=&#39;HoCoRT: A Host Contamination Removal Tool&#39;,
+        &#39;map&#39;,
+        prog=&#39;hocort&#39;,
+        description=&#39;hocort map: map reads to a reference genome and output mapped/unmapped reads&#39;,
         usage=&#39;hocort map [pipeline] [options]&#39;,
         extra_help=extra_help_map,
-        help=&#39;Map reads to reference and remove contamination&#39;,
+        help=&#39;map reads to a reference genome and output mapped/unmapped reads&#39;,
         add_help=False
     )
     parser_map.add_argument(
@@ -446,14 +441,32 @@ def main():
         nargs=0,
         help=&#39;flag: print help&#39;
     )
+    parser_map.add_argument(
+        &#39;-d&#39;,
+        &#39;--debug&#39;,
+        action=&#39;store_true&#39;,
+        help=&#39;flag: verbose output&#39;
+    )
+    parser_map.add_argument(
+        &#39;-q&#39;,
+        &#39;--quiet&#39;,
+        action=&#39;store_true&#39;,
+        help=&#39;flag: quiet output (overrides -d/--debug)&#39;
+    )
+    parser_map.add_argument(
+        &#39;-l&#39;,
+        &#39;--log-file&#39;,
+        type=str,
+        help=&#39;str: path to log file&#39;
+    )
     # index subcommand
     parser_index = subparsers.add_parser(
         &#39;index&#39;,
-        prog=&#39;HoCoRT&#39;,
-        description=&#39;HoCoRT: A Host Contamination Removal Tool&#39;,
+        prog=&#39;hocort&#39;,
+        description=&#39;hocort index: build index/-es for supported tools&#39;,
         usage=&#39;hocort index [tool] [options]&#39;,
         extra_help=extra_help_index,
-        help=&#39;Build index/-es for supported tools&#39;,
+        help=&#39;build index/-es for supported tools&#39;,
         add_help=False
     )
     parser_index.add_argument(
@@ -468,6 +481,24 @@ def main():
         nargs=0,
         help=&#39;flag: print help&#39;
     )
+    parser_index.add_argument(
+        &#39;-d&#39;,
+        &#39;--debug&#39;,
+        action=&#39;store_true&#39;,
+        help=&#39;flag: verbose output&#39;
+    )
+    parser_index.add_argument(
+        &#39;-q&#39;,
+        &#39;--quiet&#39;,
+        action=&#39;store_true&#39;,
+        help=&#39;flag: quiet output (overrides -d/--debug)&#39;
+    )
+    parser_index.add_argument(
+        &#39;-l&#39;,
+        &#39;--log-file&#39;,
+        type=str,
+        help=&#39;str: path to log file&#39;
+    )
 
     args, unknown_args = parser.parse_known_args()
     cmd = args.subcommand
@@ -477,7 +508,7 @@ def main():
     logger = hocort.logging.configure_logger(__file__, debug=debug, quiet=quiet, filename=log_file)
     logger.debug(str(args))
 
-    if cmd == &#39;clean&#39; and args.pipeline:
+    if cmd == &#39;map&#39; and args.pipeline:
         if args.pipeline not in pipelines.keys():
             logger.error(f&#39;Invalid pipeline: {args.pipeline}&#39;)
             sys.exit(1)

@@ -31,7 +31,7 @@
     SAM parsing and processing class.
 
     &#34;&#34;&#34;
-    def select(input_path=None, output_path=None, paired=True, threads=1, hcfilter=False):
+    def select(input_path=None, output_path=None, paired=True, threads=1, mfilter=True):
         &#34;&#34;&#34;
         Takes SAM input, selects mapped/unmapped reads, and outputs SAM.
 
@@ -45,8 +45,10 @@
             Process reads as paired or unpaired.
         threads : int
             Number of threads to use.
-        hcfilter : bool
-            Whether to exclude or include the mapped sequences from the output files.
+        mfilter : bool
+            Whether to output mapped/unmapped sequences.
+            True: output unmapped sequences
+            False: output mapped sequences
 
         Returns
         -------
@@ -56,23 +58,25 @@
         &#34;&#34;&#34;
         cmd = [&#39;samtools&#39;, &#39;view&#39;, &#39;--threads&#39;, f&#39;{threads}&#39;, &#39;-h&#39;]
         if paired:
-            if hcfilter:
-                cmd += [&#39;-F&#39;, &#39;12&#39;, &#39;-f&#39;, &#39;1&#39;]
-            else:
+            if mfilter:
                 cmd += [&#39;-f&#39;, &#39;13&#39;]
-        else:
-            if hcfilter:
-                cmd += [&#39;-F&#39;, &#39;4&#39;]
             else:
+                cmd += [&#39;-F&#39;, &#39;12&#39;, &#39;-f&#39;, &#39;1&#39;]
+        else:
+            if mfilter:
                 cmd += [&#39;-f&#39;, &#39;4&#39;]
+            else:
+                cmd += [&#39;-F&#39;, &#39;4&#39;]
         if output_path:
             cmd += [&#39;-o&#39;, output_path]
         if input_path:
             cmd += [input_path]
+        else:
+            cmd += [&#39;-&#39;]
 
         return [cmd]
 
-    def sam_to_fastq(input_path=None, out1=None, out2=None, threads=1, hcfilter=False):
+    def sam_to_fastq(input_path=None, out1=None, out2=None, threads=1, mfilter=False):
         &#34;&#34;&#34;
         Takes SAM input, selects mapped/unmapped reads, and outputs FastQ.
 
@@ -86,8 +90,10 @@
             FastQ READ2 output path.
         threads : int
             Number of threads to use.
-        hcfilter : bool
-            Whether to exclude or include the mapped sequences from the output files.
+        mfilter : bool
+            Whether to output mapped/unmapped sequences.
+            True: output unmapped sequences
+            False: output mapped sequences
 
         Returns
         -------
@@ -97,16 +103,16 @@
         &#34;&#34;&#34;
         cmd = [&#39;samtools&#39;, &#39;fastq&#39;, &#39;--threads&#39;, f&#39;{threads}&#39;, &#39;-N&#39;]
         if out1 and out2:
-            if hcfilter:
-                cmd += [&#39;-F&#39;, &#39;12&#39;, &#39;-f&#39;, &#39;1&#39;]
-            else:
+            if mfilter:
                 cmd += [&#39;-f&#39;, &#39;13&#39;]
+            else:
+                cmd += [&#39;-F&#39;, &#39;12&#39;, &#39;-f&#39;, &#39;1&#39;]
             cmd += [&#39;-1&#39;, out1, &#39;-2&#39;, out2]
         if out1 and not out2:
-            if hcfilter:
-                cmd += [&#39;-F&#39;, &#39;4&#39;]
-            else:
+            if mfilter:
                 cmd += [&#39;-f&#39;, &#39;4&#39;]
+            else:
+                cmd += [&#39;-F&#39;, &#39;4&#39;]
             cmd += [&#39;-0&#39;, out1]
         if input_path:
             cmd += [input_path]
@@ -139,7 +145,7 @@
     SAM parsing and processing class.
 
     &#34;&#34;&#34;
-    def select(input_path=None, output_path=None, paired=True, threads=1, hcfilter=False):
+    def select(input_path=None, output_path=None, paired=True, threads=1, mfilter=True):
         &#34;&#34;&#34;
         Takes SAM input, selects mapped/unmapped reads, and outputs SAM.
 
@@ -153,8 +159,10 @@
             Process reads as paired or unpaired.
         threads : int
             Number of threads to use.
-        hcfilter : bool
-            Whether to exclude or include the mapped sequences from the output files.
+        mfilter : bool
+            Whether to output mapped/unmapped sequences.
+            True: output unmapped sequences
+            False: output mapped sequences
 
         Returns
         -------
@@ -164,23 +172,25 @@
         &#34;&#34;&#34;
         cmd = [&#39;samtools&#39;, &#39;view&#39;, &#39;--threads&#39;, f&#39;{threads}&#39;, &#39;-h&#39;]
         if paired:
-            if hcfilter:
-                cmd += [&#39;-F&#39;, &#39;12&#39;, &#39;-f&#39;, &#39;1&#39;]
-            else:
+            if mfilter:
                 cmd += [&#39;-f&#39;, &#39;13&#39;]
-        else:
-            if hcfilter:
-                cmd += [&#39;-F&#39;, &#39;4&#39;]
             else:
+                cmd += [&#39;-F&#39;, &#39;12&#39;, &#39;-f&#39;, &#39;1&#39;]
+        else:
+            if mfilter:
                 cmd += [&#39;-f&#39;, &#39;4&#39;]
+            else:
+                cmd += [&#39;-F&#39;, &#39;4&#39;]
         if output_path:
             cmd += [&#39;-o&#39;, output_path]
         if input_path:
             cmd += [input_path]
+        else:
+            cmd += [&#39;-&#39;]
 
         return [cmd]
 
-    def sam_to_fastq(input_path=None, out1=None, out2=None, threads=1, hcfilter=False):
+    def sam_to_fastq(input_path=None, out1=None, out2=None, threads=1, mfilter=False):
         &#34;&#34;&#34;
         Takes SAM input, selects mapped/unmapped reads, and outputs FastQ.
 
@@ -194,8 +204,10 @@
             FastQ READ2 output path.
         threads : int
             Number of threads to use.
-        hcfilter : bool
-            Whether to exclude or include the mapped sequences from the output files.
+        mfilter : bool
+            Whether to output mapped/unmapped sequences.
+            True: output unmapped sequences
+            False: output mapped sequences
 
         Returns
         -------
@@ -205,16 +217,16 @@
         &#34;&#34;&#34;
         cmd = [&#39;samtools&#39;, &#39;fastq&#39;, &#39;--threads&#39;, f&#39;{threads}&#39;, &#39;-N&#39;]
         if out1 and out2:
-            if hcfilter:
-                cmd += [&#39;-F&#39;, &#39;12&#39;, &#39;-f&#39;, &#39;1&#39;]
-            else:
+            if mfilter:
                 cmd += [&#39;-f&#39;, &#39;13&#39;]
+            else:
+                cmd += [&#39;-F&#39;, &#39;12&#39;, &#39;-f&#39;, &#39;1&#39;]
             cmd += [&#39;-1&#39;, out1, &#39;-2&#39;, out2]
         if out1 and not out2:
-            if hcfilter:
-                cmd += [&#39;-F&#39;, &#39;4&#39;]
-            else:
+            if mfilter:
                 cmd += [&#39;-f&#39;, &#39;4&#39;]
+            else:
+                cmd += [&#39;-F&#39;, &#39;4&#39;]
             cmd += [&#39;-0&#39;, out1]
         if input_path:
             cmd += [input_path]
@@ -226,7 +238,7 @@
 <h3>Methods</h3>
 <dl>
 <dt id="hocort.parse.sam.SAM.sam_to_fastq"><code class="name flex">
-<span>def <span class="ident">sam_to_fastq</span></span>(<span>input_path=None, out1=None, out2=None, threads=1, hcfilter=False)</span>
+<span>def <span class="ident">sam_to_fastq</span></span>(<span>input_path=None, out1=None, out2=None, threads=1, mfilter=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Takes SAM input, selects mapped/unmapped reads, and outputs FastQ.</p>
@@ -240,8 +252,10 @@
 <dd>FastQ READ2 output path.</dd>
 <dt><strong><code>threads</code></strong> :&ensp;<code>int</code></dt>
 <dd>Number of threads to use.</dd>
-<dt><strong><code>hcfilter</code></strong> :&ensp;<code>bool</code></dt>
-<dd>Whether to exclude or include the mapped sequences from the output files.</dd>
+<dt><strong><code>mfilter</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to output mapped/unmapped sequences.
+True: output unmapped sequences
+False: output mapped sequences</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <p>[cmd] : list
@@ -250,7 +264,7 @@ List of commands to be executed.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def sam_to_fastq(input_path=None, out1=None, out2=None, threads=1, hcfilter=False):
+<pre><code class="python">def sam_to_fastq(input_path=None, out1=None, out2=None, threads=1, mfilter=False):
     &#34;&#34;&#34;
     Takes SAM input, selects mapped/unmapped reads, and outputs FastQ.
 
@@ -264,8 +278,10 @@ List of commands to be executed.</p></div>
         FastQ READ2 output path.
     threads : int
         Number of threads to use.
-    hcfilter : bool
-        Whether to exclude or include the mapped sequences from the output files.
+    mfilter : bool
+        Whether to output mapped/unmapped sequences.
+        True: output unmapped sequences
+        False: output mapped sequences
 
     Returns
     -------
@@ -275,16 +291,16 @@ List of commands to be executed.</p></div>
     &#34;&#34;&#34;
     cmd = [&#39;samtools&#39;, &#39;fastq&#39;, &#39;--threads&#39;, f&#39;{threads}&#39;, &#39;-N&#39;]
     if out1 and out2:
-        if hcfilter:
-            cmd += [&#39;-F&#39;, &#39;12&#39;, &#39;-f&#39;, &#39;1&#39;]
-        else:
+        if mfilter:
             cmd += [&#39;-f&#39;, &#39;13&#39;]
+        else:
+            cmd += [&#39;-F&#39;, &#39;12&#39;, &#39;-f&#39;, &#39;1&#39;]
         cmd += [&#39;-1&#39;, out1, &#39;-2&#39;, out2]
     if out1 and not out2:
-        if hcfilter:
-            cmd += [&#39;-F&#39;, &#39;4&#39;]
-        else:
+        if mfilter:
             cmd += [&#39;-f&#39;, &#39;4&#39;]
+        else:
+            cmd += [&#39;-F&#39;, &#39;4&#39;]
         cmd += [&#39;-0&#39;, out1]
     if input_path:
         cmd += [input_path]
@@ -295,7 +311,7 @@ List of commands to be executed.</p></div>
 </details>
 </dd>
 <dt id="hocort.parse.sam.SAM.select"><code class="name flex">
-<span>def <span class="ident">select</span></span>(<span>input_path=None, output_path=None, paired=True, threads=1, hcfilter=False)</span>
+<span>def <span class="ident">select</span></span>(<span>input_path=None, output_path=None, paired=True, threads=1, mfilter=True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Takes SAM input, selects mapped/unmapped reads, and outputs SAM.</p>
@@ -309,8 +325,10 @@ List of commands to be executed.</p></div>
 <dd>Process reads as paired or unpaired.</dd>
 <dt><strong><code>threads</code></strong> :&ensp;<code>int</code></dt>
 <dd>Number of threads to use.</dd>
-<dt><strong><code>hcfilter</code></strong> :&ensp;<code>bool</code></dt>
-<dd>Whether to exclude or include the mapped sequences from the output files.</dd>
+<dt><strong><code>mfilter</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to output mapped/unmapped sequences.
+True: output unmapped sequences
+False: output mapped sequences</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <p>[cmd] : list
@@ -319,7 +337,7 @@ List of commands to be executed.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def select(input_path=None, output_path=None, paired=True, threads=1, hcfilter=False):
+<pre><code class="python">def select(input_path=None, output_path=None, paired=True, threads=1, mfilter=True):
     &#34;&#34;&#34;
     Takes SAM input, selects mapped/unmapped reads, and outputs SAM.
 
@@ -333,8 +351,10 @@ List of commands to be executed.</p></div>
         Process reads as paired or unpaired.
     threads : int
         Number of threads to use.
-    hcfilter : bool
-        Whether to exclude or include the mapped sequences from the output files.
+    mfilter : bool
+        Whether to output mapped/unmapped sequences.
+        True: output unmapped sequences
+        False: output mapped sequences
 
     Returns
     -------
@@ -344,19 +364,21 @@ List of commands to be executed.</p></div>
     &#34;&#34;&#34;
     cmd = [&#39;samtools&#39;, &#39;view&#39;, &#39;--threads&#39;, f&#39;{threads}&#39;, &#39;-h&#39;]
     if paired:
-        if hcfilter:
-            cmd += [&#39;-F&#39;, &#39;12&#39;, &#39;-f&#39;, &#39;1&#39;]
-        else:
+        if mfilter:
             cmd += [&#39;-f&#39;, &#39;13&#39;]
-    else:
-        if hcfilter:
-            cmd += [&#39;-F&#39;, &#39;4&#39;]
         else:
+            cmd += [&#39;-F&#39;, &#39;12&#39;, &#39;-f&#39;, &#39;1&#39;]
+    else:
+        if mfilter:
             cmd += [&#39;-f&#39;, &#39;4&#39;]
+        else:
+            cmd += [&#39;-F&#39;, &#39;4&#39;]
     if output_path:
         cmd += [&#39;-o&#39;, output_path]
     if input_path:
         cmd += [input_path]
+    else:
+        cmd += [&#39;-&#39;]
 
     return [cmd]</code></pre>
 </details>

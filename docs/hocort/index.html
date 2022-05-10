@@ -30,6 +30,7 @@
 import sys
 
 
+# check if user has root access, don&#39;t allow to install or run HoCoRT with root access
 if os.environ.get(&#34;SUDO_UID&#34;):
     print(&#39;Attempting to run HoCoRT with root privileges. Exiting.&#39;)
     sys.exit(1)</code></pre>

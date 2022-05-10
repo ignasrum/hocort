@@ -26,8 +26,9 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import logging
-from abc import ABC, abstractmethod
+<pre><code class="python">from abc import ABC, abstractmethod
+
+import hocort.parser
 
 
 class Pipeline(ABC):
@@ -35,32 +36,18 @@ class Pipeline(ABC):
     Pipeline abstract base class. Meant to provide a consistent interface between different pipelines.
 
     &#34;&#34;&#34;
-    def __init__(self, logger_filename):
-        &#34;&#34;&#34;
-        Constructor which setups the logger.
-
-        Parameters
-        ----------
-        logger_filename : string
-            Logger name.
-
-        Returns
-        -------
-        None
-
-        &#34;&#34;&#34;
-        self.logger = logging.getLogger(logger_filename)
-
-    def debug_log_args(self, function_name, locals_vars):
+    def debug_log_args(self, logger, function_name, locals_vars):
         &#34;&#34;&#34;
         Logs the arguments of a function.
 
         Parameters
         ----------
+        logger : logging.Logger
+            Logger instance which is used to log the arguments
         function_name : string
             Function name.
         locals_vars : dict
-            Local symbol table from the function.
+            Local symbol table of a function.
 
         Returns
         -------
@@ -71,7 +58,35 @@ class Pipeline(ABC):
         for var in locals_vars:
             if var != &#39;self&#39;:
                 string += f&#39;\n{var}: {locals_vars[var]}&#39;
-        self.logger.debug(string + &#39;\n&#39;)
+        logger.debug(string + &#39;\n&#39;)
+
+    def validate(self, locals_vars):
+        &#34;&#34;&#34;
+        Validates a list of arguments/variables.
+        Implements positive security model by checking for
+        valid characters instead of invalid ones.
+
+        Parameters
+        ----------
+        locals_vars : dict
+            Local symbol table of a function.
+
+        Returns
+        -------
+        (bool, var, []) : tuple with a boolean, a string, and a list
+            A tuple containing a boolean, a string, and a list is returned.
+            The boolean is True if an argument is valid, False if
+            it is invalid.
+            The string contains the variable in question.
+            The list contains the invalid characters, if any.
+        &#34;&#34;&#34;
+        for var in locals_vars:
+            var = locals_vars[var]
+            if type(var) == str:
+                valid, chars = hocort.parser.validate(var)
+                if not valid:
+                    return valid, var, chars
+        return True, &#39;&#39;, []
 
     @abstractmethod
     def run(self, seq1, seq2=None):
@@ -122,21 +137,9 @@ class Pipeline(ABC):
 <dl>
 <dt id="hocort.pipelines.pipeline.Pipeline"><code class="flex name class">
 <span>class <span class="ident">Pipeline</span></span>
-<span>(</span><span>logger_filename)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pipeline abstract base class. Meant to provide a consistent interface between different pipelines.</p>
-<p>Constructor which setups the logger.</p>
-<h2 id="parameters">Parameters</h2>
-<dl>
-<dt><strong><code>logger_filename</code></strong> :&ensp;<code>string</code></dt>
-<dd>Logger name.</dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code>None</code></dt>
-<dd>&nbsp;</dd>
-</dl></div>
+<div class="desc"><p>Pipeline abstract base class. Meant to provide a consistent interface between different pipelines.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -146,32 +149,18 @@ class Pipeline(ABC):
     Pipeline abstract base class. Meant to provide a consistent interface between different pipelines.
 
     &#34;&#34;&#34;
-    def __init__(self, logger_filename):
-        &#34;&#34;&#34;
-        Constructor which setups the logger.
-
-        Parameters
-        ----------
-        logger_filename : string
-            Logger name.
-
-        Returns
-        -------
-        None
-
-        &#34;&#34;&#34;
-        self.logger = logging.getLogger(logger_filename)
-
-    def debug_log_args(self, function_name, locals_vars):
+    def debug_log_args(self, logger, function_name, locals_vars):
         &#34;&#34;&#34;
         Logs the arguments of a function.
 
         Parameters
         ----------
+        logger : logging.Logger
+            Logger instance which is used to log the arguments
         function_name : string
             Function name.
         locals_vars : dict
-            Local symbol table from the function.
+            Local symbol table of a function.
 
         Returns
         -------
@@ -182,7 +171,35 @@ class Pipeline(ABC):
         for var in locals_vars:
             if var != &#39;self&#39;:
                 string += f&#39;\n{var}: {locals_vars[var]}&#39;
-        self.logger.debug(string + &#39;\n&#39;)
+        logger.debug(string + &#39;\n&#39;)
+
+    def validate(self, locals_vars):
+        &#34;&#34;&#34;
+        Validates a list of arguments/variables.
+        Implements positive security model by checking for
+        valid characters instead of invalid ones.
+
+        Parameters
+        ----------
+        locals_vars : dict
+            Local symbol table of a function.
+
+        Returns
+        -------
+        (bool, var, []) : tuple with a boolean, a string, and a list
+            A tuple containing a boolean, a string, and a list is returned.
+            The boolean is True if an argument is valid, False if
+            it is invalid.
+            The string contains the variable in question.
+            The list contains the invalid characters, if any.
+        &#34;&#34;&#34;
+        for var in locals_vars:
+            var = locals_vars[var]
+            if type(var) == str:
+                valid, chars = hocort.parser.validate(var)
+                if not valid:
+                    return valid, var, chars
+        return True, &#39;&#39;, []
 
     @abstractmethod
     def run(self, seq1, seq2=None):
@@ -242,16 +259,18 @@ class Pipeline(ABC):
 <h3>Methods</h3>
 <dl>
 <dt id="hocort.pipelines.pipeline.Pipeline.debug_log_args"><code class="name flex">
-<span>def <span class="ident">debug_log_args</span></span>(<span>self, function_name, locals_vars)</span>
+<span>def <span class="ident">debug_log_args</span></span>(<span>self, logger, function_name, locals_vars)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Logs the arguments of a function.</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
+<dt><strong><code>logger</code></strong> :&ensp;<code>logging.Logger</code></dt>
+<dd>Logger instance which is used to log the arguments</dd>
 <dt><strong><code>function_name</code></strong> :&ensp;<code>string</code></dt>
 <dd>Function name.</dd>
 <dt><strong><code>locals_vars</code></strong> :&ensp;<code>dict</code></dt>
-<dd>Local symbol table from the function.</dd>
+<dd>Local symbol table of a function.</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -262,16 +281,18 @@ class Pipeline(ABC):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def debug_log_args(self, function_name, locals_vars):
+<pre><code class="python">def debug_log_args(self, logger, function_name, locals_vars):
     &#34;&#34;&#34;
     Logs the arguments of a function.
 
     Parameters
     ----------
+    logger : logging.Logger
+        Logger instance which is used to log the arguments
     function_name : string
         Function name.
     locals_vars : dict
-        Local symbol table from the function.
+        Local symbol table of a function.
 
     Returns
     -------
@@ -282,7 +303,7 @@ class Pipeline(ABC):
     for var in locals_vars:
         if var != &#39;self&#39;:
             string += f&#39;\n{var}: {locals_vars[var]}&#39;
-    self.logger.debug(string + &#39;\n&#39;)</code></pre>
+    logger.debug(string + &#39;\n&#39;)</code></pre>
 </details>
 </dd>
 <dt id="hocort.pipelines.pipeline.Pipeline.interface"><code class="name flex">
@@ -364,6 +385,58 @@ def run(self, seq1, seq2=None):
     pass</code></pre>
 </details>
 </dd>
+<dt id="hocort.pipelines.pipeline.Pipeline.validate"><code class="name flex">
+<span>def <span class="ident">validate</span></span>(<span>self, locals_vars)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Validates a list of arguments/variables.
+Implements positive security model by checking for
+valid characters instead of invalid ones.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>locals_vars</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Local symbol table of a function.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>(bool, var, []) : tuple with a boolean, a string, and a list
+A tuple containing a boolean, a string, and a list is returned.
+The boolean is True if an argument is valid, False if
+it is invalid.
+The string contains the variable in question.
+The list contains the invalid characters, if any.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def validate(self, locals_vars):
+    &#34;&#34;&#34;
+    Validates a list of arguments/variables.
+    Implements positive security model by checking for
+    valid characters instead of invalid ones.
+
+    Parameters
+    ----------
+    locals_vars : dict
+        Local symbol table of a function.
+
+    Returns
+    -------
+    (bool, var, []) : tuple with a boolean, a string, and a list
+        A tuple containing a boolean, a string, and a list is returned.
+        The boolean is True if an argument is valid, False if
+        it is invalid.
+        The string contains the variable in question.
+        The list contains the invalid characters, if any.
+    &#34;&#34;&#34;
+    for var in locals_vars:
+        var = locals_vars[var]
+        if type(var) == str:
+            valid, chars = hocort.parser.validate(var)
+            if not valid:
+                return valid, var, chars
+    return True, &#39;&#39;, []</code></pre>
+</details>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -388,6 +461,7 @@ def run(self, seq1, seq2=None):
 <li><code><a title="hocort.pipelines.pipeline.Pipeline.debug_log_args" href="#hocort.pipelines.pipeline.Pipeline.debug_log_args">debug_log_args</a></code></li>
 <li><code><a title="hocort.pipelines.pipeline.Pipeline.interface" href="#hocort.pipelines.pipeline.Pipeline.interface">interface</a></code></li>
 <li><code><a title="hocort.pipelines.pipeline.Pipeline.run" href="#hocort.pipelines.pipeline.Pipeline.run">run</a></code></li>
+<li><code><a title="hocort.pipelines.pipeline.Pipeline.validate" href="#hocort.pipelines.pipeline.Pipeline.validate">validate</a></code></li>
 </ul>
 </li>
 </ul>

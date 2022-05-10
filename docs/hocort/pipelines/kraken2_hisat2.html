@@ -29,11 +29,14 @@
 <pre><code class="python">import time
 import os
 import tempfile
+import logging
 
 from hocort.pipelines.pipeline import Pipeline
 from hocort.pipelines.hisat2 import HISAT2
 from hocort.pipelines.kraken2 import Kraken2
 from hocort.parser import ArgParser
+
+logger = logging.getLogger(__file__)
 
 
 class Kraken2HISAT2(Pipeline):
@@ -55,11 +58,10 @@ class Kraken2HISAT2(Pipeline):
         None
 
         &#34;&#34;&#34;
-        super().__init__(__file__)
         self.temp_dir = tempfile.TemporaryDirectory(dir=dir)
-        self.logger.debug(self.temp_dir.name)
+        logger.debug(self.temp_dir.name)
 
-    def run(self, hs2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, hcfilter=False, threads=1):
+    def run(self, hs2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, mfilter=True, threads=1, hs2_options=&#39;&#39;, kr2_options=&#39;&#39;):
         &#34;&#34;&#34;
         Run function which starts the pipeline.
 
@@ -77,10 +79,16 @@ class Kraken2HISAT2(Pipeline):
             Path where the second input FastQ file is located.
         out2 : string
             Path where the second output FastQ file will be written.
-        hcfilter : bool
-            Whether to exclude or include the matching sequences from the output files.
+        mfilter : bool
+            Whether to output mapped/unmapped sequences.
+            True: output unmapped sequences
+            False: output mapped sequences
         threads : int
             Number of threads to use.
+        hs2_options : string
+            An options string, for HISAT2, where arguments passed to the tool may be configured.
+        kr2_options : string
+            An options string, for Kraken2, where arguments passed to the tool may be configured.
 
         Returns
         -------
@@ -89,32 +97,54 @@ class Kraken2HISAT2(Pipeline):
 
         Raises
         ------
+        ValueError
             If input FastQ_2 file is given without output FastQ_2.
+            If disallowed characters are found in input.
 
         &#34;&#34;&#34;
-        self.debug_log_args(self.run.__name__, locals())
+        self.debug_log_args(logger,
+                            self.run.__name__,
+                            locals())
         if seq2 and not out2:
             raise ValueError(f&#39;Input FastQ_2 was given, but no output FastQ_2.&#39;)
 
-        self.logger.warning(f&#39;Running pipeline: {self.__class__.__name__}&#39;)
+        # validate input
+        valid, var, chars = self.validate(locals())
+        if not valid:
+            raise ValueError(f&#39;Input with disallowed characters detected: &#34;{var}&#34; - {chars}&#39;)
+
+        logger.warning(f&#39;Running pipeline: {self.__class__.__name__}&#39;)
         start_time = time.time()
 
         kr2_out = self.temp_dir.name + &#39;/out#.fastq&#39; if seq2 and out2 else self.temp_dir.name + &#39;/out_1.fastq&#39;
-        returncode = Kraken2().run(kr2_idx, seq1, kr2_out, seq2=seq2, hcfilter=hcfilter, threads=threads)
+        returncode = Kraken2().run(kr2_idx,
+                                   seq1,
+                                   kr2_out,
+                                   seq2=seq2,
+                                   mfilter=mfilter,
+                                   threads=threads,
+                                   options=kr2_options)
         if returncode != 0:
-            self.logger.error(&#39;Pipeline was terminated&#39;)
+            logger.error(&#39;Pipeline was terminated&#39;)
             return 1
 
         temp1 = f&#39;{self.temp_dir.name}/out_1.fastq&#39;
         temp2 = None if seq2 == None else f&#39;{self.temp_dir.name}/out_2.fastq&#39;
 
-        returncode = HISAT2().run(hs2_idx, temp1, out1, seq2=temp2, out2=out2, threads=threads, hcfilter=hcfilter)
+        returncode = HISAT2().run(hs2_idx,
+                                  temp1,
+                                  out1,
+                                  seq2=temp2,
+                                  out2=out2,
+                                  threads=threads,
+                                  mfilter=mfilter,
+                                  options=hs2_options)
         if returncode != 0:
-            self.logger.error(&#39;Pipeline was terminated&#39;)
+            logger.error(&#39;Pipeline was terminated&#39;)
             return 1
 
         end_time = time.time()
-        self.logger.warning(f&#39;Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds&#39;)
+        logger.warning(f&#39;Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds&#39;)
         return 0
 
     def interface(self, args):
@@ -133,7 +163,7 @@ class Kraken2HISAT2(Pipeline):
         &#34;&#34;&#34;
         parser = ArgParser(
             description=f&#39;{self.__class__.__name__} pipeline&#39;,
-            usage=f&#39;hocort {self.__class__.__name__} [-h] [--threads &lt;int&gt;] [--host-contam-filter &lt;bool&gt;] --hisat2_index &lt;idx&gt; --kraken2_index &lt;idx&gt; -i &lt;fastq_1&gt; [&lt;fastq_2&gt;] -o &lt;fastq_1&gt; [&lt;fastq_2&gt;]&#39;
+            usage=f&#39;hocort {self.__class__.__name__} [-h] [--threads &lt;int&gt;] [--filter &lt;bool&gt;] --hisat2_index &lt;idx&gt; --kraken2_index &lt;idx&gt; -i &lt;fastq_1&gt; [&lt;fastq_2&gt;] -o &lt;fastq_1&gt; [&lt;fastq_2&gt;]&#39;
         )
         parser.add_argument(
             &#39;-s&#39;,
@@ -180,10 +210,11 @@ class Kraken2HISAT2(Pipeline):
         )
         parser.add_argument(
             &#39;-f&#39;,
-            &#39;--host-contam-filter&#39;,
-            choices=[&#39;True&#39;, &#39;False&#39;],
-            default=&#39;False&#39;,
-            help=&#39;str: set to True to keep host sequences, False to keep everything besides host sequences (default: False)&#39;
+            &#39;--filter&#39;,
+            required=False,
+            choices=[&#39;true&#39;, &#39;false&#39;],
+            default=&#39;true&#39;,
+            help=&#39;str: set to false to output mapped sequences, true to output unmapped sequences (default: true)&#39;
         )
         parsed = parser.parse_args(args=args)
 
@@ -192,14 +223,21 @@ class Kraken2HISAT2(Pipeline):
         seq = parsed.input
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
-        hcfilter = True if parsed.host_contam_filter == &#39;True&#39; else False
+        mfilter = True if parsed.filter == &#39;true&#39; else False
 
         seq1 = seq[0]
         seq2 = None if len(seq) &lt; 2 else seq[1]
         out1 = out[0]
         out2 = None if len(out) &lt; 2 else out[1]
 
-        return self.run(hs2_idx, kr2_idx, seq1, out1, seq2=seq2, out2=out2, threads=threads, hcfilter=hcfilter)</code></pre>
+        return self.run(hs2_idx,
+                        kr2_idx,
+                        seq1,
+                        out1,
+                        seq2=seq2,
+                        out2=out2,
+                        threads=threads,
+                        mfilter=mfilter)</code></pre>
 </details>
 </section>
 <section>
@@ -251,11 +289,10 @@ class Kraken2HISAT2(Pipeline):
         None
 
         &#34;&#34;&#34;
-        super().__init__(__file__)
         self.temp_dir = tempfile.TemporaryDirectory(dir=dir)
-        self.logger.debug(self.temp_dir.name)
+        logger.debug(self.temp_dir.name)
 
-    def run(self, hs2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, hcfilter=False, threads=1):
+    def run(self, hs2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, mfilter=True, threads=1, hs2_options=&#39;&#39;, kr2_options=&#39;&#39;):
         &#34;&#34;&#34;
         Run function which starts the pipeline.
 
@@ -273,10 +310,16 @@ class Kraken2HISAT2(Pipeline):
             Path where the second input FastQ file is located.
         out2 : string
             Path where the second output FastQ file will be written.
-        hcfilter : bool
-            Whether to exclude or include the matching sequences from the output files.
+        mfilter : bool
+            Whether to output mapped/unmapped sequences.
+            True: output unmapped sequences
+            False: output mapped sequences
         threads : int
             Number of threads to use.
+        hs2_options : string
+            An options string, for HISAT2, where arguments passed to the tool may be configured.
+        kr2_options : string
+            An options string, for Kraken2, where arguments passed to the tool may be configured.
 
         Returns
         -------
@@ -285,32 +328,54 @@ class Kraken2HISAT2(Pipeline):
 
         Raises
         ------
+        ValueError
             If input FastQ_2 file is given without output FastQ_2.
+            If disallowed characters are found in input.
 
         &#34;&#34;&#34;
-        self.debug_log_args(self.run.__name__, locals())
+        self.debug_log_args(logger,
+                            self.run.__name__,
+                            locals())
         if seq2 and not out2:
             raise ValueError(f&#39;Input FastQ_2 was given, but no output FastQ_2.&#39;)
 
-        self.logger.warning(f&#39;Running pipeline: {self.__class__.__name__}&#39;)
+        # validate input
+        valid, var, chars = self.validate(locals())
+        if not valid:
+            raise ValueError(f&#39;Input with disallowed characters detected: &#34;{var}&#34; - {chars}&#39;)
+
+        logger.warning(f&#39;Running pipeline: {self.__class__.__name__}&#39;)
         start_time = time.time()
 
         kr2_out = self.temp_dir.name + &#39;/out#.fastq&#39; if seq2 and out2 else self.temp_dir.name + &#39;/out_1.fastq&#39;
-        returncode = Kraken2().run(kr2_idx, seq1, kr2_out, seq2=seq2, hcfilter=hcfilter, threads=threads)
+        returncode = Kraken2().run(kr2_idx,
+                                   seq1,
+                                   kr2_out,
+                                   seq2=seq2,
+                                   mfilter=mfilter,
+                                   threads=threads,
+                                   options=kr2_options)
         if returncode != 0:
-            self.logger.error(&#39;Pipeline was terminated&#39;)
+            logger.error(&#39;Pipeline was terminated&#39;)
             return 1
 
         temp1 = f&#39;{self.temp_dir.name}/out_1.fastq&#39;
         temp2 = None if seq2 == None else f&#39;{self.temp_dir.name}/out_2.fastq&#39;
 
-        returncode = HISAT2().run(hs2_idx, temp1, out1, seq2=temp2, out2=out2, threads=threads, hcfilter=hcfilter)
+        returncode = HISAT2().run(hs2_idx,
+                                  temp1,
+                                  out1,
+                                  seq2=temp2,
+                                  out2=out2,
+                                  threads=threads,
+                                  mfilter=mfilter,
+                                  options=hs2_options)
         if returncode != 0:
-            self.logger.error(&#39;Pipeline was terminated&#39;)
+            logger.error(&#39;Pipeline was terminated&#39;)
             return 1
 
         end_time = time.time()
-        self.logger.warning(f&#39;Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds&#39;)
+        logger.warning(f&#39;Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds&#39;)
         return 0
 
     def interface(self, args):
@@ -329,7 +394,7 @@ class Kraken2HISAT2(Pipeline):
         &#34;&#34;&#34;
         parser = ArgParser(
             description=f&#39;{self.__class__.__name__} pipeline&#39;,
-            usage=f&#39;hocort {self.__class__.__name__} [-h] [--threads &lt;int&gt;] [--host-contam-filter &lt;bool&gt;] --hisat2_index &lt;idx&gt; --kraken2_index &lt;idx&gt; -i &lt;fastq_1&gt; [&lt;fastq_2&gt;] -o &lt;fastq_1&gt; [&lt;fastq_2&gt;]&#39;
+            usage=f&#39;hocort {self.__class__.__name__} [-h] [--threads &lt;int&gt;] [--filter &lt;bool&gt;] --hisat2_index &lt;idx&gt; --kraken2_index &lt;idx&gt; -i &lt;fastq_1&gt; [&lt;fastq_2&gt;] -o &lt;fastq_1&gt; [&lt;fastq_2&gt;]&#39;
         )
         parser.add_argument(
             &#39;-s&#39;,
@@ -376,10 +441,11 @@ class Kraken2HISAT2(Pipeline):
         )
         parser.add_argument(
             &#39;-f&#39;,
-            &#39;--host-contam-filter&#39;,
-            choices=[&#39;True&#39;, &#39;False&#39;],
-            default=&#39;False&#39;,
-            help=&#39;str: set to True to keep host sequences, False to keep everything besides host sequences (default: False)&#39;
+            &#39;--filter&#39;,
+            required=False,
+            choices=[&#39;true&#39;, &#39;false&#39;],
+            default=&#39;true&#39;,
+            help=&#39;str: set to false to output mapped sequences, true to output unmapped sequences (default: true)&#39;
         )
         parsed = parser.parse_args(args=args)
 
@@ -388,14 +454,21 @@ class Kraken2HISAT2(Pipeline):
         seq = parsed.input
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
-        hcfilter = True if parsed.host_contam_filter == &#39;True&#39; else False
+        mfilter = True if parsed.filter == &#39;true&#39; else False
 
         seq1 = seq[0]
         seq2 = None if len(seq) &lt; 2 else seq[1]
         out1 = out[0]
         out2 = None if len(out) &lt; 2 else out[1]
 
-        return self.run(hs2_idx, kr2_idx, seq1, out1, seq2=seq2, out2=out2, threads=threads, hcfilter=hcfilter)</code></pre>
+        return self.run(hs2_idx,
+                        kr2_idx,
+                        seq1,
+                        out1,
+                        seq2=seq2,
+                        out2=out2,
+                        threads=threads,
+                        mfilter=mfilter)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -405,7 +478,7 @@ class Kraken2HISAT2(Pipeline):
 <h3>Methods</h3>
 <dl>
 <dt id="hocort.pipelines.kraken2_hisat2.Kraken2HISAT2.run"><code class="name flex">
-<span>def <span class="ident">run</span></span>(<span>self, hs2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, hcfilter=False, threads=1)</span>
+<span>def <span class="ident">run</span></span>(<span>self, hs2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, mfilter=True, threads=1, hs2_options='', kr2_options='')</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Run function which starts the pipeline.</p>
@@ -423,10 +496,16 @@ class Kraken2HISAT2(Pipeline):
 <dd>Path where the second input FastQ file is located.</dd>
 <dt><strong><code>out2</code></strong> :&ensp;<code>string</code></dt>
 <dd>Path where the second output FastQ file will be written.</dd>
-<dt><strong><code>hcfilter</code></strong> :&ensp;<code>bool</code></dt>
-<dd>Whether to exclude or include the matching sequences from the output files.</dd>
+<dt><strong><code>mfilter</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to output mapped/unmapped sequences.
+True: output unmapped sequences
+False: output mapped sequences</dd>
 <dt><strong><code>threads</code></strong> :&ensp;<code>int</code></dt>
 <dd>Number of threads to use.</dd>
+<dt><strong><code>hs2_options</code></strong> :&ensp;<code>string</code></dt>
+<dd>An options string, for HISAT2, where arguments passed to the tool may be configured.</dd>
+<dt><strong><code>kr2_options</code></strong> :&ensp;<code>string</code></dt>
+<dd>An options string, for Kraken2, where arguments passed to the tool may be configured.</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -434,13 +513,16 @@ class Kraken2HISAT2(Pipeline):
 <dd>Resulting returncode after the process is finished.</dd>
 </dl>
 <h2 id="raises">Raises</h2>
-<pre><code>If input FastQ_2 file is given without output FastQ_2.
-</code></pre></div>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>If input FastQ_2 file is given without output FastQ_2.
+If disallowed characters are found in input.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def run(self, hs2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, hcfilter=False, threads=1):
+<pre><code class="python">def run(self, hs2_idx, kr2_idx, seq1, out1, seq2=None, out2=None, mfilter=True, threads=1, hs2_options=&#39;&#39;, kr2_options=&#39;&#39;):
     &#34;&#34;&#34;
     Run function which starts the pipeline.
 
@@ -458,10 +540,16 @@ class Kraken2HISAT2(Pipeline):
         Path where the second input FastQ file is located.
     out2 : string
         Path where the second output FastQ file will be written.
-    hcfilter : bool
-        Whether to exclude or include the matching sequences from the output files.
+    mfilter : bool
+        Whether to output mapped/unmapped sequences.
+        True: output unmapped sequences
+        False: output mapped sequences
     threads : int
         Number of threads to use.
+    hs2_options : string
+        An options string, for HISAT2, where arguments passed to the tool may be configured.
+    kr2_options : string
+        An options string, for Kraken2, where arguments passed to the tool may be configured.
 
     Returns
     -------
@@ -470,32 +558,54 @@ class Kraken2HISAT2(Pipeline):
 
     Raises
     ------
+    ValueError
         If input FastQ_2 file is given without output FastQ_2.
+        If disallowed characters are found in input.
 
     &#34;&#34;&#34;
-    self.debug_log_args(self.run.__name__, locals())
+    self.debug_log_args(logger,
+                        self.run.__name__,
+                        locals())
     if seq2 and not out2:
         raise ValueError(f&#39;Input FastQ_2 was given, but no output FastQ_2.&#39;)
 
-    self.logger.warning(f&#39;Running pipeline: {self.__class__.__name__}&#39;)
+    # validate input
+    valid, var, chars = self.validate(locals())
+    if not valid:
+        raise ValueError(f&#39;Input with disallowed characters detected: &#34;{var}&#34; - {chars}&#39;)
+
+    logger.warning(f&#39;Running pipeline: {self.__class__.__name__}&#39;)
     start_time = time.time()
 
     kr2_out = self.temp_dir.name + &#39;/out#.fastq&#39; if seq2 and out2 else self.temp_dir.name + &#39;/out_1.fastq&#39;
-    returncode = Kraken2().run(kr2_idx, seq1, kr2_out, seq2=seq2, hcfilter=hcfilter, threads=threads)
+    returncode = Kraken2().run(kr2_idx,
+                               seq1,
+                               kr2_out,
+                               seq2=seq2,
+                               mfilter=mfilter,
+                               threads=threads,
+                               options=kr2_options)
     if returncode != 0:
-        self.logger.error(&#39;Pipeline was terminated&#39;)
+        logger.error(&#39;Pipeline was terminated&#39;)
         return 1
 
     temp1 = f&#39;{self.temp_dir.name}/out_1.fastq&#39;
     temp2 = None if seq2 == None else f&#39;{self.temp_dir.name}/out_2.fastq&#39;
 
-    returncode = HISAT2().run(hs2_idx, temp1, out1, seq2=temp2, out2=out2, threads=threads, hcfilter=hcfilter)
+    returncode = HISAT2().run(hs2_idx,
+                              temp1,
+                              out1,
+                              seq2=temp2,
+                              out2=out2,
+                              threads=threads,
+                              mfilter=mfilter,
+                              options=hs2_options)
     if returncode != 0:
-        self.logger.error(&#39;Pipeline was terminated&#39;)
+        logger.error(&#39;Pipeline was terminated&#39;)
         return 1
 
     end_time = time.time()
-    self.logger.warning(f&#39;Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds&#39;)
+    logger.warning(f&#39;Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds&#39;)
     return 0</code></pre>
 </details>
 </dd>
@@ -506,6 +616,7 @@ class Kraken2HISAT2(Pipeline):
 <ul class="hlist">
 <li><code><a title="hocort.pipelines.pipeline.Pipeline.debug_log_args" href="pipeline.html#hocort.pipelines.pipeline.Pipeline.debug_log_args">debug_log_args</a></code></li>
 <li><code><a title="hocort.pipelines.pipeline.Pipeline.interface" href="pipeline.html#hocort.pipelines.pipeline.Pipeline.interface">interface</a></code></li>
+<li><code><a title="hocort.pipelines.pipeline.Pipeline.validate" href="pipeline.html#hocort.pipelines.pipeline.Pipeline.validate">validate</a></code></li>
 </ul>
 </li>
 </ul>

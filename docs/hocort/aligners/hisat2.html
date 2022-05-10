@@ -144,7 +144,7 @@ class HISAT2(Aligner):
             required=True,
             type=str,
             metavar=(&#39;&lt;fasta&gt;&#39;),
-            help=&#39;str: path to sequence files, max 2 (required)&#39;
+            help=&#39;str: path to sequence files (required)&#39;
         )
         parser.add_argument(
             &#39;-o&#39;,
@@ -152,7 +152,7 @@ class HISAT2(Aligner):
             required=True,
             type=str,
             metavar=(&#39;&lt;index&gt;&#39;),
-            help=&#39;str: path to output files, max 2 (required)&#39;
+            help=&#39;str: path to output index (dir/basename) (required)&#39;
         )
         parser.add_argument(
             &#39;-t&#39;,
@@ -310,7 +310,7 @@ class HISAT2(Aligner):
             required=True,
             type=str,
             metavar=(&#39;&lt;fasta&gt;&#39;),
-            help=&#39;str: path to sequence files, max 2 (required)&#39;
+            help=&#39;str: path to sequence files (required)&#39;
         )
         parser.add_argument(
             &#39;-o&#39;,
@@ -318,7 +318,7 @@ class HISAT2(Aligner):
             required=True,
             type=str,
             metavar=(&#39;&lt;index&gt;&#39;),
-            help=&#39;str: path to output files, max 2 (required)&#39;
+            help=&#39;str: path to output index (dir/basename) (required)&#39;
         )
         parser.add_argument(
             &#39;-t&#39;,

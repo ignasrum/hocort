@@ -28,6 +28,7 @@
 </summary>
 <pre><code class="python">import time
 import os
+import logging
 
 from hocort.pipelines.pipeline import Pipeline
 from hocort.aligners.minimap2 import Minimap2 as mn2
@@ -35,24 +36,15 @@ from hocort.parse.sam import SAM
 from hocort.parser import ArgParser
 import hocort.execute as exe
 
+logger = logging.getLogger(__file__)
+
 
 class Minimap2(Pipeline):
     &#34;&#34;&#34;
     Minimap2 pipeline which maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
 
     &#34;&#34;&#34;
-    def __init__(self):
-        &#34;&#34;&#34;
-        Sets the logger file source filename.
-
-        Returns
-        -------
-        None
-
-        &#34;&#34;&#34;
-        super().__init__(__file__)
-
-    def run(self, idx, seq1, out1, seq2=None, out2=None, hcfilter=False, preset=&#39;illumina&#39;, threads=1, options=[]):
+    def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, preset=&#39;illumina&#39;, threads=1, options=&#39;&#39;):
         &#34;&#34;&#34;
         Run function which starts the pipeline.
 
@@ -68,15 +60,18 @@ class Minimap2(Pipeline):
             Path where the second input FastQ file is located.
         out2 : string
             Path where the second output FastQ file will be written.
-        hcfilter : bool
-            Whether to exclude or include the matching sequences from the output files.
+        mfilter : bool
+            Whether to output mapped/unmapped sequences.
+            True: output unmapped sequences
+            False: output mapped sequences
         preset : str
             Type of reads to align to reference.
-            Types: &#39;illumina&#39;, &#39;nanopore&#39; or &#39;pacbio&#39;
+            Types: &#39;illumina&#39;, &#39;nanopore&#39; or &#39;pacbio&#39;.
         threads : int
             Number of threads to use.
-        options : list
-            An options list where additional arguments may be specified.
+        options : string
+            An options string where arguments may be defined.
+            Overrides &#34;preset&#34; argument.
 
         Returns
         -------
@@ -85,41 +80,58 @@ class Minimap2(Pipeline):
 
         Raises
         ------
+        ValueError
             If input FastQ_2 file is given without output FastQ_2.
+            If disallowed characters are found in input.
 
         &#34;&#34;&#34;
-        self.debug_log_args(self.run.__name__, locals())
+        self.debug_log_args(logger,
+                            self.run.__name__,
+                            locals())
         if seq2 and not out2:
             raise ValueError(f&#39;Input FastQ_2 was given, but no output FastQ_2.&#39;)
 
-        if len(options) &gt; 0:
-            options = options
-        else:
-            #options = [&#39;-A1&#39;, &#39;-B4&#39;, &#39;-O1,10&#39;, &#39;-s100&#39;, &#39;--end-bonus&#39;, &#39;200&#39;]
-            options = []
+        # validate input
+        valid, var, chars = self.validate(locals())
+        if not valid:
+            raise ValueError(f&#39;Input with disallowed characters detected: &#34;{var}&#34; - {chars}&#39;)
 
+        final_options = []
         if preset == &#39;illumina&#39;:
-            options += [&#39;-xsr&#39;]
+            final_options += [&#39;-xsr&#39;]
         elif preset == &#39;nanopore&#39;:
-            options += [&#39;-xmap-ont&#39;]
+            final_options += [&#39;-xmap-ont&#39;]
         elif preset == &#39;pacbio&#39;:
-            options += [&#39;-xmap-pb&#39;]
+            final_options += [&#39;-xmap-pb&#39;]
+        else:
+            logger.warning(f&#39;Invalid preset: {preset}&#39;)
 
-        self.logger.warning(f&#39;Running pipeline: {self.__class__.__name__}&#39;)
+        if len(options) &gt; 0:
+            final_options = [options]
+
+        logger.warning(f&#39;Running pipeline: {self.__class__.__name__}&#39;)
         start_time = time.time()
 
-        mn2_cmd = mn2().align(idx, seq1, seq2=seq2, threads=threads, options=options)
+        mn2_cmd = mn2().align(idx,
+                              seq1,
+                              seq2=seq2,
+                              threads=threads,
+                              options=final_options)
         if mn2_cmd == None: return 1
-        fastq_cmd = SAM.sam_to_fastq(out1=out1, out2=out2, threads=threads, hcfilter=hcfilter)
+        fastq_cmd = SAM.sam_to_fastq(out1=out1,
+                                     out2=out2,
+                                     threads=threads,
+                                     mfilter=mfilter)
 
-        returncodes = exe.execute(mn2_cmd + fastq_cmd, pipe=True)
+        returncodes = exe.execute(mn2_cmd + fastq_cmd,
+                                  pipe=True)
 
-        self.logger.debug(returncodes)
+        logger.debug(returncodes)
         for returncode in returncodes:
             if returncode != 0: return 1
 
         end_time = time.time()
-        self.logger.warning(f&#39;Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds&#39;)
+        logger.warning(f&#39;Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds&#39;)
         return 0
 
     def interface(self, args):
@@ -138,7 +150,7 @@ class Minimap2(Pipeline):
         &#34;&#34;&#34;
         parser = ArgParser(
             description=f&#39;{self.__class__.__name__} pipeline&#39;,
-            usage=f&#39;hocort map {self.__class__.__name__} [-h] [--threads &lt;int&gt;] [--host-contam-filter &lt;bool&gt;] [--preset &lt;type&gt;] -x &lt;idx&gt; -i &lt;fastq_1&gt; [&lt;fastq_2&gt;] -o &lt;fastq_1&gt; [&lt;fastq_2&gt;]&#39;
+            usage=f&#39;hocort map {self.__class__.__name__} [-h] [--threads &lt;int&gt;] [--filter &lt;bool&gt;] [--preset &lt;str&gt;] [-c=&lt;str&gt;] -x &lt;idx&gt; -i &lt;fastq_1&gt; [&lt;fastq_2&gt;] -o &lt;fastq_1&gt; [&lt;fastq_2&gt;]&#39;
         )
         parser.add_argument(
             &#39;-x&#39;,
@@ -177,11 +189,11 @@ class Minimap2(Pipeline):
         )
         parser.add_argument(
             &#39;-f&#39;,
-            &#39;--host-contam-filter&#39;,
+            &#39;--filter&#39;,
             required=False,
-            choices=[&#39;True&#39;, &#39;False&#39;],
-            default=&#39;False&#39;,
-            help=&#39;str: set to True to keep host sequences, False to keep everything besides host sequences (default: False)&#39;
+            choices=[&#39;true&#39;, &#39;false&#39;],
+            default=&#39;true&#39;,
+            help=&#39;str: set to false to output mapped sequences, true to output unmapped sequences (default: true)&#39;
         )
         parser.add_argument(
             &#39;-p&#39;,
@@ -191,21 +203,38 @@ class Minimap2(Pipeline):
             default=&#39;illumina&#39;,
             help=&#39;str: type of reads (default: illumina)&#39;
         )
+        parser.add_argument(
+            &#39;-c&#39;,
+            &#39;--config&#39;,
+            required=False,
+            type=str,
+            metavar=(&#39;&lt;str&gt;&#39;),
+            help=&#39;str: used to pass along arguments to the aligner, use with caution, usage: -c=&#34;list arguments here&#34;&#39;
+        )
         parsed = parser.parse_args(args=args)
 
         idx = parsed.index
         seq = parsed.input
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
-        hcfilter = True if parsed.host_contam_filter == &#39;True&#39; else False
+        mfilter = True if parsed.filter == &#39;True&#39; else False
         preset = parsed.preset
+        config = parsed.config if parsed.config else &#39;&#39;
 
         seq1 = seq[0]
         seq2 = None if len(seq) &lt; 2 else seq[1]
         out1 = out[0]
         out2 = None if len(out) &lt; 2 else out[1]
 
-        return self.run(idx, seq1, out1, out2=out2, seq2=seq2, hcfilter=hcfilter, preset=preset, threads=threads)</code></pre>
+        return self.run(idx,
+                        seq1,
+                        out1,
+                        out2=out2,
+                        seq2=seq2,
+                        mfilter=mfilter,
+                        preset=preset,
+                        threads=threads,
+                        options=config)</code></pre>
 </details>
 </section>
 <section>
@@ -221,13 +250,7 @@ class Minimap2(Pipeline):
 <span>class <span class="ident">Minimap2</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Minimap2 pipeline which maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.</p>
-<p>Sets the logger file source filename.</p>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code>None</code></dt>
-<dd>&nbsp;</dd>
-</dl></div>
+<div class="desc"><p>Minimap2 pipeline which maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -237,18 +260,7 @@ class Minimap2(Pipeline):
     Minimap2 pipeline which maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
 
     &#34;&#34;&#34;
-    def __init__(self):
-        &#34;&#34;&#34;
-        Sets the logger file source filename.
-
-        Returns
-        -------
-        None
-
-        &#34;&#34;&#34;
-        super().__init__(__file__)
-
-    def run(self, idx, seq1, out1, seq2=None, out2=None, hcfilter=False, preset=&#39;illumina&#39;, threads=1, options=[]):
+    def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, preset=&#39;illumina&#39;, threads=1, options=&#39;&#39;):
         &#34;&#34;&#34;
         Run function which starts the pipeline.
 
@@ -264,15 +276,18 @@ class Minimap2(Pipeline):
             Path where the second input FastQ file is located.
         out2 : string
             Path where the second output FastQ file will be written.
-        hcfilter : bool
-            Whether to exclude or include the matching sequences from the output files.
+        mfilter : bool
+            Whether to output mapped/unmapped sequences.
+            True: output unmapped sequences
+            False: output mapped sequences
         preset : str
             Type of reads to align to reference.
-            Types: &#39;illumina&#39;, &#39;nanopore&#39; or &#39;pacbio&#39;
+            Types: &#39;illumina&#39;, &#39;nanopore&#39; or &#39;pacbio&#39;.
         threads : int
             Number of threads to use.
-        options : list
-            An options list where additional arguments may be specified.
+        options : string
+            An options string where arguments may be defined.
+            Overrides &#34;preset&#34; argument.
 
         Returns
         -------
@@ -281,41 +296,58 @@ class Minimap2(Pipeline):
 
         Raises
         ------
+        ValueError
             If input FastQ_2 file is given without output FastQ_2.
+            If disallowed characters are found in input.
 
         &#34;&#34;&#34;
-        self.debug_log_args(self.run.__name__, locals())
+        self.debug_log_args(logger,
+                            self.run.__name__,
+                            locals())
         if seq2 and not out2:
             raise ValueError(f&#39;Input FastQ_2 was given, but no output FastQ_2.&#39;)
 
-        if len(options) &gt; 0:
-            options = options
-        else:
-            #options = [&#39;-A1&#39;, &#39;-B4&#39;, &#39;-O1,10&#39;, &#39;-s100&#39;, &#39;--end-bonus&#39;, &#39;200&#39;]
-            options = []
+        # validate input
+        valid, var, chars = self.validate(locals())
+        if not valid:
+            raise ValueError(f&#39;Input with disallowed characters detected: &#34;{var}&#34; - {chars}&#39;)
 
+        final_options = []
         if preset == &#39;illumina&#39;:
-            options += [&#39;-xsr&#39;]
+            final_options += [&#39;-xsr&#39;]
         elif preset == &#39;nanopore&#39;:
-            options += [&#39;-xmap-ont&#39;]
+            final_options += [&#39;-xmap-ont&#39;]
         elif preset == &#39;pacbio&#39;:
-            options += [&#39;-xmap-pb&#39;]
+            final_options += [&#39;-xmap-pb&#39;]
+        else:
+            logger.warning(f&#39;Invalid preset: {preset}&#39;)
 
-        self.logger.warning(f&#39;Running pipeline: {self.__class__.__name__}&#39;)
+        if len(options) &gt; 0:
+            final_options = [options]
+
+        logger.warning(f&#39;Running pipeline: {self.__class__.__name__}&#39;)
         start_time = time.time()
 
-        mn2_cmd = mn2().align(idx, seq1, seq2=seq2, threads=threads, options=options)
+        mn2_cmd = mn2().align(idx,
+                              seq1,
+                              seq2=seq2,
+                              threads=threads,
+                              options=final_options)
         if mn2_cmd == None: return 1
-        fastq_cmd = SAM.sam_to_fastq(out1=out1, out2=out2, threads=threads, hcfilter=hcfilter)
+        fastq_cmd = SAM.sam_to_fastq(out1=out1,
+                                     out2=out2,
+                                     threads=threads,
+                                     mfilter=mfilter)
 
-        returncodes = exe.execute(mn2_cmd + fastq_cmd, pipe=True)
+        returncodes = exe.execute(mn2_cmd + fastq_cmd,
+                                  pipe=True)
 
-        self.logger.debug(returncodes)
+        logger.debug(returncodes)
         for returncode in returncodes:
             if returncode != 0: return 1
 
         end_time = time.time()
-        self.logger.warning(f&#39;Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds&#39;)
+        logger.warning(f&#39;Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds&#39;)
         return 0
 
     def interface(self, args):
@@ -334,7 +366,7 @@ class Minimap2(Pipeline):
         &#34;&#34;&#34;
         parser = ArgParser(
             description=f&#39;{self.__class__.__name__} pipeline&#39;,
-            usage=f&#39;hocort map {self.__class__.__name__} [-h] [--threads &lt;int&gt;] [--host-contam-filter &lt;bool&gt;] [--preset &lt;type&gt;] -x &lt;idx&gt; -i &lt;fastq_1&gt; [&lt;fastq_2&gt;] -o &lt;fastq_1&gt; [&lt;fastq_2&gt;]&#39;
+            usage=f&#39;hocort map {self.__class__.__name__} [-h] [--threads &lt;int&gt;] [--filter &lt;bool&gt;] [--preset &lt;str&gt;] [-c=&lt;str&gt;] -x &lt;idx&gt; -i &lt;fastq_1&gt; [&lt;fastq_2&gt;] -o &lt;fastq_1&gt; [&lt;fastq_2&gt;]&#39;
         )
         parser.add_argument(
             &#39;-x&#39;,
@@ -373,11 +405,11 @@ class Minimap2(Pipeline):
         )
         parser.add_argument(
             &#39;-f&#39;,
-            &#39;--host-contam-filter&#39;,
+            &#39;--filter&#39;,
             required=False,
-            choices=[&#39;True&#39;, &#39;False&#39;],
-            default=&#39;False&#39;,
-            help=&#39;str: set to True to keep host sequences, False to keep everything besides host sequences (default: False)&#39;
+            choices=[&#39;true&#39;, &#39;false&#39;],
+            default=&#39;true&#39;,
+            help=&#39;str: set to false to output mapped sequences, true to output unmapped sequences (default: true)&#39;
         )
         parser.add_argument(
             &#39;-p&#39;,
@@ -387,21 +419,38 @@ class Minimap2(Pipeline):
             default=&#39;illumina&#39;,
             help=&#39;str: type of reads (default: illumina)&#39;
         )
+        parser.add_argument(
+            &#39;-c&#39;,
+            &#39;--config&#39;,
+            required=False,
+            type=str,
+            metavar=(&#39;&lt;str&gt;&#39;),
+            help=&#39;str: used to pass along arguments to the aligner, use with caution, usage: -c=&#34;list arguments here&#34;&#39;
+        )
         parsed = parser.parse_args(args=args)
 
         idx = parsed.index
         seq = parsed.input
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
-        hcfilter = True if parsed.host_contam_filter == &#39;True&#39; else False
+        mfilter = True if parsed.filter == &#39;True&#39; else False
         preset = parsed.preset
+        config = parsed.config if parsed.config else &#39;&#39;
 
         seq1 = seq[0]
         seq2 = None if len(seq) &lt; 2 else seq[1]
         out1 = out[0]
         out2 = None if len(out) &lt; 2 else out[1]
 
-        return self.run(idx, seq1, out1, out2=out2, seq2=seq2, hcfilter=hcfilter, preset=preset, threads=threads)</code></pre>
+        return self.run(idx,
+                        seq1,
+                        out1,
+                        out2=out2,
+                        seq2=seq2,
+                        mfilter=mfilter,
+                        preset=preset,
+                        threads=threads,
+                        options=config)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -411,7 +460,7 @@ class Minimap2(Pipeline):
 <h3>Methods</h3>
 <dl>
 <dt id="hocort.pipelines.minimap2.Minimap2.run"><code class="name flex">
-<span>def <span class="ident">run</span></span>(<span>self, idx, seq1, out1, seq2=None, out2=None, hcfilter=False, preset='illumina', threads=1, options=[])</span>
+<span>def <span class="ident">run</span></span>(<span>self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, preset='illumina', threads=1, options='')</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Run function which starts the pipeline.</p>
@@ -427,15 +476,18 @@ class Minimap2(Pipeline):
 <dd>Path where the second input FastQ file is located.</dd>
 <dt><strong><code>out2</code></strong> :&ensp;<code>string</code></dt>
 <dd>Path where the second output FastQ file will be written.</dd>
-<dt><strong><code>hcfilter</code></strong> :&ensp;<code>bool</code></dt>
-<dd>Whether to exclude or include the matching sequences from the output files.</dd>
+<dt><strong><code>mfilter</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to output mapped/unmapped sequences.
+True: output unmapped sequences
+False: output mapped sequences</dd>
 <dt><strong><code>preset</code></strong> :&ensp;<code>str</code></dt>
 <dd>Type of reads to align to reference.
-Types: 'illumina', 'nanopore' or 'pacbio'</dd>
+Types: 'illumina', 'nanopore' or 'pacbio'.</dd>
 <dt><strong><code>threads</code></strong> :&ensp;<code>int</code></dt>
 <dd>Number of threads to use.</dd>
-<dt><strong><code>options</code></strong> :&ensp;<code>list</code></dt>
-<dd>An options list where additional arguments may be specified.</dd>
+<dt><strong><code>options</code></strong> :&ensp;<code>string</code></dt>
+<dd>An options string where arguments may be defined.
+Overrides "preset" argument.</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -443,13 +495,16 @@ Types: 'illumina', 'nanopore' or 'pacbio'</dd>
 <dd>Resulting returncode after the process is finished.</dd>
 </dl>
 <h2 id="raises">Raises</h2>
-<pre><code>If input FastQ_2 file is given without output FastQ_2.
-</code></pre></div>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>If input FastQ_2 file is given without output FastQ_2.
+If disallowed characters are found in input.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def run(self, idx, seq1, out1, seq2=None, out2=None, hcfilter=False, preset=&#39;illumina&#39;, threads=1, options=[]):
+<pre><code class="python">def run(self, idx, seq1, out1, seq2=None, out2=None, mfilter=True, preset=&#39;illumina&#39;, threads=1, options=&#39;&#39;):
     &#34;&#34;&#34;
     Run function which starts the pipeline.
 
@@ -465,15 +520,18 @@ Types: 'illumina', 'nanopore' or 'pacbio'</dd>
         Path where the second input FastQ file is located.
     out2 : string
         Path where the second output FastQ file will be written.
-    hcfilter : bool
-        Whether to exclude or include the matching sequences from the output files.
+    mfilter : bool
+        Whether to output mapped/unmapped sequences.
+        True: output unmapped sequences
+        False: output mapped sequences
     preset : str
         Type of reads to align to reference.
-        Types: &#39;illumina&#39;, &#39;nanopore&#39; or &#39;pacbio&#39;
+        Types: &#39;illumina&#39;, &#39;nanopore&#39; or &#39;pacbio&#39;.
     threads : int
         Number of threads to use.
-    options : list
-        An options list where additional arguments may be specified.
+    options : string
+        An options string where arguments may be defined.
+        Overrides &#34;preset&#34; argument.
 
     Returns
     -------
@@ -482,41 +540,58 @@ Types: 'illumina', 'nanopore' or 'pacbio'</dd>
 
     Raises
     ------
+    ValueError
         If input FastQ_2 file is given without output FastQ_2.
+        If disallowed characters are found in input.
 
     &#34;&#34;&#34;
-    self.debug_log_args(self.run.__name__, locals())
+    self.debug_log_args(logger,
+                        self.run.__name__,
+                        locals())
     if seq2 and not out2:
         raise ValueError(f&#39;Input FastQ_2 was given, but no output FastQ_2.&#39;)
 
-    if len(options) &gt; 0:
-        options = options
-    else:
-        #options = [&#39;-A1&#39;, &#39;-B4&#39;, &#39;-O1,10&#39;, &#39;-s100&#39;, &#39;--end-bonus&#39;, &#39;200&#39;]
-        options = []
+    # validate input
+    valid, var, chars = self.validate(locals())
+    if not valid:
+        raise ValueError(f&#39;Input with disallowed characters detected: &#34;{var}&#34; - {chars}&#39;)
 
+    final_options = []
     if preset == &#39;illumina&#39;:
-        options += [&#39;-xsr&#39;]
+        final_options += [&#39;-xsr&#39;]
     elif preset == &#39;nanopore&#39;:
-        options += [&#39;-xmap-ont&#39;]
+        final_options += [&#39;-xmap-ont&#39;]
     elif preset == &#39;pacbio&#39;:
-        options += [&#39;-xmap-pb&#39;]
+        final_options += [&#39;-xmap-pb&#39;]
+    else:
+        logger.warning(f&#39;Invalid preset: {preset}&#39;)
 
-    self.logger.warning(f&#39;Running pipeline: {self.__class__.__name__}&#39;)
+    if len(options) &gt; 0:
+        final_options = [options]
+
+    logger.warning(f&#39;Running pipeline: {self.__class__.__name__}&#39;)
     start_time = time.time()
 
-    mn2_cmd = mn2().align(idx, seq1, seq2=seq2, threads=threads, options=options)
+    mn2_cmd = mn2().align(idx,
+                          seq1,
+                          seq2=seq2,
+                          threads=threads,
+                          options=final_options)
     if mn2_cmd == None: return 1
-    fastq_cmd = SAM.sam_to_fastq(out1=out1, out2=out2, threads=threads, hcfilter=hcfilter)
+    fastq_cmd = SAM.sam_to_fastq(out1=out1,
+                                 out2=out2,
+                                 threads=threads,
+                                 mfilter=mfilter)
 
-    returncodes = exe.execute(mn2_cmd + fastq_cmd, pipe=True)
+    returncodes = exe.execute(mn2_cmd + fastq_cmd,
+                              pipe=True)
 
-    self.logger.debug(returncodes)
+    logger.debug(returncodes)
     for returncode in returncodes:
         if returncode != 0: return 1
 
     end_time = time.time()
-    self.logger.warning(f&#39;Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds&#39;)
+    logger.warning(f&#39;Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds&#39;)
     return 0</code></pre>
 </details>
 </dd>
@@ -527,6 +602,7 @@ Types: 'illumina', 'nanopore' or 'pacbio'</dd>
 <ul class="hlist">
 <li><code><a title="hocort.pipelines.pipeline.Pipeline.debug_log_args" href="pipeline.html#hocort.pipelines.pipeline.Pipeline.debug_log_args">debug_log_args</a></code></li>
 <li><code><a title="hocort.pipelines.pipeline.Pipeline.interface" href="pipeline.html#hocort.pipelines.pipeline.Pipeline.interface">interface</a></code></li>
+<li><code><a title="hocort.pipelines.pipeline.Pipeline.validate" href="pipeline.html#hocort.pipelines.pipeline.Pipeline.validate">validate</a></code></li>
 </ul>
 </li>
 </ul>

@@ -29,7 +29,31 @@
 <pre><code class="python">from argparse import ArgumentParser
 from argparse import Action
 import sys
+import re
 
+
+def validate(arg):
+    &#34;&#34;&#34;
+    Implements positive security model by checking for
+    valid characters instead of invalid ones.
+
+    Parameters
+    ----------
+    arg : string
+        String to validate.
+
+    Returns
+    -------
+    (bool, []) : tuple with a boolean and a list
+        A tuple containing a boolean and a list is returned.
+        The boolean is True if the string &#34;arg&#34; is valid, False if
+        it is invalid.
+        The list contains the invalid characters, if any.
+    &#34;&#34;&#34;
+    chars = re.findall(r&#39;[^a-zA-Z0-9\. !#=/_-]&#39;, arg)
+    if re.match(r&#39;^[a-zA-Z0-9\. !#=/_-]+$|^(?![\s\S])&#39;, arg):
+        return True, chars
+    return False, chars
 
 def create_version_action(version_info):
     &#34;&#34;&#34;
@@ -214,6 +238,51 @@ class ArgParser(ArgumentParser):
             print(version_info())
             parser.exit()
     return VersionAction</code></pre>
+</details>
+</dd>
+<dt id="hocort.parser.validate"><code class="name flex">
+<span>def <span class="ident">validate</span></span>(<span>arg)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements positive security model by checking for
+valid characters instead of invalid ones.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>arg</code></strong> :&ensp;<code>string</code></dt>
+<dd>String to validate.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>(bool, []) : tuple with a boolean and a list
+A tuple containing a boolean and a list is returned.
+The boolean is True if the string "arg" is valid, False if
+it is invalid.
+The list contains the invalid characters, if any.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def validate(arg):
+    &#34;&#34;&#34;
+    Implements positive security model by checking for
+    valid characters instead of invalid ones.
+
+    Parameters
+    ----------
+    arg : string
+        String to validate.
+
+    Returns
+    -------
+    (bool, []) : tuple with a boolean and a list
+        A tuple containing a boolean and a list is returned.
+        The boolean is True if the string &#34;arg&#34; is valid, False if
+        it is invalid.
+        The list contains the invalid characters, if any.
+    &#34;&#34;&#34;
+    chars = re.findall(r&#39;[^a-zA-Z0-9\. !#=/_-]&#39;, arg)
+    if re.match(r&#39;^[a-zA-Z0-9\. !#=/_-]+$|^(?![\s\S])&#39;, arg):
+        return True, chars
+    return False, chars</code></pre>
 </details>
 </dd>
 </dl>
@@ -415,6 +484,7 @@ class ArgParser(ArgumentParser):
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="hocort.parser.create_version_action" href="#hocort.parser.create_version_action">create_version_action</a></code></li>
+<li><code><a title="hocort.parser.validate" href="#hocort.parser.validate">validate</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
