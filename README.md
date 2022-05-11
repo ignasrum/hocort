@@ -106,3 +106,6 @@ hocort map bowtie2 -c="--local --very-fast-local --score-min G,21,9"
 
 # Wiki
 [Wiki Homepage](https://github.com/ignasrum/hocort/wiki)
+
+# Technical documentation
+[https://ignasrum.github.io/hocort/](https://ignasrum.github.io/hocort/)
