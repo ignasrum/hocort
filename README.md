@@ -17,9 +17,9 @@ External programs:
 * [Minimap2](https://github.com/lh3/minimap2) (Tested with version 2.24)
 * [samtools](https://github.com/samtools/samtools) (Tested with version 1.15)
 
-# Installing with bioconda
+# Installing with Bioconda
 
-Install with bioconda:
+Install with Bioconda:
 ```
 conda install -c bioconda hocort
 ```
