@@ -1,5 +1,7 @@
 # HoCoRT
-[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/hocort/README.html) <br>
+[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/hocort/README.html)
+[![anaconda download page](https://img.shields.io/conda/dn/bioconda/hocort.svg?style=flat)](https://anaconda.org/bioconda/hocort)
+<br>
 <strong>Ho</strong>st <strong>Co</strong>ntamination <strong>R</strong>emoval <strong>T</strong>ool (<strong>HoCoRT</strong>)
 
 Removes specific organisms from sequencing reads on Linux and Mac OS.
