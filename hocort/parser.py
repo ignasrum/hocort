@@ -4,6 +4,33 @@ import sys
 import re
 
 
+def validate_args(args):
+    """
+    Validates a list of arguments/variables.
+    Implements positive security model by checking for
+    valid characters instead of invalid ones.
+
+    Parameters
+    ----------
+    locals_vars : list
+        List containing strings.
+
+    Returns
+    -------
+    (bool, var, []) : tuple with a boolean, a string, and a list
+        A tuple containing a boolean, a string, and a list is returned.
+        The boolean is True if an argument is valid, False if
+        it is invalid.
+        The string contains the variable in question.
+        The list contains the invalid characters, if any.
+    """
+    for arg in args:
+        if type(arg) == str:
+            valid, chars = validate(arg)
+            if not valid:
+                return valid, arg, chars
+    return True, '', []
+
 def validate(arg):
     """
     Implements positive security model by checking for

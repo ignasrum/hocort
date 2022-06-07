@@ -63,11 +63,6 @@ class BBMap(Pipeline):
         if seq2 and not out2:
             raise ValueError(f'Input FastQ_2 was given, but no output FastQ_2.')
 
-        # validate input
-        valid, var, chars = self.validate(locals())
-        if not valid:
-            raise ValueError(f'Input with disallowed characters detected: "{var}" - {chars}')
-
         logger.warning(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
 

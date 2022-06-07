@@ -54,11 +54,6 @@ class Kraken2(Pipeline):
                             self.run.__name__,
                             locals())
 
-        # validate input
-        valid, var, chars = self.validate(locals())
-        if not valid:
-            raise ValueError(f'Input with disallowed characters detected: "{var}" - {chars}')
-
         final_options = []
         if len(options) > 0:
             final_options = [options]

@@ -5,6 +5,7 @@ import sys
 import hocort.execute as exe
 from hocort.aligners.aligner import Aligner
 from hocort.parser import ArgParser
+from hocort.parser import validate_args
 
 logger = logging.getLogger(__file__)
 
@@ -35,9 +36,15 @@ class BWA_MEM2(Aligner):
         Raises
         ------
         ValueError
-           Raised if no input FASTA file is given, or no output file is given.
+            Raised if no input FASTA file is given, or no output file is given.
+            If disallowed characters are found in input.
 
         """
+        # validate input
+        valid, arg, chars = validate_args([path_out, fasta_in] + options)
+        if not valid:
+            raise ValueError(f'Input with disallowed characters detected: "{arg}" - {chars}')
+
         if not fasta_in:
             raise ValueError(f'No input FASTA file was given.')
         if not path_out:
@@ -58,6 +65,7 @@ class BWA_MEM2(Aligner):
             Path where the first input FastQ file is located.
         output : string
             Path where the output SAM file is written.
+            If output is None, the output is written to stdout.
         seq2 : string
             Path where the second input FastQ file is located.
         threads : int
@@ -73,9 +81,15 @@ class BWA_MEM2(Aligner):
         Raises
         ------
         ValueError
-           Raised if no input index path is given, or no input FastQ file is given.
+            Raised if no input index path is given, or no input FastQ file is given.
+            If disallowed characters are found in input.
 
         """
+        # validate input
+        valid, arg, chars = validate_args([index, seq1, output, seq2] + options)
+        if not valid:
+            raise ValueError(f'Input with disallowed characters detected: "{arg}" - {chars}')
+
         if not index:
             raise ValueError(f'No index path was given.')
         if not seq1:
