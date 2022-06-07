@@ -4,8 +4,8 @@ import sys
 
 import hocort.execute as exe
 from hocort.classifiers.classifier import Classifier
-from hocort.parser import ArgParser
-from hocort.parser import validate_args
+from hocort.parse.parser import ArgParser
+from hocort.parse.parser import validate_args
 
 logger = logging.getLogger(__file__)
 

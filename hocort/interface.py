@@ -11,7 +11,7 @@ import hocort.classifiers
 import hocort.pipelines
 import hocort.version as version
 import hocort.logging
-from hocort.parser import ArgParser
+from hocort.parse.parser import ArgParser
 
 
 # Gets available aligners from hocort.aligners

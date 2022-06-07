@@ -6,7 +6,7 @@ import logging
 from hocort.pipelines.pipeline import Pipeline
 from hocort.pipelines.hisat2 import HISAT2
 from hocort.pipelines.kraken2 import Kraken2
-from hocort.parser import ArgParser
+from hocort.parse.parser import ArgParser
 
 logger = logging.getLogger(__file__)
 

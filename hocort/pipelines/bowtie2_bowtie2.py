@@ -5,7 +5,7 @@ import logging
 
 from hocort.pipelines.pipeline import Pipeline
 from hocort.pipelines.bowtie2 import Bowtie2
-from hocort.parser import ArgParser
+from hocort.parse.parser import ArgParser
 
 logger = logging.getLogger(__file__)
 

@@ -5,7 +5,7 @@ import logging
 from hocort.pipelines.pipeline import Pipeline
 from hocort.aligners.bbmap import BBMap as bb
 from hocort.parse.sam import SAM
-from hocort.parser import ArgParser
+from hocort.parse.parser import ArgParser
 import hocort.execute as exe
 
 logger = logging.getLogger(__file__)

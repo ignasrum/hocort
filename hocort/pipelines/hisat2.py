@@ -5,7 +5,7 @@ import logging
 from hocort.pipelines.pipeline import Pipeline
 from hocort.aligners.hisat2 import HISAT2 as hs2
 from hocort.parse.sam import SAM
-from hocort.parser import ArgParser
+from hocort.parse.parser import ArgParser
 import hocort.execute as exe
 
 logger = logging.getLogger(__file__)
