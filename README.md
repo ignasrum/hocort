@@ -21,9 +21,16 @@ External programs:
 
 # Installing with Bioconda
 
-Install with Bioconda:
+To install with Bioconda run the following command:
 ```
 conda install -c bioconda hocort
+```
+
+HoCoRT's dependencies may conflict with existing packages.
+This can be solved by installing HoCoRT in a separate environment.
+To create a new conda environment and install HoCoRT run the following command:
+```
+conda create -n hocort -c bioconda hocort
 ```
 
 # Manual Installation
