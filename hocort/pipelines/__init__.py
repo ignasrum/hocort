@@ -1,6 +1,4 @@
 from hocort.pipelines.bowtie2 import Bowtie2 as bowtie2
-from hocort.pipelines.bowtie2_hisat2 import Bowtie2HISAT2 as bowtie2hisat2
-from hocort.pipelines.bowtie2_bowtie2 import Bowtie2Bowtie2 as bowtie2bowtie2
 from hocort.pipelines.bwa_mem2 import BWA_MEM2 as bwamem2
 from hocort.pipelines.hisat2 import HISAT2 as hisat2
 from hocort.pipelines.minimap2 import Minimap2 as minimap2
