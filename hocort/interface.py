@@ -5,6 +5,8 @@ Command line user interface for HoCoRT.
 from argparse import Action
 import sys
 import inspect
+import multiprocessing
+import platform
 
 import hocort.aligners
 import hocort.classifiers
@@ -47,6 +49,7 @@ class HelpActionMap(Action):
         If a pipeline is selected, its interface is called with the '-h' flag.
         Otherwise, the help message of this interface is printed together with the
         names of pipelines available in hocort.pipelines module.
+
         Parameters
         ----------
         parser : argparse.ArgumentParser
@@ -75,9 +78,10 @@ class HelpActionIndex(Action):
     """
     def __call__(self, parser, namespace, values, option_string=None):
         """
-        If a pipeline is selected, its interface is called with the '-h' flag.
+        If an aligner or classifier is selected, its interface is called with the '-h' flag.
         Otherwise, the help message of this interface is printed together with the
-        names of pipelines available in hocort.pipelines module.
+        names of aligners and classifiers available in hocort.aligners and hocort.classifiers modules.
+
         Parameters
         ----------
         parser : argparse.ArgumentParser
@@ -104,6 +108,14 @@ class HelpActionIndex(Action):
             parser.print_help()
         parser.exit()
 
+def machine_info():
+    message = '\n'
+    message += '{}\n'.format(platform.platform())
+    message += 'Python {}\n'.format(platform.python_version())
+    message += 'Available threads: {}'.format(str(multiprocessing.cpu_count()))
+    message += '\n\n'
+    return message
+
 def extra_help_map():
     """
     Returns string containing some help information about available pipelines.
@@ -118,6 +130,7 @@ def extra_help_map():
     for pipeline in pipelines:
         message += f'\n    {pipeline}'
     message += '\n'
+    message += machine_info()
     return message
 
 def extra_help_index():
@@ -136,6 +149,7 @@ def extra_help_index():
     for classifier in classifiers:
         message += f'\n    {classifier}'
     message += '\n'
+    message += machine_info()
     return message
 
 def version_info():
@@ -165,7 +179,8 @@ def main():
         version_info=version_info,
         prog='hocort',
         description='hocort: remove specific organisms from sequencing reads',
-        usage='hocort [subcommand] [options]'
+        usage='hocort [subcommand] [options]',
+        extra_help=machine_info
     )
     subparsers = parser.add_subparsers(
         dest='subcommand',
