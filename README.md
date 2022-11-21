@@ -2,6 +2,8 @@
 [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/hocort/README.html)
 [![anaconda download page](https://img.shields.io/conda/dn/bioconda/hocort.svg?style=flat)](https://anaconda.org/bioconda/hocort)
 <br>
+[bioRxiv - HoCoRT: Host contamination removal tool](https://www.biorxiv.org/content/10.1101/2022.11.18.517030v1)
+<br>
 <strong>Ho</strong>st <strong>Co</strong>ntamination <strong>R</strong>emoval <strong>T</strong>ool (<strong>HoCoRT</strong>)
 
 Removes specific organisms from sequencing reads on Linux and Mac OS.
