@@ -98,16 +98,16 @@ Second, the sequencing reads should be mapped with the "--filter false" argument
 HoCoRT can be imported in Python scripts and programs with "import hocort".
 This allows precise configuration of the tools being run.
 ```
-import hocort.pipelines.bowtie2 as bowtie2
+import hocort.pipelines.bowtie2 as Bowtie2
 
 idx = "dir/basename"
 seq1 = "in1.fastq"
 seq2 = "in2.fastq"
 out1 = "out1.fastq"
 out2 = "out2.fastq"
-options = ["--local", "--very-fast-local"] # options is passed to the aligner/mapper, this allows precise configuration
+options = ["--local", "--very-fast-local"] # options are passed to the aligner/mapper, this allows precise configuration of the underlying tools
 
-returncode = bowtie2.run(idx, seq1, out1, seq2=seq2, out2=out2, options=options)
+returncode = Bowtie2().run(idx, seq1, out1, seq2=seq2, out2=out2, options=options)
 ```
 ### Passing arguments to the underlying tools
 It is possible to pass arguments to the underlying tools by specifying them in the -c/--config argument like this:
