@@ -1,0 +1,14 @@
+[user_input_options]
+filter_id=reference
+kmer_size=25
+desired_false_positve_rate=0.0078125
+number_of_hash_functions=7
+expected_num_entries=2160
+sequence_sources=../fasta/genome.fna 
+
+[runtime_options]
+size=21824
+num_entries=2158
+approximate_false_positive_rate=0.00776026
+redundant_sequences=2
+redundant_fpr=0.00126638

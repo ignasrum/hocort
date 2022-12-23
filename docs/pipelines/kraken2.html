@@ -33,7 +33,7 @@ import logging
 from hocort.pipelines.pipeline import Pipeline
 from hocort.classifiers.kraken2 import Kraken2 as kr2
 from hocort.parse.sam import SAM
-from hocort.parser import ArgParser
+from hocort.parse.parser import ArgParser
 import hocort.execute as exe
 
 logger = logging.getLogger(__file__)
@@ -81,11 +81,6 @@ class Kraken2(Pipeline):
         self.debug_log_args(logger,
                             self.run.__name__,
                             locals())
-
-        # validate input
-        valid, var, chars = self.validate(locals())
-        if not valid:
-            raise ValueError(f&#39;Input with disallowed characters detected: &#34;{var}&#34; - {chars}&#39;)
 
         final_options = []
         if len(options) &gt; 0:
@@ -270,11 +265,6 @@ class Kraken2(Pipeline):
         self.debug_log_args(logger,
                             self.run.__name__,
                             locals())
-
-        # validate input
-        valid, var, chars = self.validate(locals())
-        if not valid:
-            raise ValueError(f&#39;Input with disallowed characters detected: &#34;{var}&#34; - {chars}&#39;)
 
         final_options = []
         if len(options) &gt; 0:
@@ -481,11 +471,6 @@ False: output mapped sequences</dd>
                         self.run.__name__,
                         locals())
 
-    # validate input
-    valid, var, chars = self.validate(locals())
-    if not valid:
-        raise ValueError(f&#39;Input with disallowed characters detected: &#34;{var}&#34; - {chars}&#39;)
-
     final_options = []
     if len(options) &gt; 0:
         final_options = [options]
@@ -528,7 +513,6 @@ False: output mapped sequences</dd>
 <ul class="hlist">
 <li><code><a title="hocort.pipelines.pipeline.Pipeline.debug_log_args" href="pipeline.html#hocort.pipelines.pipeline.Pipeline.debug_log_args">debug_log_args</a></code></li>
 <li><code><a title="hocort.pipelines.pipeline.Pipeline.interface" href="pipeline.html#hocort.pipelines.pipeline.Pipeline.interface">interface</a></code></li>
-<li><code><a title="hocort.pipelines.pipeline.Pipeline.validate" href="pipeline.html#hocort.pipelines.pipeline.Pipeline.validate">validate</a></code></li>
 </ul>
 </li>
 </ul>

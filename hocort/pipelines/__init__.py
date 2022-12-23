@@ -3,6 +3,7 @@ from hocort.pipelines.bwa_mem2 import BWA_MEM2 as bwamem2
 from hocort.pipelines.hisat2 import HISAT2 as hisat2
 from hocort.pipelines.minimap2 import Minimap2 as minimap2
 from hocort.pipelines.kraken2 import Kraken2 as kraken2
+from hocort.pipelines.biobloom import BioBloom as biobloom
 from hocort.pipelines.kraken2_bowtie2 import Kraken2Bowtie2 as kraken2bowtie2
 from hocort.pipelines.kraken2_hisat2 import Kraken2HISAT2 as kraken2hisat2
 from hocort.pipelines.kraken2_minimap2 import Kraken2Minimap2 as kraken2minimap2

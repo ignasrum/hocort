@@ -28,8 +28,6 @@
 </summary>
 <pre><code class="python">from abc import ABC, abstractmethod
 
-import hocort.parser
-
 
 class Pipeline(ABC):
     &#34;&#34;&#34;
@@ -59,34 +57,6 @@ class Pipeline(ABC):
             if var != &#39;self&#39;:
                 string += f&#39;\n{var}: {locals_vars[var]}&#39;
         logger.debug(string + &#39;\n&#39;)
-
-    def validate(self, locals_vars):
-        &#34;&#34;&#34;
-        Validates a list of arguments/variables.
-        Implements positive security model by checking for
-        valid characters instead of invalid ones.
-
-        Parameters
-        ----------
-        locals_vars : dict
-            Local symbol table of a function.
-
-        Returns
-        -------
-        (bool, var, []) : tuple with a boolean, a string, and a list
-            A tuple containing a boolean, a string, and a list is returned.
-            The boolean is True if an argument is valid, False if
-            it is invalid.
-            The string contains the variable in question.
-            The list contains the invalid characters, if any.
-        &#34;&#34;&#34;
-        for var in locals_vars:
-            var = locals_vars[var]
-            if type(var) == str:
-                valid, chars = hocort.parser.validate(var)
-                if not valid:
-                    return valid, var, chars
-        return True, &#39;&#39;, []
 
     @abstractmethod
     def run(self, seq1, seq2=None):
@@ -173,34 +143,6 @@ class Pipeline(ABC):
                 string += f&#39;\n{var}: {locals_vars[var]}&#39;
         logger.debug(string + &#39;\n&#39;)
 
-    def validate(self, locals_vars):
-        &#34;&#34;&#34;
-        Validates a list of arguments/variables.
-        Implements positive security model by checking for
-        valid characters instead of invalid ones.
-
-        Parameters
-        ----------
-        locals_vars : dict
-            Local symbol table of a function.
-
-        Returns
-        -------
-        (bool, var, []) : tuple with a boolean, a string, and a list
-            A tuple containing a boolean, a string, and a list is returned.
-            The boolean is True if an argument is valid, False if
-            it is invalid.
-            The string contains the variable in question.
-            The list contains the invalid characters, if any.
-        &#34;&#34;&#34;
-        for var in locals_vars:
-            var = locals_vars[var]
-            if type(var) == str:
-                valid, chars = hocort.parser.validate(var)
-                if not valid:
-                    return valid, var, chars
-        return True, &#39;&#39;, []
-
     @abstractmethod
     def run(self, seq1, seq2=None):
         &#34;&#34;&#34;
@@ -245,9 +187,8 @@ class Pipeline(ABC):
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li><a title="hocort.pipelines.bbmap.BBMap" href="bbmap.html#hocort.pipelines.bbmap.BBMap">BBMap</a></li>
+<li><a title="hocort.pipelines.biobloom.BioBloom" href="biobloom.html#hocort.pipelines.biobloom.BioBloom">BioBloom</a></li>
 <li><a title="hocort.pipelines.bowtie2.Bowtie2" href="bowtie2.html#hocort.pipelines.bowtie2.Bowtie2">Bowtie2</a></li>
-<li><a title="hocort.pipelines.bowtie2_bowtie2.Bowtie2Bowtie2" href="bowtie2_bowtie2.html#hocort.pipelines.bowtie2_bowtie2.Bowtie2Bowtie2">Bowtie2Bowtie2</a></li>
-<li><a title="hocort.pipelines.bowtie2_hisat2.Bowtie2HISAT2" href="bowtie2_hisat2.html#hocort.pipelines.bowtie2_hisat2.Bowtie2HISAT2">Bowtie2HISAT2</a></li>
 <li><a title="hocort.pipelines.bwa_mem2.BWA_MEM2" href="bwa_mem2.html#hocort.pipelines.bwa_mem2.BWA_MEM2">BWA_MEM2</a></li>
 <li><a title="hocort.pipelines.hisat2.HISAT2" href="hisat2.html#hocort.pipelines.hisat2.HISAT2">HISAT2</a></li>
 <li><a title="hocort.pipelines.kraken2.Kraken2" href="kraken2.html#hocort.pipelines.kraken2.Kraken2">Kraken2</a></li>
@@ -385,58 +326,6 @@ def run(self, seq1, seq2=None):
     pass</code></pre>
 </details>
 </dd>
-<dt id="hocort.pipelines.pipeline.Pipeline.validate"><code class="name flex">
-<span>def <span class="ident">validate</span></span>(<span>self, locals_vars)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Validates a list of arguments/variables.
-Implements positive security model by checking for
-valid characters instead of invalid ones.</p>
-<h2 id="parameters">Parameters</h2>
-<dl>
-<dt><strong><code>locals_vars</code></strong> :&ensp;<code>dict</code></dt>
-<dd>Local symbol table of a function.</dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<p>(bool, var, []) : tuple with a boolean, a string, and a list
-A tuple containing a boolean, a string, and a list is returned.
-The boolean is True if an argument is valid, False if
-it is invalid.
-The string contains the variable in question.
-The list contains the invalid characters, if any.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def validate(self, locals_vars):
-    &#34;&#34;&#34;
-    Validates a list of arguments/variables.
-    Implements positive security model by checking for
-    valid characters instead of invalid ones.
-
-    Parameters
-    ----------
-    locals_vars : dict
-        Local symbol table of a function.
-
-    Returns
-    -------
-    (bool, var, []) : tuple with a boolean, a string, and a list
-        A tuple containing a boolean, a string, and a list is returned.
-        The boolean is True if an argument is valid, False if
-        it is invalid.
-        The string contains the variable in question.
-        The list contains the invalid characters, if any.
-    &#34;&#34;&#34;
-    for var in locals_vars:
-        var = locals_vars[var]
-        if type(var) == str:
-            valid, chars = hocort.parser.validate(var)
-            if not valid:
-                return valid, var, chars
-    return True, &#39;&#39;, []</code></pre>
-</details>
-</dd>
 </dl>
 </dd>
 </dl>
@@ -461,7 +350,6 @@ The list contains the invalid characters, if any.</p></div>
 <li><code><a title="hocort.pipelines.pipeline.Pipeline.debug_log_args" href="#hocort.pipelines.pipeline.Pipeline.debug_log_args">debug_log_args</a></code></li>
 <li><code><a title="hocort.pipelines.pipeline.Pipeline.interface" href="#hocort.pipelines.pipeline.Pipeline.interface">interface</a></code></li>
 <li><code><a title="hocort.pipelines.pipeline.Pipeline.run" href="#hocort.pipelines.pipeline.Pipeline.run">run</a></code></li>
-<li><code><a title="hocort.pipelines.pipeline.Pipeline.validate" href="#hocort.pipelines.pipeline.Pipeline.validate">validate</a></code></li>
 </ul>
 </li>
 </ul>

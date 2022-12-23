@@ -32,7 +32,8 @@ import sys
 
 import hocort.execute as exe
 from hocort.classifiers.classifier import Classifier
-from hocort.parser import ArgParser
+from hocort.parse.parser import ArgParser
+from hocort.parse.parser import validate_args
 
 logger = logging.getLogger(__file__)
 
@@ -65,9 +66,15 @@ class Kraken2(Classifier):
         Raises
         ------
         ValueError
-           Raised if no input FASTA file is given, or no output path is given.
+            Raised if no input FASTA file is given, or no output path is given.
+            If disallowed characters are found in input.
 
         &#34;&#34;&#34;
+        # validate input
+        valid, arg, chars = validate_args([path_out, fasta_in] + options)
+        if not valid:
+            raise ValueError(f&#39;Input with disallowed characters detected: &#34;{arg}&#34; - {chars}&#39;)
+
         if not fasta_in:
             raise ValueError(f&#39;No input FASTA file was given.&#39;)
         if not path_out:
@@ -119,9 +126,15 @@ class Kraken2(Classifier):
         Raises
         ------
         ValueError
-           Raised if no input index path is given, or no input FastQ file is given.
+            Raised if no input index path is given, or no input FastQ file is given.
+            If disallowed characters are found in input.
 
         &#34;&#34;&#34;
+        # validate input
+        valid, arg, chars = validate_args([index, seq1, classified_out, unclassified_out, seq2] + options)
+        if not valid:
+            raise ValueError(f&#39;Input with disallowed characters detected: &#34;{arg}&#34; - {chars}&#39;)
+
         if not index:
             raise ValueError(f&#39;No index path was given.&#39;)
         if not seq1:
@@ -256,9 +269,15 @@ class Kraken2(Classifier):
         Raises
         ------
         ValueError
-           Raised if no input FASTA file is given, or no output path is given.
+            Raised if no input FASTA file is given, or no output path is given.
+            If disallowed characters are found in input.
 
         &#34;&#34;&#34;
+        # validate input
+        valid, arg, chars = validate_args([path_out, fasta_in] + options)
+        if not valid:
+            raise ValueError(f&#39;Input with disallowed characters detected: &#34;{arg}&#34; - {chars}&#39;)
+
         if not fasta_in:
             raise ValueError(f&#39;No input FASTA file was given.&#39;)
         if not path_out:
@@ -310,9 +329,15 @@ class Kraken2(Classifier):
         Raises
         ------
         ValueError
-           Raised if no input index path is given, or no input FastQ file is given.
+            Raised if no input index path is given, or no input FastQ file is given.
+            If disallowed characters are found in input.
 
         &#34;&#34;&#34;
+        # validate input
+        valid, arg, chars = validate_args([index, seq1, classified_out, unclassified_out, seq2] + options)
+        if not valid:
+            raise ValueError(f&#39;Input with disallowed characters detected: &#34;{arg}&#34; - {chars}&#39;)
+
         if not index:
             raise ValueError(f&#39;No index path was given.&#39;)
         if not seq1:
@@ -429,9 +454,9 @@ List of commands to be executed.</p>
 <h2 id="raises">Raises</h2>
 <dl>
 <dt><code>ValueError</code></dt>
-<dd>&nbsp;</dd>
-</dl>
-<p>Raised if no input FASTA file is given, or no output path is given.</p></div>
+<dd>Raised if no input FASTA file is given, or no output path is given.
+If disallowed characters are found in input.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -459,9 +484,15 @@ List of commands to be executed.</p>
     Raises
     ------
     ValueError
-       Raised if no input FASTA file is given, or no output path is given.
+        Raised if no input FASTA file is given, or no output path is given.
+        If disallowed characters are found in input.
 
     &#34;&#34;&#34;
+    # validate input
+    valid, arg, chars = validate_args([path_out, fasta_in] + options)
+    if not valid:
+        raise ValueError(f&#39;Input with disallowed characters detected: &#34;{arg}&#34; - {chars}&#39;)
+
     if not fasta_in:
         raise ValueError(f&#39;No input FASTA file was given.&#39;)
     if not path_out:
@@ -513,9 +544,9 @@ List of commands to be executed.</p>
 <h2 id="raises">Raises</h2>
 <dl>
 <dt><code>ValueError</code></dt>
-<dd>&nbsp;</dd>
-</dl>
-<p>Raised if no input index path is given, or no input FastQ file is given.</p></div>
+<dd>Raised if no input index path is given, or no input FastQ file is given.
+If disallowed characters are found in input.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -549,9 +580,15 @@ List of commands to be executed.</p>
     Raises
     ------
     ValueError
-       Raised if no input index path is given, or no input FastQ file is given.
+        Raised if no input index path is given, or no input FastQ file is given.
+        If disallowed characters are found in input.
 
     &#34;&#34;&#34;
+    # validate input
+    valid, arg, chars = validate_args([index, seq1, classified_out, unclassified_out, seq2] + options)
+    if not valid:
+        raise ValueError(f&#39;Input with disallowed characters detected: &#34;{arg}&#34; - {chars}&#39;)
+
     if not index:
         raise ValueError(f&#39;No index path was given.&#39;)
     if not seq1:

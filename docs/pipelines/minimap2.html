@@ -33,7 +33,7 @@ import logging
 from hocort.pipelines.pipeline import Pipeline
 from hocort.aligners.minimap2 import Minimap2 as mn2
 from hocort.parse.sam import SAM
-from hocort.parser import ArgParser
+from hocort.parse.parser import ArgParser
 import hocort.execute as exe
 
 logger = logging.getLogger(__file__)
@@ -90,11 +90,6 @@ class Minimap2(Pipeline):
                             locals())
         if seq2 and not out2:
             raise ValueError(f&#39;Input FastQ_2 was given, but no output FastQ_2.&#39;)
-
-        # validate input
-        valid, var, chars = self.validate(locals())
-        if not valid:
-            raise ValueError(f&#39;Input with disallowed characters detected: &#34;{var}&#34; - {chars}&#39;)
 
         final_options = []
         if preset == &#39;illumina&#39;:
@@ -306,11 +301,6 @@ class Minimap2(Pipeline):
                             locals())
         if seq2 and not out2:
             raise ValueError(f&#39;Input FastQ_2 was given, but no output FastQ_2.&#39;)
-
-        # validate input
-        valid, var, chars = self.validate(locals())
-        if not valid:
-            raise ValueError(f&#39;Input with disallowed characters detected: &#34;{var}&#34; - {chars}&#39;)
 
         final_options = []
         if preset == &#39;illumina&#39;:
@@ -551,11 +541,6 @@ If disallowed characters are found in input.</dd>
     if seq2 and not out2:
         raise ValueError(f&#39;Input FastQ_2 was given, but no output FastQ_2.&#39;)
 
-    # validate input
-    valid, var, chars = self.validate(locals())
-    if not valid:
-        raise ValueError(f&#39;Input with disallowed characters detected: &#34;{var}&#34; - {chars}&#39;)
-
     final_options = []
     if preset == &#39;illumina&#39;:
         final_options += [&#39;-xsr&#39;]
@@ -602,7 +587,6 @@ If disallowed characters are found in input.</dd>
 <ul class="hlist">
 <li><code><a title="hocort.pipelines.pipeline.Pipeline.debug_log_args" href="pipeline.html#hocort.pipelines.pipeline.Pipeline.debug_log_args">debug_log_args</a></code></li>
 <li><code><a title="hocort.pipelines.pipeline.Pipeline.interface" href="pipeline.html#hocort.pipelines.pipeline.Pipeline.interface">interface</a></code></li>
-<li><code><a title="hocort.pipelines.pipeline.Pipeline.validate" href="pipeline.html#hocort.pipelines.pipeline.Pipeline.validate">validate</a></code></li>
 </ul>
 </li>
 </ul>

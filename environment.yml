@@ -4,10 +4,13 @@ channels:
   - bioconda
   - defaults
 dependencies:
+  - python >=3.7,<3.10
+  - samtools >=1.8
+  - tbb =2020.2
+  - kraken2 >=2.1.2
   - bowtie2
   - hisat2
-  - samtools
-  - kraken2
   - bwa-mem2
   - bbmap
   - minimap2
+  - biobloomtools

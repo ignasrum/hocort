@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>hocort.aligners.bwa_mem2 API documentation</title>
+<title>hocort.classifiers.biobloom API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
@@ -19,7 +19,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>hocort.aligners.bwa_mem2</code></h1>
+<h1 class="title">Module <code>hocort.classifiers.biobloom</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -31,19 +31,19 @@ import os
 import sys
 
 import hocort.execute as exe
-from hocort.aligners.aligner import Aligner
+from hocort.classifiers.classifier import Classifier
 from hocort.parse.parser import ArgParser
 from hocort.parse.parser import validate_args
 
 logger = logging.getLogger(__file__)
 
 
-class BWA_MEM2(Aligner):
+class BioBloom(Classifier):
     &#34;&#34;&#34;
-    BWA_MEM2 implementation of the Aligner abstract base class.
+    BioBloom implementation of the Classifier abstract base class.
 
     &#34;&#34;&#34;
-    def build_index(self, path_out, fasta_in, options=[], **kwargs):
+    def build_index(self, path_out, fasta_in, threads=1, options=[], **kwargs):
         &#34;&#34;&#34;
         Builds an index.
 
@@ -53,6 +53,8 @@ class BWA_MEM2(Aligner):
             Path where the output index is written.
         fasta_in : string
             Path where the input FASTA file is located.
+        threads : int
+            Number of threads to use.
         options : list
             An options list where additional arguments may be specified.
 
@@ -64,7 +66,7 @@ class BWA_MEM2(Aligner):
         Raises
         ------
         ValueError
-            Raised if no input FASTA file is given, or no output file is given.
+            Raised if no input FASTA file is given, or no output path is given.
             If disallowed characters are found in input.
 
         &#34;&#34;&#34;
@@ -75,25 +77,25 @@ class BWA_MEM2(Aligner):
 
         if not fasta_in:
             raise ValueError(f&#39;No input FASTA file was given.&#39;)
+        # should probably check whether output folder exists already here
         if not path_out:
             raise ValueError(f&#39;No output path was given.&#39;)
-        cmd = [&#39;bwa-mem2&#39;, &#39;index&#39;, &#39;-p&#39;, path_out, fasta_in]
+        cmd = [&#39;biobloommaker&#39;, &#39;-t&#39;, str(threads), &#39;-p&#39;, &#39;reference&#39;, fasta_in, &#39;-o&#39;, path_out]
 
         return [cmd]
 
-    def align(self, index, seq1, output=None, seq2=None, threads=1, options=[]):
+    def classify(self, index, seq1, out, seq2=None, threads=1, options=[]):
         &#34;&#34;&#34;
-        Aligns FastQ sequences to reference genome and outputs a SAM file.
+        Matches sequences to a reference database and classifies them.
 
         Parameters
         ----------
         index : string
-            Path where the aligner index is located.
+            Path where the output index is written.
         seq1 : string
             Path where the first input FastQ file is located.
-        output : string
-            Path where the output SAM file is written.
-            If output is None, the output is written to stdout.
+        out : string
+            Path (path/prefix) where the output FastQ files will be written.
         seq2 : string
             Path where the second input FastQ file is located.
         threads : int
@@ -114,7 +116,7 @@ class BWA_MEM2(Aligner):
 
         &#34;&#34;&#34;
         # validate input
-        valid, arg, chars = validate_args([index, seq1, output, seq2] + options)
+        valid, arg, chars = validate_args([index, seq1, out, seq2] + options)
         if not valid:
             raise ValueError(f&#39;Input with disallowed characters detected: &#34;{arg}&#34; - {chars}&#39;)
 
@@ -122,12 +124,10 @@ class BWA_MEM2(Aligner):
             raise ValueError(f&#39;No index path was given.&#39;)
         if not seq1:
             raise ValueError(f&#39;No input FastQ was given.&#39;)
-        cmd = [&#39;bwa-mem2&#39;, &#39;mem&#39;, &#39;-t&#39;, str(threads)]
-        if output:
-            cmd += [&#39;-o&#39;, output]
-        cmd += [index, seq1]
+        cmd = [&#39;biobloomcategorizer&#39;, &#39;-t&#39;, str(threads), &#39;-f&#39;, index, &#39;--fq&#39;, &#39;-p&#39;, out]
         if seq2:
-            cmd += [seq2]
+            cmd += [&#39;--paired_mode&#39;, seq1, seq2]
+        else: cmd += [seq1]
         cmd += options
 
         return [cmd]
@@ -148,7 +148,7 @@ class BWA_MEM2(Aligner):
         &#34;&#34;&#34;
         parser = ArgParser(
             description=f&#39;{self.__class__.__name__} aligner&#39;,
-            usage=f&#39;hocort index {self.__class__.__name__} [-h] -i &lt;fasta&gt; -o &lt;index&gt;&#39;
+            usage=f&#39;hocort index {self.__class__.__name__} [-h] [--threads &lt;int&gt;] -i &lt;fasta&gt; -o &lt;index&gt;&#39;
         )
         parser.add_argument(
             &#39;-i&#39;,
@@ -166,22 +166,29 @@ class BWA_MEM2(Aligner):
             metavar=(&#39;&lt;index&gt;&#39;),
             help=&#39;str: path to output index (dir/basename) (required)&#39;
         )
+        parser.add_argument(
+            &#39;-t&#39;,
+            &#39;--threads&#39;,
+            required=False,
+            type=int,
+            metavar=(&#39;&lt;int&gt;&#39;),
+            default=os.cpu_count(),
+            help=&#39;int: number of threads (default: max available on machine)&#39;
+        )
         parsed = parser.parse_args(args=args)
 
         ref = parsed.input
         out = parsed.output
+        threads = parsed.threads
 
         s = os.path.split(out)
         out_dir = s[0]
         basename = s[1]
-        if basename == &#39;&#39; or basename == out:
-            logger.error(f&#39;No basename was provided for output path (dir/basename): {basename}&#39;)
-            sys.exit(1)
         if not os.path.isdir(out_dir):
             logger.error(f&#39;Output path does not exist: {out}&#39;)
             sys.exit(1)
 
-        cmd = self.build_index(out, ref)
+        cmd = self.build_index(out, ref, threads=threads)
         logger.warning(f&#39;Generating index for: {self.__class__.__name__}&#39;)
         returncode = exe.execute(cmd, pipe=False, merge_stdout_stderr=True)
         return returncode[0]</code></pre>
@@ -196,21 +203,21 @@ class BWA_MEM2(Aligner):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="hocort.aligners.bwa_mem2.BWA_MEM2"><code class="flex name class">
-<span>class <span class="ident">BWA_MEM2</span></span>
+<dt id="hocort.classifiers.biobloom.BioBloom"><code class="flex name class">
+<span>class <span class="ident">BioBloom</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>BWA_MEM2 implementation of the Aligner abstract base class.</p></div>
+<div class="desc"><p>BioBloom implementation of the Classifier abstract base class.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class BWA_MEM2(Aligner):
+<pre><code class="python">class BioBloom(Classifier):
     &#34;&#34;&#34;
-    BWA_MEM2 implementation of the Aligner abstract base class.
+    BioBloom implementation of the Classifier abstract base class.
 
     &#34;&#34;&#34;
-    def build_index(self, path_out, fasta_in, options=[], **kwargs):
+    def build_index(self, path_out, fasta_in, threads=1, options=[], **kwargs):
         &#34;&#34;&#34;
         Builds an index.
 
@@ -220,6 +227,8 @@ class BWA_MEM2(Aligner):
             Path where the output index is written.
         fasta_in : string
             Path where the input FASTA file is located.
+        threads : int
+            Number of threads to use.
         options : list
             An options list where additional arguments may be specified.
 
@@ -231,7 +240,7 @@ class BWA_MEM2(Aligner):
         Raises
         ------
         ValueError
-            Raised if no input FASTA file is given, or no output file is given.
+            Raised if no input FASTA file is given, or no output path is given.
             If disallowed characters are found in input.
 
         &#34;&#34;&#34;
@@ -242,25 +251,25 @@ class BWA_MEM2(Aligner):
 
         if not fasta_in:
             raise ValueError(f&#39;No input FASTA file was given.&#39;)
+        # should probably check whether output folder exists already here
         if not path_out:
             raise ValueError(f&#39;No output path was given.&#39;)
-        cmd = [&#39;bwa-mem2&#39;, &#39;index&#39;, &#39;-p&#39;, path_out, fasta_in]
+        cmd = [&#39;biobloommaker&#39;, &#39;-t&#39;, str(threads), &#39;-p&#39;, &#39;reference&#39;, fasta_in, &#39;-o&#39;, path_out]
 
         return [cmd]
 
-    def align(self, index, seq1, output=None, seq2=None, threads=1, options=[]):
+    def classify(self, index, seq1, out, seq2=None, threads=1, options=[]):
         &#34;&#34;&#34;
-        Aligns FastQ sequences to reference genome and outputs a SAM file.
+        Matches sequences to a reference database and classifies them.
 
         Parameters
         ----------
         index : string
-            Path where the aligner index is located.
+            Path where the output index is written.
         seq1 : string
             Path where the first input FastQ file is located.
-        output : string
-            Path where the output SAM file is written.
-            If output is None, the output is written to stdout.
+        out : string
+            Path (path/prefix) where the output FastQ files will be written.
         seq2 : string
             Path where the second input FastQ file is located.
         threads : int
@@ -281,7 +290,7 @@ class BWA_MEM2(Aligner):
 
         &#34;&#34;&#34;
         # validate input
-        valid, arg, chars = validate_args([index, seq1, output, seq2] + options)
+        valid, arg, chars = validate_args([index, seq1, out, seq2] + options)
         if not valid:
             raise ValueError(f&#39;Input with disallowed characters detected: &#34;{arg}&#34; - {chars}&#39;)
 
@@ -289,12 +298,10 @@ class BWA_MEM2(Aligner):
             raise ValueError(f&#39;No index path was given.&#39;)
         if not seq1:
             raise ValueError(f&#39;No input FastQ was given.&#39;)
-        cmd = [&#39;bwa-mem2&#39;, &#39;mem&#39;, &#39;-t&#39;, str(threads)]
-        if output:
-            cmd += [&#39;-o&#39;, output]
-        cmd += [index, seq1]
+        cmd = [&#39;biobloomcategorizer&#39;, &#39;-t&#39;, str(threads), &#39;-f&#39;, index, &#39;--fq&#39;, &#39;-p&#39;, out]
         if seq2:
-            cmd += [seq2]
+            cmd += [&#39;--paired_mode&#39;, seq1, seq2]
+        else: cmd += [seq1]
         cmd += options
 
         return [cmd]
@@ -315,7 +322,7 @@ class BWA_MEM2(Aligner):
         &#34;&#34;&#34;
         parser = ArgParser(
             description=f&#39;{self.__class__.__name__} aligner&#39;,
-            usage=f&#39;hocort index {self.__class__.__name__} [-h] -i &lt;fasta&gt; -o &lt;index&gt;&#39;
+            usage=f&#39;hocort index {self.__class__.__name__} [-h] [--threads &lt;int&gt;] -i &lt;fasta&gt; -o &lt;index&gt;&#39;
         )
         parser.add_argument(
             &#39;-i&#39;,
@@ -333,47 +340,124 @@ class BWA_MEM2(Aligner):
             metavar=(&#39;&lt;index&gt;&#39;),
             help=&#39;str: path to output index (dir/basename) (required)&#39;
         )
+        parser.add_argument(
+            &#39;-t&#39;,
+            &#39;--threads&#39;,
+            required=False,
+            type=int,
+            metavar=(&#39;&lt;int&gt;&#39;),
+            default=os.cpu_count(),
+            help=&#39;int: number of threads (default: max available on machine)&#39;
+        )
         parsed = parser.parse_args(args=args)
 
         ref = parsed.input
         out = parsed.output
+        threads = parsed.threads
 
         s = os.path.split(out)
         out_dir = s[0]
         basename = s[1]
-        if basename == &#39;&#39; or basename == out:
-            logger.error(f&#39;No basename was provided for output path (dir/basename): {basename}&#39;)
-            sys.exit(1)
         if not os.path.isdir(out_dir):
             logger.error(f&#39;Output path does not exist: {out}&#39;)
             sys.exit(1)
 
-        cmd = self.build_index(out, ref)
+        cmd = self.build_index(out, ref, threads=threads)
         logger.warning(f&#39;Generating index for: {self.__class__.__name__}&#39;)
         returncode = exe.execute(cmd, pipe=False, merge_stdout_stderr=True)
         return returncode[0]</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="hocort.aligners.aligner.Aligner" href="aligner.html#hocort.aligners.aligner.Aligner">Aligner</a></li>
+<li><a title="hocort.classifiers.classifier.Classifier" href="classifier.html#hocort.classifiers.classifier.Classifier">Classifier</a></li>
 <li>abc.ABC</li>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="hocort.aligners.bwa_mem2.BWA_MEM2.align"><code class="name flex">
-<span>def <span class="ident">align</span></span>(<span>self, index, seq1, output=None, seq2=None, threads=1, options=[])</span>
+<dt id="hocort.classifiers.biobloom.BioBloom.build_index"><code class="name flex">
+<span>def <span class="ident">build_index</span></span>(<span>self, path_out, fasta_in, threads=1, options=[], **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Aligns FastQ sequences to reference genome and outputs a SAM file.</p>
+<div class="desc"><p>Builds an index.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>path_out</code></strong> :&ensp;<code>string</code></dt>
+<dd>Path where the output index is written.</dd>
+<dt><strong><code>fasta_in</code></strong> :&ensp;<code>string</code></dt>
+<dd>Path where the input FASTA file is located.</dd>
+<dt><strong><code>threads</code></strong> :&ensp;<code>int</code></dt>
+<dd>Number of threads to use.</dd>
+<dt><strong><code>options</code></strong> :&ensp;<code>list</code></dt>
+<dd>An options list where additional arguments may be specified.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>[cmd] : list
+List of commands to be executed.</p>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>Raised if no input FASTA file is given, or no output path is given.
+If disallowed characters are found in input.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build_index(self, path_out, fasta_in, threads=1, options=[], **kwargs):
+    &#34;&#34;&#34;
+    Builds an index.
+
+    Parameters
+    ----------
+    path_out : string
+        Path where the output index is written.
+    fasta_in : string
+        Path where the input FASTA file is located.
+    threads : int
+        Number of threads to use.
+    options : list
+        An options list where additional arguments may be specified.
+
+    Returns
+    -------
+    [cmd] : list
+        List of commands to be executed.
+
+    Raises
+    ------
+    ValueError
+        Raised if no input FASTA file is given, or no output path is given.
+        If disallowed characters are found in input.
+
+    &#34;&#34;&#34;
+    # validate input
+    valid, arg, chars = validate_args([path_out, fasta_in] + options)
+    if not valid:
+        raise ValueError(f&#39;Input with disallowed characters detected: &#34;{arg}&#34; - {chars}&#39;)
+
+    if not fasta_in:
+        raise ValueError(f&#39;No input FASTA file was given.&#39;)
+    # should probably check whether output folder exists already here
+    if not path_out:
+        raise ValueError(f&#39;No output path was given.&#39;)
+    cmd = [&#39;biobloommaker&#39;, &#39;-t&#39;, str(threads), &#39;-p&#39;, &#39;reference&#39;, fasta_in, &#39;-o&#39;, path_out]
+
+    return [cmd]</code></pre>
+</details>
+</dd>
+<dt id="hocort.classifiers.biobloom.BioBloom.classify"><code class="name flex">
+<span>def <span class="ident">classify</span></span>(<span>self, index, seq1, out, seq2=None, threads=1, options=[])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Matches sequences to a reference database and classifies them.</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
 <dt><strong><code>index</code></strong> :&ensp;<code>string</code></dt>
-<dd>Path where the aligner index is located.</dd>
+<dd>Path where the output index is written.</dd>
 <dt><strong><code>seq1</code></strong> :&ensp;<code>string</code></dt>
 <dd>Path where the first input FastQ file is located.</dd>
-<dt><strong><code>output</code></strong> :&ensp;<code>string</code></dt>
-<dd>Path where the output SAM file is written.
-If output is None, the output is written to stdout.</dd>
+<dt><strong><code>out</code></strong> :&ensp;<code>string</code></dt>
+<dd>Path (path/prefix) where the output FastQ files will be written.</dd>
 <dt><strong><code>seq2</code></strong> :&ensp;<code>string</code></dt>
 <dd>Path where the second input FastQ file is located.</dd>
 <dt><strong><code>threads</code></strong> :&ensp;<code>int</code></dt>
@@ -394,19 +478,18 @@ If disallowed characters are found in input.</dd>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def align(self, index, seq1, output=None, seq2=None, threads=1, options=[]):
+<pre><code class="python">def classify(self, index, seq1, out, seq2=None, threads=1, options=[]):
     &#34;&#34;&#34;
-    Aligns FastQ sequences to reference genome and outputs a SAM file.
+    Matches sequences to a reference database and classifies them.
 
     Parameters
     ----------
     index : string
-        Path where the aligner index is located.
+        Path where the output index is written.
     seq1 : string
         Path where the first input FastQ file is located.
-    output : string
-        Path where the output SAM file is written.
-        If output is None, the output is written to stdout.
+    out : string
+        Path (path/prefix) where the output FastQ files will be written.
     seq2 : string
         Path where the second input FastQ file is located.
     threads : int
@@ -427,7 +510,7 @@ If disallowed characters are found in input.</dd>
 
     &#34;&#34;&#34;
     # validate input
-    valid, arg, chars = validate_args([index, seq1, output, seq2] + options)
+    valid, arg, chars = validate_args([index, seq1, out, seq2] + options)
     if not valid:
         raise ValueError(f&#39;Input with disallowed characters detected: &#34;{arg}&#34; - {chars}&#39;)
 
@@ -435,79 +518,11 @@ If disallowed characters are found in input.</dd>
         raise ValueError(f&#39;No index path was given.&#39;)
     if not seq1:
         raise ValueError(f&#39;No input FastQ was given.&#39;)
-    cmd = [&#39;bwa-mem2&#39;, &#39;mem&#39;, &#39;-t&#39;, str(threads)]
-    if output:
-        cmd += [&#39;-o&#39;, output]
-    cmd += [index, seq1]
+    cmd = [&#39;biobloomcategorizer&#39;, &#39;-t&#39;, str(threads), &#39;-f&#39;, index, &#39;--fq&#39;, &#39;-p&#39;, out]
     if seq2:
-        cmd += [seq2]
+        cmd += [&#39;--paired_mode&#39;, seq1, seq2]
+    else: cmd += [seq1]
     cmd += options
-
-    return [cmd]</code></pre>
-</details>
-</dd>
-<dt id="hocort.aligners.bwa_mem2.BWA_MEM2.build_index"><code class="name flex">
-<span>def <span class="ident">build_index</span></span>(<span>self, path_out, fasta_in, options=[], **kwargs)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Builds an index.</p>
-<h2 id="parameters">Parameters</h2>
-<dl>
-<dt><strong><code>path_out</code></strong> :&ensp;<code>string</code></dt>
-<dd>Path where the output index is written.</dd>
-<dt><strong><code>fasta_in</code></strong> :&ensp;<code>string</code></dt>
-<dd>Path where the input FASTA file is located.</dd>
-<dt><strong><code>options</code></strong> :&ensp;<code>list</code></dt>
-<dd>An options list where additional arguments may be specified.</dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<p>[cmd] : list
-List of commands to be executed.</p>
-<h2 id="raises">Raises</h2>
-<dl>
-<dt><code>ValueError</code></dt>
-<dd>Raised if no input FASTA file is given, or no output file is given.
-If disallowed characters are found in input.</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def build_index(self, path_out, fasta_in, options=[], **kwargs):
-    &#34;&#34;&#34;
-    Builds an index.
-
-    Parameters
-    ----------
-    path_out : string
-        Path where the output index is written.
-    fasta_in : string
-        Path where the input FASTA file is located.
-    options : list
-        An options list where additional arguments may be specified.
-
-    Returns
-    -------
-    [cmd] : list
-        List of commands to be executed.
-
-    Raises
-    ------
-    ValueError
-        Raised if no input FASTA file is given, or no output file is given.
-        If disallowed characters are found in input.
-
-    &#34;&#34;&#34;
-    # validate input
-    valid, arg, chars = validate_args([path_out, fasta_in] + options)
-    if not valid:
-        raise ValueError(f&#39;Input with disallowed characters detected: &#34;{arg}&#34; - {chars}&#39;)
-
-    if not fasta_in:
-        raise ValueError(f&#39;No input FASTA file was given.&#39;)
-    if not path_out:
-        raise ValueError(f&#39;No output path was given.&#39;)
-    cmd = [&#39;bwa-mem2&#39;, &#39;index&#39;, &#39;-p&#39;, path_out, fasta_in]
 
     return [cmd]</code></pre>
 </details>
@@ -515,9 +530,9 @@ If disallowed characters are found in input.</dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="hocort.aligners.aligner.Aligner" href="aligner.html#hocort.aligners.aligner.Aligner">Aligner</a></b></code>:
+<li><code><b><a title="hocort.classifiers.classifier.Classifier" href="classifier.html#hocort.classifiers.classifier.Classifier">Classifier</a></b></code>:
 <ul class="hlist">
-<li><code><a title="hocort.aligners.aligner.Aligner.index_interface" href="aligner.html#hocort.aligners.aligner.Aligner.index_interface">index_interface</a></code></li>
+<li><code><a title="hocort.classifiers.classifier.Classifier.index_interface" href="classifier.html#hocort.classifiers.classifier.Classifier.index_interface">index_interface</a></code></li>
 </ul>
 </li>
 </ul>
@@ -533,16 +548,16 @@ If disallowed characters are found in input.</dd>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="hocort.aligners" href="index.html">hocort.aligners</a></code></li>
+<li><code><a title="hocort.classifiers" href="index.html">hocort.classifiers</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="hocort.aligners.bwa_mem2.BWA_MEM2" href="#hocort.aligners.bwa_mem2.BWA_MEM2">BWA_MEM2</a></code></h4>
+<h4><code><a title="hocort.classifiers.biobloom.BioBloom" href="#hocort.classifiers.biobloom.BioBloom">BioBloom</a></code></h4>
 <ul class="">
-<li><code><a title="hocort.aligners.bwa_mem2.BWA_MEM2.align" href="#hocort.aligners.bwa_mem2.BWA_MEM2.align">align</a></code></li>
-<li><code><a title="hocort.aligners.bwa_mem2.BWA_MEM2.build_index" href="#hocort.aligners.bwa_mem2.BWA_MEM2.build_index">build_index</a></code></li>
+<li><code><a title="hocort.classifiers.biobloom.BioBloom.build_index" href="#hocort.classifiers.biobloom.BioBloom.build_index">build_index</a></code></li>
+<li><code><a title="hocort.classifiers.biobloom.BioBloom.classify" href="#hocort.classifiers.biobloom.BioBloom.classify">classify</a></code></li>
 </ul>
 </li>
 </ul>

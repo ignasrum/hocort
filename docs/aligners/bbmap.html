@@ -32,7 +32,8 @@ import sys
 
 import hocort.execute as exe
 from hocort.aligners.aligner import Aligner
-from hocort.parser import ArgParser
+from hocort.parse.parser import ArgParser
+from hocort.parse.parser import validate_args
 
 logger = logging.getLogger(__file__)
 
@@ -65,9 +66,15 @@ class BBMap(Aligner):
         Raises
         ------
         ValueError
-           Raised if no input FASTA file is given, or no output file is given.
+            Raised if no input FASTA file is given, or no output file is given.
+            If disallowed characters are found in input.
 
         &#34;&#34;&#34;
+        # validate input
+        valid, arg, chars = validate_args([path_out, fasta_in] + options)
+        if not valid:
+            raise ValueError(f&#39;Input with disallowed characters detected: &#34;{arg}&#34; - {chars}&#39;)
+
         if not fasta_in:
             raise ValueError(f&#39;No input FASTA file was given.&#39;)
         if not path_out:
@@ -88,6 +95,7 @@ class BBMap(Aligner):
             Path where the first input FastQ file is located.
         output : string
             Path where the output SAM file is written.
+            If output is None, the output is written to stdout.
         seq2 : string
             Path where the second input FastQ file is located.
         threads : int
@@ -103,9 +111,15 @@ class BBMap(Aligner):
         Raises
         ------
         ValueError
-           Raised if no input index path is given, or no input FastQ file is given.
+            Raised if no input index path is given, or no input FastQ file is given.
+            If disallowed characters are found in input.
 
         &#34;&#34;&#34;
+        # validate input
+        valid, arg, chars = validate_args([index, seq1, output, seq2] + options)
+        if not valid:
+            raise ValueError(f&#39;Input with disallowed characters detected: &#34;{arg}&#34; - {chars}&#39;)
+
         if not index:
             raise ValueError(f&#39;No index path was given.&#39;)
         if not seq1:
@@ -231,9 +245,15 @@ class BBMap(Aligner):
         Raises
         ------
         ValueError
-           Raised if no input FASTA file is given, or no output file is given.
+            Raised if no input FASTA file is given, or no output file is given.
+            If disallowed characters are found in input.
 
         &#34;&#34;&#34;
+        # validate input
+        valid, arg, chars = validate_args([path_out, fasta_in] + options)
+        if not valid:
+            raise ValueError(f&#39;Input with disallowed characters detected: &#34;{arg}&#34; - {chars}&#39;)
+
         if not fasta_in:
             raise ValueError(f&#39;No input FASTA file was given.&#39;)
         if not path_out:
@@ -254,6 +274,7 @@ class BBMap(Aligner):
             Path where the first input FastQ file is located.
         output : string
             Path where the output SAM file is written.
+            If output is None, the output is written to stdout.
         seq2 : string
             Path where the second input FastQ file is located.
         threads : int
@@ -269,9 +290,15 @@ class BBMap(Aligner):
         Raises
         ------
         ValueError
-           Raised if no input index path is given, or no input FastQ file is given.
+            Raised if no input index path is given, or no input FastQ file is given.
+            If disallowed characters are found in input.
 
         &#34;&#34;&#34;
+        # validate input
+        valid, arg, chars = validate_args([index, seq1, output, seq2] + options)
+        if not valid:
+            raise ValueError(f&#39;Input with disallowed characters detected: &#34;{arg}&#34; - {chars}&#39;)
+
         if not index:
             raise ValueError(f&#39;No index path was given.&#39;)
         if not seq1:
@@ -369,7 +396,8 @@ class BBMap(Aligner):
 <dt><strong><code>seq1</code></strong> :&ensp;<code>string</code></dt>
 <dd>Path where the first input FastQ file is located.</dd>
 <dt><strong><code>output</code></strong> :&ensp;<code>string</code></dt>
-<dd>Path where the output SAM file is written.</dd>
+<dd>Path where the output SAM file is written.
+If output is None, the output is written to stdout.</dd>
 <dt><strong><code>seq2</code></strong> :&ensp;<code>string</code></dt>
 <dd>Path where the second input FastQ file is located.</dd>
 <dt><strong><code>threads</code></strong> :&ensp;<code>int</code></dt>
@@ -383,9 +411,9 @@ List of commands to be executed.</p>
 <h2 id="raises">Raises</h2>
 <dl>
 <dt><code>ValueError</code></dt>
-<dd>&nbsp;</dd>
-</dl>
-<p>Raised if no input index path is given, or no input FastQ file is given.</p></div>
+<dd>Raised if no input index path is given, or no input FastQ file is given.
+If disallowed characters are found in input.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -402,6 +430,7 @@ List of commands to be executed.</p>
         Path where the first input FastQ file is located.
     output : string
         Path where the output SAM file is written.
+        If output is None, the output is written to stdout.
     seq2 : string
         Path where the second input FastQ file is located.
     threads : int
@@ -417,9 +446,15 @@ List of commands to be executed.</p>
     Raises
     ------
     ValueError
-       Raised if no input index path is given, or no input FastQ file is given.
+        Raised if no input index path is given, or no input FastQ file is given.
+        If disallowed characters are found in input.
 
     &#34;&#34;&#34;
+    # validate input
+    valid, arg, chars = validate_args([index, seq1, output, seq2] + options)
+    if not valid:
+        raise ValueError(f&#39;Input with disallowed characters detected: &#34;{arg}&#34; - {chars}&#39;)
+
     if not index:
         raise ValueError(f&#39;No index path was given.&#39;)
     if not seq1:
@@ -457,9 +492,9 @@ List of commands to be executed.</p>
 <h2 id="raises">Raises</h2>
 <dl>
 <dt><code>ValueError</code></dt>
-<dd>&nbsp;</dd>
-</dl>
-<p>Raised if no input FASTA file is given, or no output file is given.</p></div>
+<dd>Raised if no input FASTA file is given, or no output file is given.
+If disallowed characters are found in input.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -487,9 +522,15 @@ List of commands to be executed.</p>
     Raises
     ------
     ValueError
-       Raised if no input FASTA file is given, or no output file is given.
+        Raised if no input FASTA file is given, or no output file is given.
+        If disallowed characters are found in input.
 
     &#34;&#34;&#34;
+    # validate input
+    valid, arg, chars = validate_args([path_out, fasta_in] + options)
+    if not valid:
+        raise ValueError(f&#39;Input with disallowed characters detected: &#34;{arg}&#34; - {chars}&#39;)
+
     if not fasta_in:
         raise ValueError(f&#39;No input FASTA file was given.&#39;)
     if not path_out:

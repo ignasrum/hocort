@@ -34,13 +34,15 @@ Command line user interface for HoCoRT.
 from argparse import Action
 import sys
 import inspect
+import multiprocessing
+import platform
 
 import hocort.aligners
 import hocort.classifiers
 import hocort.pipelines
 import hocort.version as version
 import hocort.logging
-from hocort.parser import ArgParser
+from hocort.parse.parser import ArgParser
 
 
 # Gets available aligners from hocort.aligners
@@ -76,6 +78,7 @@ class HelpActionMap(Action):
         If a pipeline is selected, its interface is called with the &#39;-h&#39; flag.
         Otherwise, the help message of this interface is printed together with the
         names of pipelines available in hocort.pipelines module.
+
         Parameters
         ----------
         parser : argparse.ArgumentParser
@@ -104,9 +107,10 @@ class HelpActionIndex(Action):
     &#34;&#34;&#34;
     def __call__(self, parser, namespace, values, option_string=None):
         &#34;&#34;&#34;
-        If a pipeline is selected, its interface is called with the &#39;-h&#39; flag.
+        If an aligner or classifier is selected, its interface is called with the &#39;-h&#39; flag.
         Otherwise, the help message of this interface is printed together with the
-        names of pipelines available in hocort.pipelines module.
+        names of aligners and classifiers available in hocort.aligners and hocort.classifiers modules.
+
         Parameters
         ----------
         parser : argparse.ArgumentParser
@@ -133,6 +137,14 @@ class HelpActionIndex(Action):
             parser.print_help()
         parser.exit()
 
+def machine_info():
+    message = &#39;\n&#39;
+    message += &#39;{}\n&#39;.format(platform.platform())
+    message += &#39;Python {}\n&#39;.format(platform.python_version())
+    message += &#39;Available threads: {}&#39;.format(str(multiprocessing.cpu_count()))
+    message += &#39;\n\n&#39;
+    return message
+
 def extra_help_map():
     &#34;&#34;&#34;
     Returns string containing some help information about available pipelines.
@@ -147,6 +159,7 @@ def extra_help_map():
     for pipeline in pipelines:
         message += f&#39;\n    {pipeline}&#39;
     message += &#39;\n&#39;
+    message += machine_info()
     return message
 
 def extra_help_index():
@@ -165,6 +178,7 @@ def extra_help_index():
     for classifier in classifiers:
         message += f&#39;\n    {classifier}&#39;
     message += &#39;\n&#39;
+    message += machine_info()
     return message
 
 def version_info():
@@ -194,7 +208,8 @@ def main():
         version_info=version_info,
         prog=&#39;hocort&#39;,
         description=&#39;hocort: remove specific organisms from sequencing reads&#39;,
-        usage=&#39;hocort [subcommand] [options]&#39;
+        usage=&#39;hocort [subcommand] [options]&#39;,
+        extra_help=machine_info
     )
     subparsers = parser.add_subparsers(
         dest=&#39;subcommand&#39;,
@@ -350,6 +365,7 @@ def main():
     for classifier in classifiers:
         message += f&#39;\n    {classifier}&#39;
     message += &#39;\n&#39;
+    message += machine_info()
     return message</code></pre>
 </details>
 </dd>
@@ -381,6 +397,25 @@ def main():
     for pipeline in pipelines:
         message += f&#39;\n    {pipeline}&#39;
     message += &#39;\n&#39;
+    message += machine_info()
+    return message</code></pre>
+</details>
+</dd>
+<dt id="hocort.interface.machine_info"><code class="name flex">
+<span>def <span class="ident">machine_info</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def machine_info():
+    message = &#39;\n&#39;
+    message += &#39;{}\n&#39;.format(platform.platform())
+    message += &#39;Python {}\n&#39;.format(platform.python_version())
+    message += &#39;Available threads: {}&#39;.format(str(multiprocessing.cpu_count()))
+    message += &#39;\n\n&#39;
     return message</code></pre>
 </details>
 </dd>
@@ -411,7 +446,8 @@ def main():
         version_info=version_info,
         prog=&#39;hocort&#39;,
         description=&#39;hocort: remove specific organisms from sequencing reads&#39;,
-        usage=&#39;hocort [subcommand] [options]&#39;
+        usage=&#39;hocort [subcommand] [options]&#39;,
+        extra_help=machine_info
     )
     subparsers = parser.add_subparsers(
         dest=&#39;subcommand&#39;,
@@ -580,9 +616,10 @@ def main():
     &#34;&#34;&#34;
     def __call__(self, parser, namespace, values, option_string=None):
         &#34;&#34;&#34;
-        If a pipeline is selected, its interface is called with the &#39;-h&#39; flag.
+        If an aligner or classifier is selected, its interface is called with the &#39;-h&#39; flag.
         Otherwise, the help message of this interface is printed together with the
-        names of pipelines available in hocort.pipelines module.
+        names of aligners and classifiers available in hocort.aligners and hocort.classifiers modules.
+
         Parameters
         ----------
         parser : argparse.ArgumentParser
@@ -634,6 +671,7 @@ def main():
         If a pipeline is selected, its interface is called with the &#39;-h&#39; flag.
         Otherwise, the help message of this interface is printed together with the
         names of pipelines available in hocort.pipelines module.
+
         Parameters
         ----------
         parser : argparse.ArgumentParser
@@ -680,6 +718,7 @@ def main():
 <ul class="">
 <li><code><a title="hocort.interface.extra_help_index" href="#hocort.interface.extra_help_index">extra_help_index</a></code></li>
 <li><code><a title="hocort.interface.extra_help_map" href="#hocort.interface.extra_help_map">extra_help_map</a></code></li>
+<li><code><a title="hocort.interface.machine_info" href="#hocort.interface.machine_info">machine_info</a></code></li>
 <li><code><a title="hocort.interface.main" href="#hocort.interface.main">main</a></code></li>
 <li><code><a title="hocort.interface.version_info" href="#hocort.interface.version_info">version_info</a></code></li>
 </ul>
