@@ -9,7 +9,6 @@ import multiprocessing
 import platform
 
 import hocort.aligners
-import hocort.classifiers
 import hocort.pipelines
 import hocort.version as version
 import hocort.logging
@@ -23,14 +22,6 @@ for aligner in dir(hocort.aligners):
         m = getattr(hocort.aligners, aligner)
         if inspect.isclass(m):
             aligners[aligner] = m
-
-# Gets available classifiers from hocort.classifiers
-classifiers = {}
-for classifier in dir(hocort.classifiers):
-    if classifier[0] != '_':
-        m = getattr(hocort.classifiers, classifier)
-        if inspect.isclass(m):
-            classifiers[classifier] = m
 
 # Gets available pipelines from hocort.pipelines
 pipelines = {}
@@ -100,9 +91,6 @@ class HelpActionIndex(Action):
         if tool != None:
             if tool in aligners:
                 tool_interface = aligners[tool]().index_interface
-                tool_interface(['-h'])
-            if tool in classifiers:
-                tool_interface = classifiers[tool]().index_interface
                 tool_interface(['-h'])
         else:
             parser.print_help()
@@ -289,8 +277,6 @@ def main():
         interface = None
         if args.tool in aligners.keys():
             interface = aligners[args.tool]().index_interface
-        elif args.tool in classifiers.keys():
-            interface = classifiers[args.tool]().index_interface
         else:
             logger.error(f'Invalid tool: {args.tool}')
             sys.exit(1)

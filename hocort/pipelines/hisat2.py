@@ -2,7 +2,7 @@ import time
 import os
 import logging
 
-from hocort.pipelines.pipeline import Pipeline
+from hocort.pipelines.utils import debug_log_args
 from hocort.aligners.hisat2 import HISAT2 as hs2
 from hocort.parse.sam import SAM
 from hocort.parse.parser import ArgParser
@@ -11,7 +11,7 @@ import hocort.execute as exe
 logger = logging.getLogger(__file__)
 
 
-class HISAT2(Pipeline):
+class HISAT2():
     """
     HISAT2 pipeline which maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
 
@@ -53,9 +53,9 @@ class HISAT2(Pipeline):
             If disallowed characters are found in input.
 
         """
-        self.debug_log_args(logger,
-                            self.run.__name__,
-                            locals())
+        debug_log_args(logger,
+                       self.run.__name__,
+                       locals())
         if seq2 and not out2:
             raise ValueError(f'Input FastQ_2 was given, but no output FastQ_2.')
 

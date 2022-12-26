@@ -2,15 +2,15 @@ import time
 import os
 import logging
 
-from hocort.pipelines.pipeline import Pipeline
-from hocort.classifiers.biobloom import BioBloom as biobloom
+from hocort.pipelines.utils import debug_log_args
+from hocort.aligners.biobloom import BioBloom as biobloom
 from hocort.parse.parser import ArgParser
 import hocort.execute as exe
 
 logger = logging.getLogger(__file__)
 
 
-class BioBloom(Pipeline):
+class BioBloom():
     """
     BioBloom pipeline which maps reads to a genome and matching/non-matching reads in the output FastQ file/-s.
 
@@ -45,9 +45,9 @@ class BioBloom(Pipeline):
             If disallowed characters are found in input.
 
         """
-        self.debug_log_args(logger,
-                            self.run.__name__,
-                            locals())
+        debug_log_args(logger,
+                       self.run.__name__,
+                       locals())
 
         final_options = []
         if len(options) > 0:

@@ -2,8 +2,8 @@ import time
 import os
 import logging
 
-from hocort.pipelines.pipeline import Pipeline
-from hocort.classifiers.kraken2 import Kraken2 as kr2
+from hocort.pipelines.utils import debug_log_args
+from hocort.aligners.kraken2 import Kraken2 as kr2
 from hocort.parse.sam import SAM
 from hocort.parse.parser import ArgParser
 import hocort.execute as exe
@@ -11,7 +11,7 @@ import hocort.execute as exe
 logger = logging.getLogger(__file__)
 
 
-class Kraken2(Pipeline):
+class Kraken2():
     """
     Kraken2 pipeline which maps reads to a genome and includes/excludes matching reads from the output FastQ file/-s.
 
@@ -50,9 +50,9 @@ class Kraken2(Pipeline):
             If disallowed characters are found in input.
 
         """
-        self.debug_log_args(logger,
-                            self.run.__name__,
-                            locals())
+        debug_log_args(logger,
+                       self.run.__name__,
+                       locals())
 
         final_options = []
         if len(options) > 0:
