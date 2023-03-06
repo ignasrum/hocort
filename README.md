@@ -20,6 +20,7 @@ External programs:
 * [bwa-mem2](https://github.com/bwa-mem2/bwa-mem2) (Tested with version 2.2.1)
 * [BBMap](https://sourceforge.net/projects/bbmap/) (Tested with version 38.96)
 * [Minimap2](https://github.com/lh3/minimap2) (Tested with version 2.24)
+* [BioBloomTools](https://github.com/bcgsc/biobloom) (Tested with version 2.3.5)
 * [samtools](https://github.com/samtools/samtools) (Tested with version 1.15)
 
 # Installing with Bioconda
