@@ -12,7 +12,9 @@ external_dependencies = {
     'bwa-mem2': ['bwa-mem2'],
     'bbmap': ['bbmap.sh'],
     'minimap2': ['minimap2'],
-    'samtools': ['samtools']
+    'samtools': ['samtools'],
+    'biobloommaker': ['biobloommaker'],
+    'biobloomcategorizer': ['biobloomcategorizer']
 }
 
 

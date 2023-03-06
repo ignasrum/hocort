@@ -3,14 +3,13 @@ import os
 import sys
 
 import hocort.execute as exe
-from hocort.classifiers.classifier import Classifier
 from hocort.parse.parser import ArgParser
 from hocort.parse.parser import validate_args
 
 logger = logging.getLogger(__file__)
 
 
-class BioBloom(Classifier):
+class BioBloom():
     """
     BioBloom implementation of the Classifier abstract base class.
 

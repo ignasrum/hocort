@@ -3,7 +3,7 @@ import os
 
 import pytest
 
-from hocort.classifiers.kraken2 import Kraken2
+from hocort.aligners.kraken2 import Kraken2
 
 from helper import helper
 

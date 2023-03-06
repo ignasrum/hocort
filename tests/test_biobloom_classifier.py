@@ -3,7 +3,7 @@ import os
 
 import pytest
 
-from hocort.classifiers.biobloom import BioBloom
+from hocort.aligners.biobloom import BioBloom
 
 from helper import helper
 

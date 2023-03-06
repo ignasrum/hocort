@@ -3,14 +3,13 @@ import os
 import sys
 
 import hocort.execute as exe
-from hocort.aligners.aligner import Aligner
 from hocort.parse.parser import ArgParser
 from hocort.parse.parser import validate_args
 
 logger = logging.getLogger(__file__)
 
 
-class BBMap(Aligner):
+class BBMap():
     """
     BBMap implementation of the Aligner abstract base class.
 
