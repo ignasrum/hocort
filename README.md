@@ -6,7 +6,7 @@
 <br>
 <strong>Ho</strong>st <strong>Co</strong>ntamination <strong>R</strong>emoval <strong>T</strong>ool (<strong>HoCoRT</strong>)
 
-Removes specific organisms from sequencing reads on Linux and Mac OS.
+Removes specific organisms from sequencing reads on Linux.
 
 Supports un-/paired FastQ input. Outputs in FastQ format.
 
