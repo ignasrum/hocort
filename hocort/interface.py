@@ -69,9 +69,9 @@ class HelpActionIndex(Action):
     """
     def __call__(self, parser, namespace, values, option_string=None):
         """
-        If an aligner or classifier is selected, its interface is called with the '-h' flag.
+        If an aligner is selected, its interface is called with the '-h' flag.
         Otherwise, the help message of this interface is printed together with the
-        names of aligners and classifiers available in hocort.aligners and hocort.classifiers modules.
+        names of aligners available in hocort.aligners module.
 
         Parameters
         ----------
@@ -134,8 +134,6 @@ def extra_help_index():
     message = '\navailable tools:'
     for aligner in aligners:
         message += f'\n    {aligner}'
-    for classifier in classifiers:
-        message += f'\n    {classifier}'
     message += '\n'
     message += machine_info()
     return message
