@@ -38,7 +38,6 @@ import multiprocessing
 import platform
 
 import hocort.aligners
-import hocort.classifiers
 import hocort.pipelines
 import hocort.version as version
 import hocort.logging
@@ -52,14 +51,6 @@ for aligner in dir(hocort.aligners):
         m = getattr(hocort.aligners, aligner)
         if inspect.isclass(m):
             aligners[aligner] = m
-
-# Gets available classifiers from hocort.classifiers
-classifiers = {}
-for classifier in dir(hocort.classifiers):
-    if classifier[0] != &#39;_&#39;:
-        m = getattr(hocort.classifiers, classifier)
-        if inspect.isclass(m):
-            classifiers[classifier] = m
 
 # Gets available pipelines from hocort.pipelines
 pipelines = {}
@@ -107,9 +98,9 @@ class HelpActionIndex(Action):
     &#34;&#34;&#34;
     def __call__(self, parser, namespace, values, option_string=None):
         &#34;&#34;&#34;
-        If an aligner or classifier is selected, its interface is called with the &#39;-h&#39; flag.
+        If an aligner is selected, its interface is called with the &#39;-h&#39; flag.
         Otherwise, the help message of this interface is printed together with the
-        names of aligners and classifiers available in hocort.aligners and hocort.classifiers modules.
+        names of aligners available in hocort.aligners module.
 
         Parameters
         ----------
@@ -129,9 +120,6 @@ class HelpActionIndex(Action):
         if tool != None:
             if tool in aligners:
                 tool_interface = aligners[tool]().index_interface
-                tool_interface([&#39;-h&#39;])
-            if tool in classifiers:
-                tool_interface = classifiers[tool]().index_interface
                 tool_interface([&#39;-h&#39;])
         else:
             parser.print_help()
@@ -175,8 +163,6 @@ def extra_help_index():
     message = &#39;\navailable tools:&#39;
     for aligner in aligners:
         message += f&#39;\n    {aligner}&#39;
-    for classifier in classifiers:
-        message += f&#39;\n    {classifier}&#39;
     message += &#39;\n&#39;
     message += machine_info()
     return message
@@ -312,19 +298,17 @@ def main():
             sys.exit(1)
         pipeline_interface = pipelines[args.pipeline]().interface
         returncode = pipeline_interface(unknown_args)
-        logger.warning(f&#39;Pipeline exited with returncode: {returncode}&#39;)
+        logger.info(f&#39;Pipeline exited with returncode: {returncode}&#39;)
         sys.exit(returncode)
     if cmd == &#39;index&#39; and args.tool:
         interface = None
         if args.tool in aligners.keys():
             interface = aligners[args.tool]().index_interface
-        elif args.tool in classifiers.keys():
-            interface = classifiers[args.tool]().index_interface
         else:
             logger.error(f&#39;Invalid tool: {args.tool}&#39;)
             sys.exit(1)
         returncode = interface(unknown_args)
-        logger.warning(f&#39;Process exited with returncode: {returncode}&#39;)
+        logger.info(f&#39;Process exited with returncode: {returncode}&#39;)
         sys.exit(returncode)</code></pre>
 </details>
 </section>
@@ -362,8 +346,6 @@ def main():
     message = &#39;\navailable tools:&#39;
     for aligner in aligners:
         message += f&#39;\n    {aligner}&#39;
-    for classifier in classifiers:
-        message += f&#39;\n    {classifier}&#39;
     message += &#39;\n&#39;
     message += machine_info()
     return message</code></pre>
@@ -550,19 +532,17 @@ def main():
             sys.exit(1)
         pipeline_interface = pipelines[args.pipeline]().interface
         returncode = pipeline_interface(unknown_args)
-        logger.warning(f&#39;Pipeline exited with returncode: {returncode}&#39;)
+        logger.info(f&#39;Pipeline exited with returncode: {returncode}&#39;)
         sys.exit(returncode)
     if cmd == &#39;index&#39; and args.tool:
         interface = None
         if args.tool in aligners.keys():
             interface = aligners[args.tool]().index_interface
-        elif args.tool in classifiers.keys():
-            interface = classifiers[args.tool]().index_interface
         else:
             logger.error(f&#39;Invalid tool: {args.tool}&#39;)
             sys.exit(1)
         returncode = interface(unknown_args)
-        logger.warning(f&#39;Process exited with returncode: {returncode}&#39;)
+        logger.info(f&#39;Process exited with returncode: {returncode}&#39;)
         sys.exit(returncode)</code></pre>
 </details>
 </dd>
@@ -616,9 +596,9 @@ def main():
     &#34;&#34;&#34;
     def __call__(self, parser, namespace, values, option_string=None):
         &#34;&#34;&#34;
-        If an aligner or classifier is selected, its interface is called with the &#39;-h&#39; flag.
+        If an aligner is selected, its interface is called with the &#39;-h&#39; flag.
         Otherwise, the help message of this interface is printed together with the
-        names of aligners and classifiers available in hocort.aligners and hocort.classifiers modules.
+        names of aligners available in hocort.aligners module.
 
         Parameters
         ----------
@@ -638,9 +618,6 @@ def main():
         if tool != None:
             if tool in aligners:
                 tool_interface = aligners[tool]().index_interface
-                tool_interface([&#39;-h&#39;])
-            if tool in classifiers:
-                tool_interface = classifiers[tool]().index_interface
                 tool_interface([&#39;-h&#39;])
         else:
             parser.print_help()

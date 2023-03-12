@@ -73,7 +73,7 @@ class Bowtie2():
         if len(options) > 0:
             final_options = [options]
 
-        logger.warning(f'Running pipeline: {self.__class__.__name__}')
+        logger.info(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
         bowtie2_cmd = bt2().align(idx,
@@ -95,7 +95,7 @@ class Bowtie2():
             if returncode != 0: return 1
 
         end_time = time.time()
-        logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
+        logger.info(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return 0
 
     def interface(self, args):

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>hocort.classifiers API documentation</title>
+<title>hocort.pipelines.utils API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
@@ -19,37 +19,94 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>hocort.classifiers</code></h1>
+<h1 class="title">Module <code>hocort.pipelines.utils</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from hocort.classifiers.kraken2 import Kraken2 as kraken2
-from hocort.classifiers.biobloom import BioBloom as biobloom</code></pre>
+<pre><code class="python">def debug_log_args(logger, function_name, locals_vars):
+    &#34;&#34;&#34;
+    Logs the arguments of a function.
+
+    Parameters
+    ----------
+    logger : logging.Logger
+        Logger instance which is used to log the arguments
+    function_name : string
+        Function name.
+    locals_vars : dict
+        Local symbol table of a function.
+
+    Returns
+    -------
+    None
+
+    &#34;&#34;&#34;
+    string = f&#39;Logging args for: {function_name}()&#39;
+    for var in locals_vars:
+        if var != &#39;self&#39;:
+            string += f&#39;\n{var}: {locals_vars[var]}&#39;
+    logger.debug(string + &#39;\n&#39;)</code></pre>
 </details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt><code class="name"><a title="hocort.classifiers.biobloom" href="biobloom.html">hocort.classifiers.biobloom</a></code></dt>
+<dt id="hocort.pipelines.utils.debug_log_args"><code class="name flex">
+<span>def <span class="ident">debug_log_args</span></span>(<span>logger, function_name, locals_vars)</span>
+</code></dt>
 <dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="hocort.classifiers.classifier" href="classifier.html">hocort.classifiers.classifier</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="hocort.classifiers.kraken2" href="kraken2.html">hocort.classifiers.kraken2</a></code></dt>
-<dd>
-<div class="desc"></div>
+<div class="desc"><p>Logs the arguments of a function.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>logger</code></strong> :&ensp;<code>logging.Logger</code></dt>
+<dd>Logger instance which is used to log the arguments</dd>
+<dt><strong><code>function_name</code></strong> :&ensp;<code>string</code></dt>
+<dd>Function name.</dd>
+<dt><strong><code>locals_vars</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Local symbol table of a function.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>None</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def debug_log_args(logger, function_name, locals_vars):
+    &#34;&#34;&#34;
+    Logs the arguments of a function.
+
+    Parameters
+    ----------
+    logger : logging.Logger
+        Logger instance which is used to log the arguments
+    function_name : string
+        Function name.
+    locals_vars : dict
+        Local symbol table of a function.
+
+    Returns
+    -------
+    None
+
+    &#34;&#34;&#34;
+    string = f&#39;Logging args for: {function_name}()&#39;
+    for var in locals_vars:
+        if var != &#39;self&#39;:
+            string += f&#39;\n{var}: {locals_vars[var]}&#39;
+    logger.debug(string + &#39;\n&#39;)</code></pre>
+</details>
 </dd>
 </dl>
-</section>
-<section>
-</section>
-<section>
 </section>
 <section>
 </section>
@@ -62,14 +119,12 @@ from hocort.classifiers.biobloom import BioBloom as biobloom</code></pre>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="hocort" href="../index.html">hocort</a></code></li>
+<li><code><a title="hocort.pipelines" href="index.html">hocort.pipelines</a></code></li>
 </ul>
 </li>
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
-<ul>
-<li><code><a title="hocort.classifiers.biobloom" href="biobloom.html">hocort.classifiers.biobloom</a></code></li>
-<li><code><a title="hocort.classifiers.classifier" href="classifier.html">hocort.classifiers.classifier</a></code></li>
-<li><code><a title="hocort.classifiers.kraken2" href="kraken2.html">hocort.classifiers.kraken2</a></code></li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="hocort.pipelines.utils.debug_log_args" href="#hocort.pipelines.utils.debug_log_args">debug_log_args</a></code></li>
 </ul>
 </li>
 </ul>

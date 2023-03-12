@@ -31,14 +31,13 @@ import os
 import sys
 
 import hocort.execute as exe
-from hocort.aligners.aligner import Aligner
 from hocort.parse.parser import ArgParser
 from hocort.parse.parser import validate_args
 
 logger = logging.getLogger(__file__)
 
 
-class Minimap2(Aligner):
+class Minimap2():
     &#34;&#34;&#34;
     Minimap2 implementation of the Aligner abstract base class.
 
@@ -234,7 +233,7 @@ class Minimap2(Aligner):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class Minimap2(Aligner):
+<pre><code class="python">class Minimap2():
     &#34;&#34;&#34;
     Minimap2 implementation of the Aligner abstract base class.
 
@@ -411,11 +410,6 @@ class Minimap2(Aligner):
         returncode = exe.execute(cmd, pipe=False, merge_stdout_stderr=True)
         return returncode[0]</code></pre>
 </details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li><a title="hocort.aligners.aligner.Aligner" href="aligner.html#hocort.aligners.aligner.Aligner">Aligner</a></li>
-<li>abc.ABC</li>
-</ul>
 <h3>Methods</h3>
 <dl>
 <dt id="hocort.aligners.minimap2.Minimap2.align"><code class="name flex">
@@ -586,15 +580,99 @@ If disallowed characters are found in input.</dd>
     return [cmd]</code></pre>
 </details>
 </dd>
+<dt id="hocort.aligners.minimap2.Minimap2.index_interface"><code class="name flex">
+<span>def <span class="ident">index_interface</span></span>(<span>self, args)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Main function for the index generation interface. Parses arguments and generates the index.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>args</code></strong> :&ensp;<code>list</code></dt>
+<dd>This list is parsed by ArgumentParser.</dd>
 </dl>
-<h3>Inherited members</h3>
-<ul class="hlist">
-<li><code><b><a title="hocort.aligners.aligner.Aligner" href="aligner.html#hocort.aligners.aligner.Aligner">Aligner</a></b></code>:
-<ul class="hlist">
-<li><code><a title="hocort.aligners.aligner.Aligner.index_interface" href="aligner.html#hocort.aligners.aligner.Aligner.index_interface">index_interface</a></code></li>
-</ul>
-</li>
-</ul>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>None</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def index_interface(self, args):
+    &#34;&#34;&#34;
+    Main function for the index generation interface. Parses arguments and generates the index.
+
+    Parameters
+    ----------
+    args : list
+        This list is parsed by ArgumentParser.
+
+    Returns
+    -------
+    None
+
+    &#34;&#34;&#34;
+    parser = ArgParser(
+        description=f&#39;{self.__class__.__name__} aligner&#39;,
+        usage=f&#39;hocort index {self.__class__.__name__} [-h] [--threads &lt;int&gt;] [--preset &lt;type&gt;] -i &lt;fasta&gt; -o &lt;index&gt;&#39;
+    )
+    parser.add_argument(
+        &#39;-i&#39;,
+        &#39;--input&#39;,
+        required=True,
+        type=str,
+        metavar=(&#39;&lt;fasta&gt;&#39;),
+        help=&#39;str: path to sequence files (required)&#39;
+    )
+    parser.add_argument(
+        &#39;-o&#39;,
+        &#39;--output&#39;,
+        required=True,
+        type=str,
+        metavar=(&#39;&lt;index&gt;&#39;),
+        help=&#39;str: path to output index (dir/basename) (required)&#39;
+    )
+    parser.add_argument(
+        &#39;-t&#39;,
+        &#39;--threads&#39;,
+        required=False,
+        type=int,
+        metavar=(&#39;&lt;int&gt;&#39;),
+        default=os.cpu_count(),
+        help=&#39;int: number of threads (default: max available on machine)&#39;
+    )
+    parser.add_argument(
+        &#39;-p&#39;,
+        &#39;--preset&#39;,
+        choices=[&#39;illumina&#39;, &#39;nanopore&#39;, &#39;pacbio&#39;],
+        default=&#39;illumina&#39;,
+        help=&#39;str: type of reads (default: illumina)&#39;
+    )
+    parsed = parser.parse_args(args=args)
+
+    ref = parsed.input
+    out = parsed.output
+    threads = parsed.threads
+    preset = parsed.preset
+
+    s = os.path.split(out)
+    out_dir = s[0]
+    basename = s[1]
+    if basename == &#39;&#39; or basename == out:
+        logger.error(f&#39;No basename was provided for output path (dir/basename): {basename}&#39;)
+        sys.exit(1)
+    if not os.path.isdir(out_dir):
+        logger.error(f&#39;Output path does not exist: {out}&#39;)
+        sys.exit(1)
+
+    cmd = self.build_index(out, ref, threads=threads, preset=preset)
+    logger.warning(f&#39;Generating index for: {self.__class__.__name__}&#39;)
+    returncode = exe.execute(cmd, pipe=False, merge_stdout_stderr=True)
+    return returncode[0]</code></pre>
+</details>
+</dd>
+</dl>
 </dd>
 </dl>
 </section>
@@ -617,6 +695,7 @@ If disallowed characters are found in input.</dd>
 <ul class="">
 <li><code><a title="hocort.aligners.minimap2.Minimap2.align" href="#hocort.aligners.minimap2.Minimap2.align">align</a></code></li>
 <li><code><a title="hocort.aligners.minimap2.Minimap2.build_index" href="#hocort.aligners.minimap2.Minimap2.build_index">build_index</a></code></li>
+<li><code><a title="hocort.aligners.minimap2.Minimap2.index_interface" href="#hocort.aligners.minimap2.Minimap2.index_interface">index_interface</a></code></li>
 </ul>
 </li>
 </ul>

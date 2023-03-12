@@ -59,7 +59,7 @@ class HISAT2():
         if seq2 and not out2:
             raise ValueError(f'Input FastQ_2 was given, but no output FastQ_2.')
 
-        logger.warning(f'Running pipeline: {self.__class__.__name__}')
+        logger.info(f'Running pipeline: {self.__class__.__name__}')
         start_time = time.time()
 
         final_options = []
@@ -85,7 +85,7 @@ class HISAT2():
             if returncode != 0: return 1
 
         end_time = time.time()
-        logger.warning(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
+        logger.info(f'Pipeline {self.__class__.__name__} run time: {end_time - start_time} seconds')
         return 0
 
     def interface(self, args):

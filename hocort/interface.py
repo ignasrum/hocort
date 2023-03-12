@@ -269,7 +269,7 @@ def main():
             sys.exit(1)
         pipeline_interface = pipelines[args.pipeline]().interface
         returncode = pipeline_interface(unknown_args)
-        logger.warning(f'Pipeline exited with returncode: {returncode}')
+        logger.info(f'Pipeline exited with returncode: {returncode}')
         sys.exit(returncode)
     if cmd == 'index' and args.tool:
         interface = None
@@ -279,5 +279,5 @@ def main():
             logger.error(f'Invalid tool: {args.tool}')
             sys.exit(1)
         returncode = interface(unknown_args)
-        logger.warning(f'Process exited with returncode: {returncode}')
+        logger.info(f'Process exited with returncode: {returncode}')
         sys.exit(returncode)

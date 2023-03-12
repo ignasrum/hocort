@@ -182,7 +182,7 @@ class Kraken2():
             sys.exit(1)
 
         cmds = self.build_index(out, ref, threads=threads)
-        logger.warning(f'Generating index for: {self.__class__.__name__}')
+        logger.info(f'Generating index for: {self.__class__.__name__}')
         logger.info('Downloading taxonomy, this may take a while...')
         returncode = exe.execute([cmds[0]], pipe=False, merge_stdout_stderr=True)
         logger.info('Adding reference fasta to library...')
