@@ -6,7 +6,7 @@
 <br>
 <strong>Ho</strong>st <strong>Co</strong>ntamination <strong>R</strong>emoval <strong>T</strong>ool (<strong>HoCoRT</strong>)
 
-Removes specific organisms from sequencing reads on Linux and Mac OS.
+Removes specific organisms from sequencing reads on Linux.
 
 Supports un-/paired FastQ input. Outputs in FastQ format.
 
@@ -27,14 +27,14 @@ External programs:
 
 To install with Bioconda run the following command:
 ```
-conda install -c bioconda -c conda-forge hocort
+conda install -c conda-forge -c bioconda hocort
 ```
 
 HoCoRT's dependencies may conflict with existing packages.
 This can be solved by installing HoCoRT in a separate environment.
 To create a new conda environment and install HoCoRT run the following command:
 ```
-conda create -n hocort -c bioconda -c conda-forge hocort
+conda create -n hocort -c conda-forge -c bioconda hocort
 ```
 
 # Manual Installation
