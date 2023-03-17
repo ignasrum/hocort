@@ -184,7 +184,7 @@ class Minimap2():
         seq = parsed.input
         out = parsed.output
         threads = parsed.threads if parsed.threads else 1
-        mfilter = True if parsed.filter == 'True' else False
+        mfilter = True if parsed.filter == 'true' else False
         preset = parsed.preset
         config = parsed.config if parsed.config else ''
 
