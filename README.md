@@ -2,7 +2,10 @@
 [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/hocort/README.html)
 [![anaconda download page](https://img.shields.io/conda/dn/bioconda/hocort.svg?style=flat)](https://anaconda.org/bioconda/hocort)
 <br>
+[BMC Bioinformatics - HoCoRT: host contamination removal tool](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-023-05492-w)
+<br>
 [bioRxiv - HoCoRT: Host contamination removal tool](https://www.biorxiv.org/content/10.1101/2022.11.18.517030v1)
+<br>
 <br>
 <strong>Ho</strong>st <strong>Co</strong>ntamination <strong>R</strong>emoval <strong>T</strong>ool (<strong>HoCoRT</strong>)
 
